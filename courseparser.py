@@ -7,13 +7,6 @@
 from html.parser import HTMLParser
 import json
 
-global dataRead
-dataRead = -1
-global store
-store = ""
-global jdata
-jdata = ""
-
 # For reading files, dataRead will indicate what section is being read
 # 0: Index
 # 1: Term
@@ -28,76 +21,75 @@ jdata = ""
 
 def ParseCourses(name):
 	class ParseData(HTMLParser):
+		def __init__(self):
+			super(ParseData, self).__init__()
+			self.dataRead = -1
+			self.store = ""
+			self.jdata = ""
+
 		def handle_starttag(self, tag, attrs):
-			global dataRead
-			global jdata
 			if(tag != "div" and tag != "label" and tag != "input"):
 				if(tag == "tr"):
-					if(dataRead == -1):
-						jdata = "{"
-					dataRead = 0
+					if(self.dataRead == -1):
+						self.jdata = "{"
+					self.dataRead = 0
 				elif(tag == "th"):
-					dataRead = -1
-					jdata = ""
+					self.dataRead = -1
+					self.jdata = ""
 
 
 		def handle_endtag(self, tag):
-			global dataRead
-			global store
-			global jdata
 			if(tag != "div" and tag != "label" and tag != "input"):
-				if(tag == "td" and dataRead != -1 and store != ""):
-					match dataRead:
+				if(tag == "td" and self.dataRead != -1 and self.store != ""):
+					match self.dataRead:
 						case 0:
 							# 0 is unique as it usually is a hidden index value.
 							# However, it will only be 0 if it is the first entry.
 							# In other words, we are done reading the previous jdata
-							if(jdata != "" and jdata != "{"):
-								jdata += "}"
+							if(self.jdata != "" and self.jdata != "{"):
+								self.jdata += "}"
 								# At this point, jdata can be converted to a JSON object and treated as
 								# done and ready to be stored.
-								print(jdata)
-								jdata = "{"
+								print(self.jdata)
+								self.jdata = "{"
 						case 1:
-							jdata += "\"term\": \"" + store + "\", "
+							self.jdata += "\"term\": \"" + self.store + "\", "
 						case 2:
-							jdata += "\"status\": \"" + store + "\", "
+							self.jdata += "\"status\": \"" + self.store + "\", "
 						case 3:
-							temp = store.split(" ", 2)
-							jdata += "\"code\": \"" + temp[0] + "\", "
-							jdata += "\"section\": \"" + temp[1] + "\", "
-							jdata += "\"name\": \"" + temp[2] + "\", "
+							temp = self.store.split(" ", 2)
+							self.jdata += "\"code\": \"" + temp[0] + "\", "
+							self.jdata += "\"section\": \"" + temp[1] + "\", "
+							self.jdata += "\"name\": \"" + temp[2] + "\", "
 						case 4:
-							jdata += "\"location\": \"" + store + "\", "
+							self.jdata += "\"location\": \"" + self.store + "\", "
 						case 5:
-							jdata += "\"meeting\": \"" + store + "\", "
+							self.jdata += "\"meeting\": \"" + self.store + "\", "
 						case 6:
-							jdata += "\"teacher\": \"" + store + "\", "
+							self.jdata += "\"teacher\": \"" + self.store + "\", "
 						case 7:
-							jdata += "\"available\": \"" + store + "\", "
+							self.jdata += "\"available\": \"" + self.store + "\", "
 						case 8:
-							jdata += "\"credits\": \"" + store + "\", "
+							self.jdata += "\"credits\": \"" + self.store + "\", "
 						case 9:
-							jdata += "\"academiclevel\": \"" + store + "\""
+							self.jdata += "\"academiclevel\": \"" + self.store + "\""
 						case _:
-							jdata += "\"error\": " + store + "\", "
+							self.jdata += "\"error\": " + self.store + "\", "
 					# End of stuff to do with the store
-					dataRead += 1
-					store = ""
+					self.dataRead += 1
+					self.store = ""
 				elif(tag == "table"):
-					if(dataRead != -1):
+					if(self.dataRead != -1):
 						# Before the -1 indicating end, make sure to add final entry
-						if(jdata != "" and jdata != "{"):
-							jdata += "}"
-							print(jdata)
-							jdata = ""
-					dataRead = -1
+						if(self.jdata != "" and self.jdata != "{"):
+							self.jdata += "}"
+							print(self.jdata)
+							self.jdata = ""
+					self.dataRead = -1
 
 		def handle_data(self, data):
-			global dataRead
-			global store
-			if(dataRead != -1):
-				store += data
+			if(self.dataRead != -1):
+				self.store += data
 
 	with open(name, "r") as file:
 		parser = ParseData()
