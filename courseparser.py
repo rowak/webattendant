@@ -96,5 +96,3 @@ def ParseCourses(name):
 		for line in file:
 			parser.feed(line.strip())
 		parser.close()
-
-ParseCourses("Section Selection Results WebAdvisor University of Guelph.html")
