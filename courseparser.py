@@ -5,11 +5,14 @@
 # https://www.pythontutorial.net/python-basics/python-read-text-file/
 
 from html.parser import HTMLParser
+import json
 
 global dataRead
 dataRead = -1
 global store
 store = ""
+global jdata
+jdata = ""
 
 # For reading files, dataRead will indicate what section is being read
 # 0: Index
@@ -27,36 +30,67 @@ def ParseCourses(name):
 	class ParseData(HTMLParser):
 		def handle_starttag(self, tag, attrs):
 			global dataRead
+			global jdata
 			if(tag != "div" and tag != "label" and tag != "input"):
 				if(tag == "tr"):
+					if(dataRead == -1):
+						jdata = "{"
 					dataRead = 0
 				elif(tag == "th"):
 					dataRead = -1
+					jdata = ""
 
 
 		def handle_endtag(self, tag):
 			global dataRead
 			global store
+			global jdata
 			if(tag != "div" and tag != "label" and tag != "input"):
 				if(tag == "td" and dataRead != -1 and store != ""):
-					if(dataRead == 0):
-						# This line will recognize if this is a new entry that needs to be created
-						# If needed, work to create a new object to enter in should be done here
-						print("New Entry")
-						# After this, it will be the general case
-
-					# You have got the data for "store", now use it to store it into the correct position
-					# using the dataRead variable
-					print("#", dataRead, " ", store)
+					match dataRead:
+						case 0:
+							# 0 is unique as it usually is a hidden index value.
+							# However, it will only be 0 if it is the first entry.
+							# In other words, we are done reading the previous jdata
+							if(jdata != "" and jdata != "{"):
+								jdata += "}"
+								# At this point, jdata can be converted to a JSON object and treated as
+								# done and ready to be stored.
+								print(jdata)
+								jdata = "{"
+						case 1:
+							jdata += "\"term\": \"" + store + "\", "
+						case 2:
+							jdata += "\"status\": \"" + store + "\", "
+						case 3:
+							temp = store.split(" ", 2)
+							jdata += "\"code\": \"" + temp[0] + "\", "
+							jdata += "\"section\": \"" + temp[1] + "\", "
+							jdata += "\"name\": \"" + temp[2] + "\", "
+						case 4:
+							jdata += "\"location\": \"" + store + "\", "
+						case 5:
+							jdata += "\"meeting\": \"" + store + "\", "
+						case 6:
+							jdata += "\"teacher\": \"" + store + "\", "
+						case 7:
+							jdata += "\"available\": \"" + store + "\", "
+						case 8:
+							jdata += "\"credits\": \"" + store + "\", "
+						case 9:
+							jdata += "\"academiclevel\": \"" + store + "\""
+						case _:
+							jdata += "\"error\": " + store + "\", "
 					# End of stuff to do with the store
 					dataRead += 1
 					store = ""
 				elif(tag == "table"):
 					if(dataRead != -1):
-						# Before the -1, make sure to add final entry
-						print("Done")
-						# Do not edit after this, as this if block makes sure it doesn't try to repeat each
-						# end of a table code
+						# Before the -1 indicating end, make sure to add final entry
+						if(jdata != "" and jdata != "{"):
+							jdata += "}"
+							print(jdata)
+							jdata = ""
 					dataRead = -1
 
 		def handle_data(self, data):
