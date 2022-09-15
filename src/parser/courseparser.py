@@ -47,7 +47,7 @@ def ParseCourses(name):
 			super(ParseData, self).__init__()
 			self.dataRead = -1
 			self.store = ""
-			self.storeLines = []
+			self.storeLines = []  # Contains the same data as "store", but in an array
 			self.jdata = ""
 
 		# Before I explain, there are 5 important things:
@@ -170,6 +170,9 @@ def ParseCourses(name):
 
 		# Parses the HTML meeting information and converts it into a dictionary representing
 		# a MeetingInfo object
+		#
+		# meetingLines -- an array with each element representing the inner text of a <div>
+		#                 from the meeting information of the HTML document
 		def parse_meeting_info(self, meetingLines):
 			allMeetingInfo = []
 
