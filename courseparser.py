@@ -41,40 +41,39 @@ def ParseCourses(name):
 		def handle_endtag(self, tag):
 			if(tag != "div" and tag != "label" and tag != "input"):
 				if(tag == "td" and self.dataRead != -1 and self.store != ""):
-					match self.dataRead:
-						case 0:
-							# 0 is unique as it usually is a hidden index value.
-							# However, it will only be 0 if it is the first entry.
-							# In other words, we are done reading the previous jdata
-							if(self.jdata != "" and self.jdata != "{"):
-								self.jdata += "}"
-								# At this point, jdata can be converted to a JSON object and treated as
-								# done and ready to be stored.
-								print(self.jdata)
-								self.jdata = "{"
-						case 1:
-							self.jdata += "\"term\": \"" + self.store + "\", "
-						case 2:
-							self.jdata += "\"status\": \"" + self.store + "\", "
-						case 3:
-							temp = self.store.split(" ", 2)
-							self.jdata += "\"code\": \"" + temp[0] + "\", "
-							self.jdata += "\"section\": \"" + temp[1] + "\", "
-							self.jdata += "\"name\": \"" + temp[2] + "\", "
-						case 4:
-							self.jdata += "\"location\": \"" + self.store + "\", "
-						case 5:
-							self.jdata += "\"meeting\": \"" + self.store + "\", "
-						case 6:
-							self.jdata += "\"teacher\": \"" + self.store + "\", "
-						case 7:
-							self.jdata += "\"available\": \"" + self.store + "\", "
-						case 8:
-							self.jdata += "\"credits\": \"" + self.store + "\", "
-						case 9:
-							self.jdata += "\"academiclevel\": \"" + self.store + "\""
-						case _:
-							self.jdata += "\"error\": " + self.store + "\", "
+					if self.dataRead == 0:
+						# 0 is unique as it usually is a hidden index value.
+						# However, it will only be 0 if it is the first entry.
+						# In other words, we are done reading the previous jdata
+						if(self.jdata != "" and self.jdata != "{"):
+							self.jdata += "}"
+							# At this point, jdata can be converted to a JSON object and treated as
+							# done and ready to be stored.
+							print(self.jdata)
+							self.jdata = "{"
+					elif self.dataRead == 1:
+						self.jdata += "\"term\": \"" + self.store + "\", "
+					elif self.dataRead == 2:
+						self.jdata += "\"status\": \"" + self.store + "\", "
+					elif self.dataRead == 3:
+						temp = self.store.split(" ", 2)
+						self.jdata += "\"code\": \"" + temp[0] + "\", "
+						self.jdata += "\"section\": \"" + temp[1] + "\", "
+						self.jdata += "\"name\": \"" + temp[2] + "\", "
+					elif self.dataRead == 4:
+						self.jdata += "\"location\": \"" + self.store + "\", "
+					elif self.dataRead == 5:
+						self.jdata += "\"meeting\": \"" + self.store + "\", "
+					elif self.dataRead == 6:
+						self.jdata += "\"teacher\": \"" + self.store + "\", "
+					elif self.dataRead == 7:
+						self.jdata += "\"available\": \"" + self.store + "\", "
+					elif self.dataRead == 8:
+						self.jdata += "\"credits\": \"" + self.store + "\", "
+					elif self.dataRead == 9:
+						self.jdata += "\"academiclevel\": \"" + self.store + "\""
+					else:
+						self.jdata += "\"error\": " + self.store + "\", "
 					# End of stuff to do with the store
 					self.dataRead += 1
 					self.store = ""
