@@ -30,8 +30,10 @@ import json
 # 9: A hidden variable
 # 10: Academic level
 
+
 def ParseCourses(name):
 	class ParseData(HTMLParser):
+
 		# An explanation of the variables:
 		# dataRead : A variable that indicates what kind of data you are reading in.
 		#            There is a list above which explains what each entry in the table
@@ -44,7 +46,6 @@ def ParseCourses(name):
 			self.dataRead = -1
 			self.store = ""
 			self.jdata = ""
-			#self.meetType = -1
 
 		# Before I explain, there are 5 important things:
 		# An entry starts and ends with <tr>
@@ -84,14 +85,6 @@ def ParseCourses(name):
 				# Data will look better if there is spaces between some things
 				if(self.store != ""):
 					self.store += " "
-				#for attr in attrs:
-				#	if(attr[0] == "class"):
-				#		if(attr[1] == "meet LEC"):
-				#			self.meetType = 0
-				#		elif(attr[1] == "meet LAB"):
-				#			self.meetType = 1
-				#		elif(attr[1] == "meet EXAM"):
-				#			self.meetType = 2
 
 
 		def handle_endtag(self, tag):
@@ -99,84 +92,72 @@ def ParseCourses(name):
 				if(self.store != ""):
 					# Store will need to clean up extra spaces
 					self.store = self.store.strip()
-					# Each case will handle a new
-					match self.dataRead:
-						case 0:
-							# 0 is unique as it usually is a hidden index value.
-							# However, it will only be 0 if it is the first entry.
-							# In other words, we are done reading the previous jdata
-							if(self.jdata != "" and self.jdata != "{"):
-								self.jdata += "}"
-								# At this point, jdata can be converted to a JSON object and treated as
-								# done and ready to be stored.
-								print(self.jdata)
-								self.jdata = "{"
-						case 1:
-							# Case for the term (Usually something like "Fall 2022")
-							# Type: String
-							self.jdata += "\"term\": \"" + self.store + "\", "
-						case 2:
-								# Case for the status
-							# Type: String
-							self.jdata += "\"status\": \"" + self.store + "\", "
-						case 3:
-							# Case for the code, id, and name. ID will be the section number
-							# Type: String, Int, String
-							temp = self.store.split(" ", 2)
-							temp2 = temp[0].split("*", 2)
-							self.jdata += "\"code\": \"" + temp2[0] + "*" + temp2[1] + "\", "
-							self.jdata += "\"id\": " + temp2[2] + ", "
-							self.jdata += "\"name\": \"" + temp[2] + " " + temp[1] + "\", "
-						case 4:
-							# Case for the location info (Guelph mostly)
-							# Type: String
-							self.jdata += "\"location\": \"" + self.store + "\", "
-						case 5:
-							# Case for the meeting info
-							# Type: CUSTOM
-							self.jdata += "\"meeting\": \"" + self.store + "\", "
-						case 6:
-							# Case for the professor teaching the course
-							# Type: String
-							self.jdata += "\"teacher\": \"" + self.store + "\", "
-						case 7:
-							# Case for the capacity and avaialbel capacity
-							# Type: Int, Int
-							temp = self.store.split("/", 2)
-							self.jdata += "\"capacity\": " + temp[1] + ", "
-							self.jdata += "\"availableCapacity\": " + temp[0] + ", "
-						case 8:
-							# Case for the credits
-							# Type: Float
-							self.jdata += "\"credits\": " + self.store + ", "
-						case 9:
-							# do nothing
-							pass
-						case 10:
-							# Case for the academic level (Eg, Undergraduate)
-							# Type: String
-							# This is the final entry, so we don't add a comma
-							self.jdata += "\"academiclevel\": \"" + self.store + "\""
-						case _:
-							# Error case
-							# Type: String
-							self.jdata += "\"error\": " + self.store + "\", "
-						# End of stuff to do with the store
-				# This is will switch over to the next type to read and reset store
+					print (self.store)
+					if self.dataRead == 0:
+						# 0 is unique as it usually is a hidden index value.
+						# However, it will only be 0 if it is the first entry.
+						# In other words, we are done reading the previous jdata
+						if(self.jdata != "" and self.jdata != "{"):
+							self.jdata += "}"
+							# At this point, jdata can be converted to a JSON object and treated as
+							# done and ready to be stored.
+							print(self.jdata)
+							self.jdata = "{"
+					elif self.dataRead == 1:
+						# Case for the term (Usually something like "Fall 2022")
+						# Type: String
+						self.jdata += "\"term\": \"" + self.store + "\", "
+					elif self.dataRead == 2:
+						# Case for the status
+						# Type: String
+						self.jdata += "\"status\": \"" + self.store + "\", "
+					elif self.dataRead == 3:
+						# Case for the code, id, and name. ID will be the section number
+						# Type: String, Int, String
+						temp = self.store.split(" ", 2)
+						temp2 = temp[0].split("*", 2)
+						self.jdata += "\"code\": \"" + temp2[0] + "*" + temp2[1] + "\", "
+						self.jdata += "\"id\": " + temp2[2] + ", "
+						self.jdata += "\"name\": \"" + temp[2] + " " + temp[1] + "\", "
+					elif self.dataRead == 4:
+						# Case for the location info (Guelph mostly)
+						# Type: String
+						self.jdata += "\"location\": \"" + self.store + "\", "
+					elif self.dataRead == 5:
+						# Case for the meeting info
+						# Type: CUSTOM
+						self.jdata += "\"meeting\": \"" + self.store + "\", "
+					elif self.dataRead == 6:
+						# Case for the professor teaching the course
+						# Type: String
+						self.jdata += "\"teacher\": \"" + self.store + "\", "
+					elif self.dataRead == 7:
+						# Case for the capacity and avaialbel capacity
+						# Type: Int, Int
+						temp = self.store.split("/", 2)
+						print(temp)
+						self.jdata += "\"capacity\": " + temp[1] + ", "
+						self.jdata += "\"availableCapacity\": " + temp[0] + ", "
+					elif self.dataRead == 8:
+						# Case for the credits
+						# Type: Float
+						self.jdata += "\"credits\": \"" + self.store + "\", "
+					elif self.dataRead == 10:
+						self.jdata += "\"academiclevel\": \"" + self.store + "\""
+					elif(self.dataRead != 9):
+						self.jdata += "\"error\": " + self.store + "\", "
+					# End of stuff to do with the store
 				self.dataRead += 1
 				self.store = ""
 			elif(tag == "table"):
-				# Add final entry
-				# If the final entry is either nothing or holds no info, we don't want to store it
-				if(self.jdata != ""):
-					if(self.jdata != "{"):
+				if(self.dataRead != -1):
+					# Before the -1 indicating end, make sure to add final entry
+					if(self.jdata != "" and self.jdata != "{"):
 						self.jdata += "}"
 						print(self.jdata)
-					self.jdata = ""
+						self.jdata = ""
 				self.dataRead = -1
 
-
-		# This will just put any content that appears into the self.store variable
 		def handle_data(self, data):
 			if(self.dataRead != -1):
 				self.store += data
@@ -193,5 +174,4 @@ def ParseCourses(name):
 	except IOError:
 		print("The file could not be opened")
 
-# Debug Line for testing
-ParseCourses("Section Selection Results WebAdvisor University of Guelph.html")
+#ParseCourses("Section Selection Results WebAdvisor University of Guelph.html")
