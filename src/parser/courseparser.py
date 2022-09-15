@@ -168,6 +168,8 @@ def ParseCourses(name):
 				self.store += data
 				self.storeLines.append(data)
 
+		# Parses the HTML meeting information and converts it into a dictionary representing
+		# a MeetingInfo object
 		def parse_meeting_info(self, meetingLines):
 			allMeetingInfo = []
 
