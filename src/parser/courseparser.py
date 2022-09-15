@@ -131,7 +131,6 @@ def ParseCourses(name):
 						# Type: CUSTOM
 						meetingInfo = ParseData.parse_meeting_info(self, self.storeLines)
 						self.jdata += "\"meetings\": " + json.dumps(meetingInfo) + ", "
-						# self.jdata += "\"meeting\": \"" + self.store + "\", "
 					elif self.dataRead == 6:
 						# Case for the professor teaching the course
 						# Type: String
