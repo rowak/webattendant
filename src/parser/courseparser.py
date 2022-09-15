@@ -129,7 +129,8 @@ def ParseCourses(name):
 					elif self.dataRead == 5:
 						# Case for the meeting info
 						# Type: CUSTOM
-						ParseData.parse_meeting_info(self, self.storeLines)
+						meetingInfo = ParseData.parse_meeting_info(self, self.storeLines)
+						self.jdata += "\"meetings\": " + json.dumps(meetingInfo) + ", "
 						# self.jdata += "\"meeting\": \"" + self.store + "\", "
 					elif self.dataRead == 6:
 						# Case for the professor teaching the course
@@ -171,13 +172,13 @@ def ParseCourses(name):
 		def parse_meeting_info(self, meetingLines):
 			allMeetingInfo = []
 
-			print("LINES: " + str(meetingLines))
-
 			lineIterator = iter(meetingLines)
 			currLine = next(lineIterator)
 			while (currLine != None):
 				meetingInfo = {}
 				roomInfo = {}
+
+				# Parse meetingType
 				if currLine.startswith("Distance Education"):
 					meetingType = "Distance Education"
 				else:
@@ -185,20 +186,33 @@ def ParseCourses(name):
 					meetingType = lineSplit[0]
 				meetingInfo["type"] = meetingType
 
+				# Parse daysOfWeek
 				days = currLine.replace(meetingType + " ", "")
 				if days == "Days TBA":
 					meetingInfo["daysOfWeek"] = None
 				else:
 					meetingInfo["daysOfWeek"] = days.split(", ")
 
-				# TODO: need further parsing for days (multiple days)
-
+				# Parse startTime and endTime
 				timesLine = next(lineIterator)
 				if timesLine != "Times TBA":
 					timesSplit = timesLine.split(" - ")
+					endTimeSplit = timesSplit[1].split(" ")
 					meetingInfo["startTime"] = timesSplit[0]
-					meetingInfo["endTime"] = timesSplit[1]
+					meetingInfo["endTime"] = endTimeSplit[0]
+				else:
+					meetingInfo["startTime"] = None
+					meetingInfo["endTime"] = None
 
+				# Parse date (only for exams)
+				if meetingType == "EXAM":
+					# Special Case: Exam is a one-time event, so it occurs on a specific day
+					match = re.search(r'\((\d+/\d+/\d+)\)', timesLine)
+					meetingInfo["date"] = match.group(1)
+				else:
+					meetingInfo["date"] = None
+
+				# Parsing building (stored in roomInfo)
 				buildingLine = next(lineIterator)
 				if buildingLine != "Room TBA" and buildingLine != "Room VIRTUAL" and buildingLine != "Room GNHS":
 					roomInfo["building"] = buildingLine
@@ -206,6 +220,7 @@ def ParseCourses(name):
 				else:
 					roomInfo["building"] = None
 
+				# Parse roomNumber (stored in roomInfo)
 				roomLine = currLine
 				if buildingLine == "Room TBA" or roomLine == "Room TBA":
 					roomInfo["roomNumber"] = "TBA"
@@ -217,16 +232,7 @@ def ParseCourses(name):
 					roomInfo["roomNumber"] = roomLine.replace(", Room ", "")
 				meetingInfo["roomInfo"] = roomInfo
 
-				# Special Case: Exam is a one-time event, so it occurs on a specific day
-				if meetingType == "EXAM":
-					match = re.search(r'\((\d+/\d+/\d+)\)', timesLine)
-					meetingInfo["date"] = match.group(1)
-				else:
-					meetingInfo["date"] = None
-
-				print(meetingInfo)
 				allMeetingInfo.append(meetingInfo)
-				
 				if (currLine != None):
 					currLine = next(lineIterator, None)
 			
