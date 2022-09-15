@@ -14,6 +14,8 @@
 # the command from my research. It is an innate library of Python
 from html.parser import HTMLParser
 
+import re
+
 # For future use
 import json
 
@@ -45,6 +47,7 @@ def ParseCourses(name):
 			super(ParseData, self).__init__()
 			self.dataRead = -1
 			self.store = ""
+			self.storeLines = []
 			self.jdata = ""
 
 		# Before I explain, there are 5 important things:
@@ -92,7 +95,7 @@ def ParseCourses(name):
 				if(self.store != ""):
 					# Store will need to clean up extra spaces
 					self.store = self.store.strip()
-					print (self.store)
+					# print (self.store)
 					if self.dataRead == 0:
 						# 0 is unique as it usually is a hidden index value.
 						# However, it will only be 0 if it is the first entry.
@@ -126,7 +129,8 @@ def ParseCourses(name):
 					elif self.dataRead == 5:
 						# Case for the meeting info
 						# Type: CUSTOM
-						self.jdata += "\"meeting\": \"" + self.store + "\", "
+						ParseData.parse_meeting_info(self, self.storeLines)
+						# self.jdata += "\"meeting\": \"" + self.store + "\", "
 					elif self.dataRead == 6:
 						# Case for the professor teaching the course
 						# Type: String
@@ -135,7 +139,7 @@ def ParseCourses(name):
 						# Case for the capacity and avaialbel capacity
 						# Type: Int, Int
 						temp = self.store.split("/", 2)
-						print(temp)
+						# print(temp)
 						self.jdata += "\"capacity\": " + temp[1] + ", "
 						self.jdata += "\"availableCapacity\": " + temp[0] + ", "
 					elif self.dataRead == 8:
@@ -149,6 +153,7 @@ def ParseCourses(name):
 					# End of stuff to do with the store
 				self.dataRead += 1
 				self.store = ""
+				self.storeLines = []
 			elif(tag == "table"):
 				if(self.dataRead != -1):
 					# Before the -1 indicating end, make sure to add final entry
@@ -161,6 +166,61 @@ def ParseCourses(name):
 		def handle_data(self, data):
 			if(self.dataRead != -1):
 				self.store += data
+				self.storeLines.append(data)
+
+		def parse_meeting_info(self, meetingLines):
+			allMeetingInfo = []
+
+			print("LINES: " + str(meetingLines))
+
+			lineIterator = iter(meetingLines)
+			currLine = next(lineIterator)
+			while (currLine != None):
+				meetingInfo = {}
+				roomInfo = {}
+				lineSplit = currLine.split(" ")
+				meetingType = lineSplit[0]
+				meetingInfo["type"] = meetingType
+				meetingInfo["days"] = currLine.replace(meetingType + " ", "")
+
+				# TODO: need further parsing for days (multiple days)
+
+				timesLine = next(lineIterator)
+				if timesLine != "Times TBA":
+					timesSplit = timesLine.split(" - ")
+					meetingInfo["startTime"] = timesSplit[0]
+					meetingInfo["endTime"] = timesSplit[1]
+
+				buildingLine = next(lineIterator)
+				if buildingLine != "Room TBA" and buildingLine != "Room VIRTUAL" and buildingLine != "Room GNHS":
+					roomInfo["building"] = buildingLine
+					currLine = next(lineIterator)
+
+				roomLine = currLine
+				if roomLine == "Room TBA":
+					roomInfo["roomNumber"] = "TBA"
+				elif roomLine == "Room VIRTUAL":
+					roomInfo["roomNumber"] = "VIRTUAL"
+				elif roomLine == "Room GNHS":
+					roomInfo["roomNumber"] = "GNHS" # No idea what this is
+				else:
+					roomInfo["roomNumber"] = roomLine.replace(", Room ", "")
+				meetingInfo["roomInfo"] = roomInfo
+
+				# Special Case: Exam is a one-time event, so it occurs on a specific day
+				if meetingType == "EXAM":
+					match = re.search(r'\((\d+/\d+/\d+)\)', timesLine)
+					meetingInfo["date"] = match.group(1)
+				else:
+					meetingInfo["date"] = None
+
+				print(meetingInfo)
+				allMeetingInfo.append(meetingInfo)
+				
+				if (currLine != None):
+					currLine = next(lineIterator, None)
+			
+			return allMeetingInfo
 
 	# A small try catch for opening the file and reading line by line
 	# It would be too much memory to read all at once, so it will read line
@@ -174,4 +234,4 @@ def ParseCourses(name):
 	except IOError:
 		print("The file could not be opened")
 
-#ParseCourses("Section Selection Results WebAdvisor University of Guelph.html")
+ParseCourses("Section Selection Results WebAdvisor University of Guelph.html")
