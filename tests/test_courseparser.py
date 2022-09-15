@@ -1,10 +1,8 @@
 import unittest
-import src.parser
 
-class testtest(unittest.TestCase):
-    def test(self):
-        # self.assertTrue(1==1, "good")
-        # testfunc()
+class TestCourseParser(unittest.TestCase):
+    def test_placeholder(self):
+        # TODO: write test cases
         None
 
 if __name__ == "__main__":

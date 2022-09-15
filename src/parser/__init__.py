@@ -1,1 +1,0 @@
-from . courseparser import courseparser
