@@ -195,13 +195,15 @@ def ParseCourses(name):
 				if buildingLine != "Room TBA" and buildingLine != "Room VIRTUAL" and buildingLine != "Room GNHS":
 					roomInfo["building"] = buildingLine
 					currLine = next(lineIterator)
+				else:
+					roomInfo["building"] = None
 
 				roomLine = currLine
-				if roomLine == "Room TBA":
+				if buildingLine == "Room TBA" or roomLine == "Room TBA":
 					roomInfo["roomNumber"] = "TBA"
-				elif roomLine == "Room VIRTUAL":
+				elif buildingLine == "Room VIRTUAL" or roomLine == "Room VIRTUAL":
 					roomInfo["roomNumber"] = "VIRTUAL"
-				elif roomLine == "Room GNHS":
+				elif buildingLine == "Room GNHS" or roomLine == "Room GNHS":
 					roomInfo["roomNumber"] = "GNHS" # No idea what this is
 				else:
 					roomInfo["roomNumber"] = roomLine.replace(", Room ", "")
