@@ -4,6 +4,7 @@
 # Additional code for reading a Python file line by line was provided by Python Tutorial
 # https://www.pythontutorial.net/python-basics/python-read-text-file/
 
+<<<<<<< HEAD
 # The way I learned how to catch the missing file error came from Charles Horbrow
 # https://stackoverflow.com/questions/5627425/what-is-a-good-way-to-handle-exceptions-when-trying-to-read-a-file-in-python
 # It was mainly the IOError line I needed
@@ -15,6 +16,9 @@
 from html.parser import HTMLParser
 
 # For future use
+=======
+from html.parser import HTMLParser
+>>>>>>> sprint1
 import json
 
 # For reading files, dataRead will indicate what section is being read
@@ -27,6 +31,7 @@ import json
 # 6: Faculty (Teacher)
 # 7: Available/Capacity
 # 8: Credits
+<<<<<<< HEAD
 # 9: A hidden variable
 # 10: Academic level
 
@@ -41,12 +46,19 @@ def ParseCourses(name):
 		# store    : A variable which will hold the string that comes from an entry
 		# jdata    : A string which can be converted into a JSON data structure once
 		#            completed
+=======
+# 9: Academic level
+
+def ParseCourses(name):
+	class ParseData(HTMLParser):
+>>>>>>> sprint1
 		def __init__(self):
 			super(ParseData, self).__init__()
 			self.dataRead = -1
 			self.store = ""
 			self.jdata = ""
 
+<<<<<<< HEAD
 		# Before I explain, there are 5 important things:
 		# An entry starts and ends with <tr>
 		# There are several tables
@@ -93,6 +105,22 @@ def ParseCourses(name):
 					# Store will need to clean up extra spaces
 					self.store = self.store.strip()
 					print (self.store)
+=======
+		def handle_starttag(self, tag, attrs):
+			if(tag != "div" and tag != "label" and tag != "input"):
+				if(tag == "tr"):
+					if(self.dataRead == -1):
+						self.jdata = "{"
+					self.dataRead = 0
+				elif(tag == "th"):
+					self.dataRead = -1
+					self.jdata = ""
+
+
+		def handle_endtag(self, tag):
+			if(tag != "div" and tag != "label" and tag != "input"):
+				if(tag == "td" and self.dataRead != -1 and self.store != ""):
+>>>>>>> sprint1
 					if self.dataRead == 0:
 						# 0 is unique as it usually is a hidden index value.
 						# However, it will only be 0 if it is the first entry.
@@ -104,6 +132,7 @@ def ParseCourses(name):
 							print(self.jdata)
 							self.jdata = "{"
 					elif self.dataRead == 1:
+<<<<<<< HEAD
 						# Case for the term (Usually something like "Fall 2022")
 						# Type: String
 						self.jdata += "\"term\": \"" + self.store + "\", "
@@ -157,11 +186,47 @@ def ParseCourses(name):
 						print(self.jdata)
 						self.jdata = ""
 				self.dataRead = -1
+=======
+						self.jdata += "\"term\": \"" + self.store + "\", "
+					elif self.dataRead == 2:
+						self.jdata += "\"status\": \"" + self.store + "\", "
+					elif self.dataRead == 3:
+						temp = self.store.split(" ", 2)
+						self.jdata += "\"code\": \"" + temp[0] + "\", "
+						self.jdata += "\"section\": \"" + temp[1] + "\", "
+						self.jdata += "\"name\": \"" + temp[2] + "\", "
+					elif self.dataRead == 4:
+						self.jdata += "\"location\": \"" + self.store + "\", "
+					elif self.dataRead == 5:
+						self.jdata += "\"meeting\": \"" + self.store + "\", "
+					elif self.dataRead == 6:
+						self.jdata += "\"teacher\": \"" + self.store + "\", "
+					elif self.dataRead == 7:
+						self.jdata += "\"available\": \"" + self.store + "\", "
+					elif self.dataRead == 8:
+						self.jdata += "\"credits\": \"" + self.store + "\", "
+					elif self.dataRead == 9:
+						self.jdata += "\"academiclevel\": \"" + self.store + "\""
+					else:
+						self.jdata += "\"error\": " + self.store + "\", "
+					# End of stuff to do with the store
+					self.dataRead += 1
+					self.store = ""
+				elif(tag == "table"):
+					if(self.dataRead != -1):
+						# Before the -1 indicating end, make sure to add final entry
+						if(self.jdata != "" and self.jdata != "{"):
+							self.jdata += "}"
+							print(self.jdata)
+							self.jdata = ""
+					self.dataRead = -1
+>>>>>>> sprint1
 
 		def handle_data(self, data):
 			if(self.dataRead != -1):
 				self.store += data
 
+<<<<<<< HEAD
 	# A small try catch for opening the file and reading line by line
 	# It would be too much memory to read all at once, so it will read line
 	# by line
@@ -175,3 +240,12 @@ def ParseCourses(name):
 		print("The file could not be opened")
 
 #ParseCourses("Section Selection Results WebAdvisor University of Guelph.html")
+=======
+	with open(name, "r") as file:
+		parser = ParseData()
+		for line in file:
+			parser.feed(line.strip())
+		parser.close()
+
+ParseCourses("Section Selection Results WebAdvisor University of Guelph.html")
+>>>>>>> sprint1
