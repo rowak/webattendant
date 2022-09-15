@@ -1,2 +1,1 @@
-def testfunc():
-    print("test")
+# This is a placeholder file for the searching program
