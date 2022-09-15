@@ -178,10 +178,18 @@ def ParseCourses(name):
 			while (currLine != None):
 				meetingInfo = {}
 				roomInfo = {}
-				lineSplit = currLine.split(" ")
-				meetingType = lineSplit[0]
+				if currLine.startswith("Distance Education"):
+					meetingType = "Distance Education"
+				else:
+					lineSplit = currLine.split(" ")
+					meetingType = lineSplit[0]
 				meetingInfo["type"] = meetingType
-				meetingInfo["days"] = currLine.replace(meetingType + " ", "")
+
+				days = currLine.replace(meetingType + " ", "")
+				if days == "Days TBA":
+					meetingInfo["daysOfWeek"] = None
+				else:
+					meetingInfo["daysOfWeek"] = days.split(", ")
 
 				# TODO: need further parsing for days (multiple days)
 
