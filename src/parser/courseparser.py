@@ -49,6 +49,7 @@ def ParseCourses(name):
 			self.store = ""
 			self.storeLines = []  # Contains the same data as "store", but in an array
 			self.jdata = ""
+			self.coursesArray = []
 
 		# Before I explain, there are 5 important things:
 		# An entry starts and ends with <tr>
@@ -105,6 +106,8 @@ def ParseCourses(name):
 							# At this point, jdata can be converted to a JSON object and treated as
 							# done and ready to be stored.
 							print(self.jdata)
+							self.coursesArray.append(self.jdata)
+							#ParseData.export_to_json(self,self.jdata)
 							self.jdata = "{"
 					elif self.dataRead == 1:
 						# Case for the term (Usually something like "Fall 2022")
@@ -134,7 +137,8 @@ def ParseCourses(name):
 					elif self.dataRead == 6:
 						# Case for the professor teaching the course
 						# Type: String
-						self.jdata += "\"teacher\": \"" + self.store + "\", "
+						teachers = self.store.split(", ")
+						self.jdata += "\"teacher\":" + str(teachers) + ", "
 					elif self.dataRead == 7:
 						# Case for the capacity and avaialbel capacity
 						# Type: Int, Int
@@ -145,9 +149,9 @@ def ParseCourses(name):
 					elif self.dataRead == 8:
 						# Case for the credits
 						# Type: Float
-						self.jdata += "\"credits\": \"" + self.store + "\", "
+						self.jdata += "\"credits\": " + self.store + " , "
 					elif self.dataRead == 10:
-						self.jdata += "\"academiclevel\": \"" + self.store + "\""
+						self.jdata += "\"academicLevel\": \"" + self.store + "\""
 					elif(self.dataRead != 9):
 						self.jdata += "\"error\": " + self.store + "\", "
 					# End of stuff to do with the store
@@ -160,6 +164,8 @@ def ParseCourses(name):
 					if(self.jdata != "" and self.jdata != "{"):
 						self.jdata += "}"
 						print(self.jdata)
+						self.coursesArray.append(self.jdata)
+						#ParseData.export_to_json(self,self.jdata)
 						self.jdata = ""
 				self.dataRead = -1
 
@@ -242,6 +248,11 @@ def ParseCourses(name):
 			
 			return allMeetingInfo
 
+	def export_to_json(dictionary):
+		with open("sample.json", "w") as outfile:
+			json.dump(dictionary, outfile)
+			
+
 	# A small try catch for opening the file and reading line by line
 	# It would be too much memory to read all at once, so it will read line
 	# by line
@@ -251,6 +262,7 @@ def ParseCourses(name):
 			for line in file:
 				parser.feed(line.strip())
 			parser.close()
+			export_to_json(parser.coursesArray)
 	except IOError:
 		print("The file could not be opened")
 
