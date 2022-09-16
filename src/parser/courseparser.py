@@ -49,6 +49,7 @@ def ParseCourses(name):
 			self.store = ""
 			self.storeLines = []  # Contains the same data as "store", but in an array
 			self.jdata = {}
+			self.coursesArray = []
 
 		# Before I explain, there are 5 important things:
 		# An entry starts and ends with <tr>
@@ -103,6 +104,7 @@ def ParseCourses(name):
 							# At this point, jdata can be converted to a JSON object and treated as
 							# done and ready to be stored.
 							print(self.jdata)
+							self.coursesArray.append(self.jdata)
 							self.jdata = {}
 					elif self.dataRead == 1:
 						# Case for the term (Usually something like "Fall 2022")
@@ -132,7 +134,8 @@ def ParseCourses(name):
 					elif self.dataRead == 6:
 						# Case for the professor teaching the course
 						# Type: String
-						self.jdata["teachers"] = self.store
+						teachers = self.store.split(", ")
+						self.jdata["teachers"] = teachers
 					elif self.dataRead == 7:
 						# Case for the capacity and avaialbel capacity
 						# Type: Int, Int
@@ -158,6 +161,8 @@ def ParseCourses(name):
 					# Before the -1 indicating end, make sure to add final entry
 					if(len(self.jdata) != 0):
 						print(self.jdata)
+						self.coursesArray.append(self.jdata)
+						self.jdata = {}
 				self.dataRead = -1
 
 		def handle_data(self, data):
@@ -239,6 +244,11 @@ def ParseCourses(name):
 			
 			return allMeetingInfo
 
+	def export_to_json(dictionary):
+		with open("sample.json", "w") as outfile:
+			json.dump(dictionary, outfile)
+			
+
 	# A small try catch for opening the file and reading line by line
 	# It would be too much memory to read all at once, so it will read line
 	# by line
@@ -248,6 +258,7 @@ def ParseCourses(name):
 			for line in file:
 				parser.feed(line.strip())
 			parser.close()
+			export_to_json(parser.coursesArray)
 	except IOError:
 		print("The file could not be opened")
 
