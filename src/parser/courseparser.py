@@ -48,7 +48,7 @@ def ParseCourses(name):
 			self.dataRead = -1
 			self.store = ""
 			self.storeLines = []  # Contains the same data as "store", but in an array
-			self.jdata = ""
+			self.jdata = {}
 
 		# Before I explain, there are 5 important things:
 		# An entry starts and ends with <tr>
@@ -79,11 +79,11 @@ def ParseCourses(name):
 		def handle_starttag(self, tag, attrs):
 			if(tag == "tr"):
 				if(self.dataRead == -1):
-					self.jdata = "{"
+					self.jdata = {}
 				self.dataRead = 0
 			elif(tag == "th"):
 				self.dataRead = -1
-				self.jdata = ""
+				self.jdata = {}
 			elif(tag == "div"):
 				# Data will look better if there is spaces between some things
 				if(self.store != ""):
@@ -95,61 +95,60 @@ def ParseCourses(name):
 				if(self.store != ""):
 					# Store will need to clean up extra spaces
 					self.store = self.store.strip()
-					# print (self.store)
 					if self.dataRead == 0:
 						# 0 is unique as it usually is a hidden index value.
 						# However, it will only be 0 if it is the first entry.
 						# In other words, we are done reading the previous jdata
-						if(self.jdata != "" and self.jdata != "{"):
-							self.jdata += "}"
+						if len(self.jdata) != 0:
 							# At this point, jdata can be converted to a JSON object and treated as
 							# done and ready to be stored.
 							print(self.jdata)
-							self.jdata = "{"
+							self.jdata = {}
 					elif self.dataRead == 1:
 						# Case for the term (Usually something like "Fall 2022")
 						# Type: String
-						self.jdata += "\"term\": \"" + self.store + "\", "
+						self.jdata["term"] = self.store
 					elif self.dataRead == 2:
 						# Case for the status
 						# Type: String
-						self.jdata += "\"status\": \"" + self.store + "\", "
+						self.jdata["status"] = self.store
 					elif self.dataRead == 3:
 						# Case for the code, id, and name. ID will be the section number
 						# Type: String, Int, String
 						temp = self.store.split(" ", 2)
 						temp2 = temp[0].split("*", 2)
-						self.jdata += "\"code\": \"" + temp2[0] + "*" + temp2[1] + "\", "
-						self.jdata += "\"id\": " + temp2[2] + ", "
-						self.jdata += "\"name\": \"" + temp[2] + " " + temp[1] + "\", "
+						self.jdata["code"] = temp2[0] + "*" + temp2[1]
+						self.jdata["id"] = temp2[2]
+						self.jdata["name"] = temp[2] + " " + temp[1]
 					elif self.dataRead == 4:
 						# Case for the location info (Guelph mostly)
 						# Type: String
-						self.jdata += "\"location\": \"" + self.store + "\", "
+						self.jdata["location"] = self.store
 					elif self.dataRead == 5:
 						# Case for the meeting info
 						# Type: CUSTOM
 						meetingInfo = ParseData.parse_meeting_info(self, self.storeLines)
-						self.jdata += "\"meetings\": " + json.dumps(meetingInfo) + ", "
+						self.jdata["meetings"] = meetingInfo
 					elif self.dataRead == 6:
 						# Case for the professor teaching the course
 						# Type: String
-						self.jdata += "\"teacher\": \"" + self.store + "\", "
+						self.jdata["teachers"] = self.store
 					elif self.dataRead == 7:
 						# Case for the capacity and avaialbel capacity
 						# Type: Int, Int
 						temp = self.store.split("/", 2)
 						# print(temp)
-						self.jdata += "\"capacity\": " + temp[1] + ", "
-						self.jdata += "\"availableCapacity\": " + temp[0] + ", "
+						self.jdata["availableCapacity"] = int(temp[0])
+						self.jdata["capacity"] = int(temp[1])
 					elif self.dataRead == 8:
 						# Case for the credits
 						# Type: Float
-						self.jdata += "\"credits\": \"" + self.store + "\", "
+						self.jdata["credits"] = float(self.store)
 					elif self.dataRead == 10:
-						self.jdata += "\"academiclevel\": \"" + self.store + "\""
+						self.jdata["academicLevel"] = self.store
 					elif(self.dataRead != 9):
-						self.jdata += "\"error\": " + self.store + "\", "
+						error = {error: self.store}
+						self.jdata["errors"].append(error)
 					# End of stuff to do with the store
 				self.dataRead += 1
 				self.store = ""
@@ -157,10 +156,8 @@ def ParseCourses(name):
 			elif(tag == "table"):
 				if(self.dataRead != -1):
 					# Before the -1 indicating end, make sure to add final entry
-					if(self.jdata != "" and self.jdata != "{"):
-						self.jdata += "}"
+					if(len(self.jdata) != 0):
 						print(self.jdata)
-						self.jdata = ""
 				self.dataRead = -1
 
 		def handle_data(self, data):
