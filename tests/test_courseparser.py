@@ -6,7 +6,7 @@ class TestCourseParser(unittest.TestCase):
         self.parser = ParseData()
 
     def test_parse_meeting_info_parses_normal_lecture_lab_exam(self):
-        meetingInfoArr = [
+        meetingInfoInput = [
             "LEC Mon, Wed, Fri",
             "11:00AM - 11:50AM",
             "ROZH",
@@ -48,11 +48,11 @@ class TestCourseParser(unittest.TestCase):
                 }
             }
         ]
-        meetingInfoResult = self.parser.parse_meeting_info(meetingInfoArr)
+        meetingInfoResult = self.parser.parse_meeting_info(meetingInfoInput)
         self.assertEqual(meetingInfoResult, meetingInfoExpected, "MeetingInfo objects do not match.")
     
     def test_parse_meeting_info_parses_TBA_days_TBA_times_TBA_room(self):
-        meetingInfoArr = [
+        meetingInfoInput = [
             "LEC Days TBA",
             "Times TBA",
             "Room TBA"
@@ -67,7 +67,7 @@ class TestCourseParser(unittest.TestCase):
                 }
             }
         ]
-        meetingInfoResult = self.parser.parse_meeting_info(meetingInfoArr)
+        meetingInfoResult = self.parser.parse_meeting_info(meetingInfoInput)
         self.assertEqual(meetingInfoResult, meetingInfoExpected, "MeetingInfo objects do not match.")
 
 if __name__ == "__main__":
