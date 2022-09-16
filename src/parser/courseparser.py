@@ -47,6 +47,9 @@ class ParseData(HTMLParser):
 		self.storeLines = []  # Contains the same data as "store", but in an array
 		self.jdata = {}
 		self.coursesArray = []
+		self.course = {"code": "", "sections": []}
+		self.currCourseCode = ""
+		self.x = 0
 
 	# Before I explain, there are 5 important things:
 	# An entry starts and ends with <tr>
@@ -99,9 +102,22 @@ class ParseData(HTMLParser):
 					if len(self.jdata) != 0:
 						# At this point, jdata can be converted to a JSON object and treated as
 						# done and ready to be stored.
-						print(self.jdata)
-						self.coursesArray.append(self.jdata)
+						# print(self.jdata)
+						# self.coursesArray.append(self.jdata)
+						if self.course["code"] == self.currCourseCode or self.course["code"] == "":
+							self.course["code"] = self.currCourseCode
+							self.course["sections"].append(self.jdata)
+						else:
+							print(self.currCourseCode, self.course["code"], len(self.course["sections"]))
+							print(self.course)
+							self.coursesArray.append(self.course)
+							self.course["sections"] = [self.jdata]
+							self.course["code"] = self.currCourseCode
 						self.jdata = {}
+						self.x = self.x + 1
+						if self.x == 14:
+							print(self.coursesArray)
+							exit()
 				elif self.dataRead == 1:
 					# Case for the term (Usually something like "Fall 2022")
 					# Type: String
@@ -113,11 +129,17 @@ class ParseData(HTMLParser):
 				elif self.dataRead == 3:
 					# Case for the code, id, and name. ID will be the section number
 					# Type: String, Int, String
-					temp = self.store.split(" ", 2)
-					temp2 = temp[0].split("*", 2)
-					self.jdata["code"] = temp2[0] + "*" + temp2[1]
-					self.jdata["id"] = temp2[2]
-					self.jdata["name"] = temp[2] + " " + temp[1]
+					temp = self.store.split(" ")
+					courseAndSectionCode = temp[0].split("*")
+					courseCode = courseAndSectionCode[0] + "*" + courseAndSectionCode[1]
+					sectionCode = courseAndSectionCode[2]
+					sectionId = temp[1].replace("(", "").replace(")", "")
+					courseName = temp[2]
+					self.jdata["code"] = sectionCode
+					self.jdata["id"] = sectionId
+					self.jdata["name"] = courseName
+					
+					self.currCourseCode = courseCode
 				elif self.dataRead == 4:
 					# Case for the location info (Guelph mostly)
 					# Type: String
@@ -146,7 +168,7 @@ class ParseData(HTMLParser):
 				elif self.dataRead == 10:
 					self.jdata["academicLevel"] = self.store
 				elif(self.dataRead != 9):
-					error = {error: self.store}
+					error = {"error": self.store}
 					self.jdata["errors"].append(error)
 				# End of stuff to do with the store
 			self.dataRead += 1
@@ -156,8 +178,17 @@ class ParseData(HTMLParser):
 			if(self.dataRead != -1):
 				# Before the -1 indicating end, make sure to add final entry
 				if(len(self.jdata) != 0):
-					print(self.jdata)
-					self.coursesArray.append(self.jdata)
+					# print(self.jdata)
+					# self.coursesArray.append(self.jdata)
+					# if self.course["code"] == self.currCourseCode or self.course["code"] == "":
+					# 	self.course["code"] = self.currCourseCode
+					# 	self.course["sections"].append(self.jdata)
+					# else:
+					# 	self.coursesArray.append(self.course)
+					# 	self.course["sections"] = [self.jdata]
+
+					# self.course.append(self.jdata)
+					# self.lastJData = self.jdata
 					self.jdata = {}
 			self.dataRead = -1
 
