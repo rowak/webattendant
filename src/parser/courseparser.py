@@ -102,22 +102,8 @@ class ParseData(HTMLParser):
 					if len(self.jdata) != 0:
 						# At this point, jdata can be converted to a JSON object and treated as
 						# done and ready to be stored.
-						# print(self.jdata)
-						# self.coursesArray.append(self.jdata)
-						if self.course["code"] == self.currCourseCode or self.course["code"] == "":
-							self.course["code"] = self.currCourseCode
-							self.course["sections"].append(self.jdata)
-						else:
-							print(self.currCourseCode, self.course["code"], len(self.course["sections"]))
-							print(self.course)
-							self.coursesArray.append(self.course)
-							self.course["sections"] = [self.jdata]
-							self.course["code"] = self.currCourseCode
+						ParseData.add_section_to_course(self)
 						self.jdata = {}
-						self.x = self.x + 1
-						if self.x == 14:
-							print(self.coursesArray)
-							exit()
 				elif self.dataRead == 1:
 					# Case for the term (Usually something like "Fall 2022")
 					# Type: String
@@ -129,12 +115,12 @@ class ParseData(HTMLParser):
 				elif self.dataRead == 3:
 					# Case for the code, id, and name. ID will be the section number
 					# Type: String, Int, String
-					temp = self.store.split(" ")
-					courseAndSectionCode = temp[0].split("*")
+					courseInfo = self.store.split(" ")
+					courseAndSectionCode = courseInfo[0].split("*")
 					courseCode = courseAndSectionCode[0] + "*" + courseAndSectionCode[1]
 					sectionCode = courseAndSectionCode[2]
-					sectionId = temp[1].replace("(", "").replace(")", "")
-					courseName = temp[2]
+					sectionId = courseInfo[1].replace("(", "").replace(")", "")
+					courseName = " ".join(courseInfo[2:len(courseInfo)])
 					self.jdata["code"] = sectionCode
 					self.jdata["id"] = sectionId
 					self.jdata["name"] = courseName
@@ -178,17 +164,7 @@ class ParseData(HTMLParser):
 			if(self.dataRead != -1):
 				# Before the -1 indicating end, make sure to add final entry
 				if(len(self.jdata) != 0):
-					# print(self.jdata)
-					# self.coursesArray.append(self.jdata)
-					# if self.course["code"] == self.currCourseCode or self.course["code"] == "":
-					# 	self.course["code"] = self.currCourseCode
-					# 	self.course["sections"].append(self.jdata)
-					# else:
-					# 	self.coursesArray.append(self.course)
-					# 	self.course["sections"] = [self.jdata]
-
-					# self.course.append(self.jdata)
-					# self.lastJData = self.jdata
+					ParseData.add_section_to_course(self)
 					self.jdata = {}
 			self.dataRead = -1
 
@@ -196,6 +172,15 @@ class ParseData(HTMLParser):
 		if(self.dataRead != -1):
 			self.store += data
 			self.storeLines.append(data)
+	
+	def add_section_to_course(self):
+		if self.course["code"] == self.currCourseCode or self.course["code"] == "":
+			self.course["code"] = self.currCourseCode
+			self.course["sections"].append(self.jdata.copy())
+		else:
+			self.coursesArray.append(self.course.copy())
+			self.course["sections"] = [self.jdata.copy()]
+			self.course["code"] = self.currCourseCode
 
 	# Parses the HTML meeting information and converts it into a dictionary representing
 	# a MeetingInfo object
