@@ -1,6 +1,14 @@
 # CIS3760
 
+## Testing
+Unit tests can be run using  `make test`. Tests are also run automatically when you push your code to GitLab.
+
 ## Courseparser.py
+
+### Running
+`./courseparser.sh <inputfile> <outputfile>`
+
+### Design
 A function which will open a file given to it and attempt to read the courses. Each course is expected to be in a table and have table entries in the following order:
 - A index
 - A Term
