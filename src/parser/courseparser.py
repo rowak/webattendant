@@ -130,7 +130,6 @@ class ParseData(HTMLParser):
 					self.jdata["code"] = sectionCode
 					self.jdata["id"] = sectionId
 					self.jdata["name"] = courseName
-					
 					self.currCourseCode = courseCode
 				elif self.dataRead == 4:
 					# Case for the location info (Guelph mostly)
@@ -150,7 +149,6 @@ class ParseData(HTMLParser):
 					# Case for the capacity and avaialbel capacity
 					# Type: Int, Int
 					temp = self.store.split("/", 2)
-					# print(temp)
 					self.jdata["availableCapacity"] = int(temp[0])
 					self.jdata["capacity"] = int(temp[1])
 				elif self.dataRead == 8:
