@@ -14,6 +14,7 @@
 # the command from my research. It is an innate library of Python
 from html.parser import HTMLParser
 
+import sys
 import re
 
 # For future use
@@ -47,6 +48,9 @@ class ParseData(HTMLParser):
 		self.storeLines = []  # Contains the same data as "store", but in an array
 		self.jdata = {}
 		self.coursesArray = []
+		self.course = {"code": "", "sections": []}
+		self.currCourseCode = ""
+		self.x = 0
 
 	# Before I explain, there are 5 important things:
 	# An entry starts and ends with <tr>
@@ -99,8 +103,15 @@ class ParseData(HTMLParser):
 					if len(self.jdata) != 0:
 						# At this point, jdata can be converted to a JSON object and treated as
 						# done and ready to be stored.
-						print(self.jdata)
-						self.coursesArray.append(self.jdata)
+						if self.course["code"] == self.currCourseCode or self.course["code"] == "":
+							# Add the current section to the course
+							self.course["code"] = self.currCourseCode
+							self.course["sections"].append(self.jdata.copy())
+						else:
+							# Flush the current course because a new course was detected
+							self.coursesArray.append(self.course.copy())
+							self.course["sections"] = [self.jdata.copy()]
+							self.course["code"] = self.currCourseCode
 						self.jdata = {}
 				elif self.dataRead == 1:
 					# Case for the term (Usually something like "Fall 2022")
@@ -113,11 +124,16 @@ class ParseData(HTMLParser):
 				elif self.dataRead == 3:
 					# Case for the code, id, and name. ID will be the section number
 					# Type: String, Int, String
-					temp = self.store.split(" ", 2)
-					temp2 = temp[0].split("*", 2)
-					self.jdata["code"] = temp2[0] + "*" + temp2[1]
-					self.jdata["id"] = temp2[2]
-					self.jdata["name"] = temp[2] + " " + temp[1]
+					courseInfo = self.store.split(" ")
+					courseAndSectionCode = courseInfo[0].split("*")
+					courseCode = courseAndSectionCode[0] + "*" + courseAndSectionCode[1]
+					sectionCode = courseAndSectionCode[2]
+					sectionId = courseInfo[1].replace("(", "").replace(")", "")
+					courseName = " ".join(courseInfo[2:len(courseInfo)])
+					self.jdata["code"] = sectionCode
+					self.jdata["id"] = sectionId
+					self.jdata["name"] = courseName
+					self.currCourseCode = courseCode
 				elif self.dataRead == 4:
 					# Case for the location info (Guelph mostly)
 					# Type: String
@@ -136,7 +152,6 @@ class ParseData(HTMLParser):
 					# Case for the capacity and avaialbel capacity
 					# Type: Int, Int
 					temp = self.store.split("/", 2)
-					# print(temp)
 					self.jdata["availableCapacity"] = int(temp[0])
 					self.jdata["capacity"] = int(temp[1])
 				elif self.dataRead == 8:
@@ -146,7 +161,7 @@ class ParseData(HTMLParser):
 				elif self.dataRead == 10:
 					self.jdata["academicLevel"] = self.store
 				elif(self.dataRead != 9):
-					error = {error: self.store}
+					error = {"error": self.store}
 					self.jdata["errors"].append(error)
 				# End of stuff to do with the store
 			self.dataRead += 1
@@ -156,8 +171,9 @@ class ParseData(HTMLParser):
 			if(self.dataRead != -1):
 				# Before the -1 indicating end, make sure to add final entry
 				if(len(self.jdata) != 0):
-					print(self.jdata)
-					self.coursesArray.append(self.jdata)
+					self.course["sections"] = [self.jdata.copy()]
+					self.course["code"] = self.currCourseCode
+					self.coursesArray.append(self.course.copy())
 					self.jdata = {}
 			self.dataRead = -1
 
@@ -240,24 +256,28 @@ class ParseData(HTMLParser):
 		
 		return allMeetingInfo
 
-def export_to_json(dictionary):
-		with open("sample.json", "w") as outfile:
-			json.dump(dictionary, outfile)
+def export_to_json(dictionary, filename):
+	with open(filename, "w") as outfile:
+		json.dump(dictionary, outfile)
 			
-def ParseCourses(name):
+def ParseCourses(inFilename, outFilename):
 	# A small try catch for opening the file and reading line by line
 	# It would be too much memory to read all at once, so it will read line
 	# by line
 	try:
-		with open(name, "r") as file:
+		with open(inFilename, "r") as file:
 			parser = ParseData()
 			for line in file:
 				parser.feed(line.strip())
 			parser.close()
-			export_to_json(parser.coursesArray)
+			export_to_json(parser.coursesArray, outFilename)
+			coursesProcessed = len(parser.coursesArray)
+			print(f'Successfully parsed {coursesProcessed} courses to {outFilename}!')
 	except IOError:
 		print("The file could not be opened")
 
 # Entry point of the program
 if __name__ == "__main__":
-	ParseCourses("Section Selection Results WebAdvisor University of Guelph.html")
+	inFilename = sys.argv[1]
+	outFilename = sys.argv[2]
+	ParseCourses(inFilename, outFilename)
