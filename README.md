@@ -6,11 +6,7 @@ Unit tests can be run using  `make test`. Tests are also run automatically when 
 ## Courseparser.py
 
 ### Running
-#### Makefile
-`ARGS="<inputfile> <outputfile>" make run-parser`
-
-#### No makefile
-`python3 src/parser/courseparser.py <inputfile> <outputfile>`
+`./courseparser.sh <inputfile> <outputfile>`
 
 ### Design
 A function which will open a file given to it and attempt to read the courses. Each course is expected to be in a table and have table entries in the following order:
