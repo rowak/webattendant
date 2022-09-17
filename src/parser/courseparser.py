@@ -14,6 +14,7 @@
 # the command from my research. It is an innate library of Python
 from html.parser import HTMLParser
 
+import sys
 import re
 
 # For future use
@@ -170,7 +171,6 @@ class ParseData(HTMLParser):
 			if(self.dataRead != -1):
 				# Before the -1 indicating end, make sure to add final entry
 				if(len(self.jdata) != 0):
-					print(self.currCourseCode, self.course["code"])
 					self.course["sections"] = [self.jdata.copy()]
 					self.course["code"] = self.currCourseCode
 					self.coursesArray.append(self.course.copy())
@@ -256,24 +256,28 @@ class ParseData(HTMLParser):
 		
 		return allMeetingInfo
 
-def export_to_json(dictionary):
-		with open("sample.json", "w") as outfile:
-			json.dump(dictionary, outfile)
+def export_to_json(dictionary, filename):
+	with open(filename, "w") as outfile:
+		json.dump(dictionary, outfile)
 			
-def ParseCourses(name):
+def ParseCourses(inFilename, outFilename):
 	# A small try catch for opening the file and reading line by line
 	# It would be too much memory to read all at once, so it will read line
 	# by line
 	try:
-		with open(name, "r") as file:
+		with open(inFilename, "r") as file:
 			parser = ParseData()
 			for line in file:
 				parser.feed(line.strip())
 			parser.close()
-			export_to_json(parser.coursesArray)
+			export_to_json(parser.coursesArray, outFilename)
+			coursesProcessed = len(parser.coursesArray)
+			print(f'Successfully parsed {coursesProcessed} courses to {outFilename}!')
 	except IOError:
 		print("The file could not be opened")
 
 # Entry point of the program
 if __name__ == "__main__":
-	ParseCourses("Section Selection Results WebAdvisor University of Guelph.html")
+	inFilename = sys.argv[1]
+	outFilename = sys.argv[2]
+	ParseCourses(inFilename, outFilename)
