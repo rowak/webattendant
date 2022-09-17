@@ -103,9 +103,11 @@ class ParseData(HTMLParser):
 						# At this point, jdata can be converted to a JSON object and treated as
 						# done and ready to be stored.
 						if self.course["code"] == self.currCourseCode or self.course["code"] == "":
+							# Add the current section to the course
 							self.course["code"] = self.currCourseCode
 							self.course["sections"].append(self.jdata.copy())
 						else:
+							# Flush the current course because a new course was detected
 							self.coursesArray.append(self.course.copy())
 							self.course["sections"] = [self.jdata.copy()]
 							self.course["code"] = self.currCourseCode
