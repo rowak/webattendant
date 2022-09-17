@@ -102,7 +102,13 @@ class ParseData(HTMLParser):
 					if len(self.jdata) != 0:
 						# At this point, jdata can be converted to a JSON object and treated as
 						# done and ready to be stored.
-						ParseData.add_section_to_course(self)
+						if self.course["code"] == self.currCourseCode or self.course["code"] == "":
+							self.course["code"] = self.currCourseCode
+							self.course["sections"].append(self.jdata.copy())
+						else:
+							self.coursesArray.append(self.course.copy())
+							self.course["sections"] = [self.jdata.copy()]
+							self.course["code"] = self.currCourseCode
 						self.jdata = {}
 				elif self.dataRead == 1:
 					# Case for the term (Usually something like "Fall 2022")
@@ -164,7 +170,10 @@ class ParseData(HTMLParser):
 			if(self.dataRead != -1):
 				# Before the -1 indicating end, make sure to add final entry
 				if(len(self.jdata) != 0):
-					ParseData.add_section_to_course(self)
+					print(self.currCourseCode, self.course["code"])
+					self.course["sections"] = [self.jdata.copy()]
+					self.course["code"] = self.currCourseCode
+					self.coursesArray.append(self.course.copy())
 					self.jdata = {}
 			self.dataRead = -1
 
@@ -172,15 +181,6 @@ class ParseData(HTMLParser):
 		if(self.dataRead != -1):
 			self.store += data
 			self.storeLines.append(data)
-	
-	def add_section_to_course(self):
-		if self.course["code"] == self.currCourseCode or self.course["code"] == "":
-			self.course["code"] = self.currCourseCode
-			self.course["sections"].append(self.jdata.copy())
-		else:
-			self.coursesArray.append(self.course.copy())
-			self.course["sections"] = [self.jdata.copy()]
-			self.course["code"] = self.currCourseCode
 
 	# Parses the HTML meeting information and converts it into a dictionary representing
 	# a MeetingInfo object
