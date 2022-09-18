@@ -18,7 +18,7 @@ def SearchCourseByCode(filename,coursecode):
     courseFound = False
 
     # loop through courses in the json file and see if course exists
-    for course in data['courses']:
+    for course in data:
         if(course['code'] == coursecode):
             # course found
             courseFound = True
@@ -39,10 +39,10 @@ def SearchCourseByName(filename,coursename):
 
     courseFound = False
     # loop through courses in the json file and see if course exists
-    for i in range(len(data['courses'])):
+    for i in range(len(data)):
         # check if course object has a sections object
-        if(data['courses'][i].get('sections')):
-            for section in data['courses'][i].get('sections'):
+        if(data[i].get('sections')):
+            for section in data[i].get('sections'):
                 if(section['name'] == coursename):
                     print("Found")
                     courseFound = True
@@ -62,10 +62,10 @@ def SearchByProfessor(filename,professorname):
 
     courseFound = False
     # loop through courses in the json file and see if course exists
-    for i in range(len(data['courses'])):
+    for i in range(len(data)):
         # check if course object has a sections object
-        if(data['courses'][i].get('sections')):
-            for section in data['courses'][i].get('sections'):
+        if(data[i].get('sections')):
+            for section in data[i].get('sections'):
                 # check if section object has a teachers field
                 if(section.get('teachers')):
                     for professor in section['teachers']:
