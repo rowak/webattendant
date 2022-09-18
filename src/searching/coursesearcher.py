@@ -11,10 +11,11 @@ def SearchCourseByCode(filename,coursecode):
         quit()
     
     # add an asterisk between the characters and the digits of the course code
-    for i in range(len(coursecode)):
-        if(coursecode[i].isdigit()):
-            coursecode = coursecode[:i] + '*' + coursecode[i:]
-            break
+    if('*' not in coursecode):
+        for i in range(len(coursecode)):
+            if(coursecode[i].isdigit()):
+                coursecode = coursecode[:i] + '*' + coursecode[i:]
+                break
     courseFound = False
 
     # loop through courses in the json file and see if course exists
