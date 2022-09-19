@@ -18,14 +18,18 @@ def SearchCourseByCode(filename,coursecode):
                 break
     courseFound = False
 
+    coursecode = coursecode.lower()
+
+    courses = []
     # loop through courses in the json file and see if course exists
     for course in data:
-        if(course['code'] == coursecode):
+        if(course['code'].lower() == coursecode):
             # course found
-            courseFound = True
-            display_course(course)
-            break
-    if(not courseFound):
+            courses.append(course)
+    
+    if len(courses) > 0:
+        display_courses(courses)
+    else:
         print("Course not found.")
     
 
@@ -38,6 +42,9 @@ def SearchCourseByName(filename,coursename):
         print("The file could not be opened.")
         quit()
 
+    # standardize the query
+    coursename = coursename.lower()
+
     courseFound = False
     # loop through courses in the json file and see if course exists
     course = None
@@ -46,11 +53,13 @@ def SearchCourseByName(filename,coursename):
         # check if course object has a sections object
         if(data[i].get('sections')):
             for section in data[i].get('sections'):
-                if(section['name'] == coursename):
+                if(section['name'].lower() == coursename):
                     sections.append(section)
                     course = data[i]
-    display_course_sections(course, sections)
-    if(len(sections) == 0):
+                    
+    if(len(sections) > 0):
+        display_course_sections(course, sections)
+    else:
         print("Course not found.")
 
 
@@ -62,6 +71,9 @@ def SearchByProfessor(filename,professorname):
     except:
         print("The file could not be opened.")
         quit()
+    
+    # standardize the query
+    professorname = professorname.lower()
 
     courses = []
     # loop through courses in the json file and see if course exists
@@ -73,15 +85,15 @@ def SearchByProfessor(filename,professorname):
                 # check if section object has a teachers field
                 if(section.get('teachers')):
                     for professor in section['teachers']:
-                        if(professor == professorname):
+                        if(professor.lower() == professorname):
                             course["sections"].append(section)
         if len(course["sections"]) > 0:
             courses.append(course)
-    
-    for course in courses:
-        display_course(course)
 
-    if(len(courses) == 0):
+    if(len(courses) > 0):
+        for course in courses:
+            display_course(course)
+    else:
         print("Course not found.")
 
 ## Displays an array of courses formatted as a table.
@@ -90,9 +102,9 @@ def SearchByProfessor(filename,professorname):
 #  showsections -- when this flag is set, the sections for a course are displayed
 #  showmeetings -- when this flag is set, the meetings for a course are displayed.
 #                  Note that the showsections flag must also be set.
-def display_courses(courses, showsections=True, showmeetings=True):
+def display_courses(courses):
     for course in courses:
-        display_course(course, showsections, showmeetings)
+        display_course(course)
 
 ## Displays a course formatted as a table.
 #
@@ -256,9 +268,31 @@ def get_max_property_length(objects, property, title):
     return (titleLen, propertyLen)
 
 if __name__ == "__main__":
-    print("1 -- Search by course code")
-    print("2 -- Search by course name")
-    print("3 -- Search by professor")
-    SearchCourseByCode("out.json", "ACCT*1220")
-    # SearchCourseByName("out.json", "Software Engineering")
-    # SearchByProfessor("out.json", "D. Gillis")
+    inputfile = sys.argv[1]
+
+    userOption = ""
+    while (userOption.strip() != "4"):
+        print("1) Search by course code")
+        print("2) Search by course name")
+        print("3) Search by professor")
+        print("4) Exit")
+        
+        print("Select an option from the above menu: ", end="")
+        userOption = input()
+
+        if userOption == "1":
+            print("Enter the course code: ", end="")
+            query = input()
+            SearchCourseByCode(inputfile, query)
+        elif userOption == "2":
+            print("Enter the course name: ", end="")
+            query = input()
+            SearchCourseByName(inputfile, query)
+        elif userOption == "3":
+            print("Enter the professor name (L. First): ", end="")
+            query = input()
+            SearchByProfessor(inputfile, query)
+        elif userOption == "4":
+            exit()
+        
+        print("\n")
