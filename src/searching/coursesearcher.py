@@ -23,7 +23,7 @@ def SearchCourseByCode(filename,coursecode):
         if(course['code'] == coursecode):
             # course found
             courseFound = True
-            print("Found")
+            display_course(course)
             break
     if(not courseFound):
         print("Course not found.")
@@ -40,15 +40,17 @@ def SearchCourseByName(filename,coursename):
 
     courseFound = False
     # loop through courses in the json file and see if course exists
+    course = None
+    sections = []
     for i in range(len(data)):
         # check if course object has a sections object
         if(data[i].get('sections')):
             for section in data[i].get('sections'):
                 if(section['name'] == coursename):
-                    print("Found")
-                    courseFound = True
-                    break
-    if(not courseFound):
+                    sections.append(section)
+                    course = data[i]
+    display_course_sections(course, sections)
+    if(len(sections) == 0):
         print("Course not found.")
 
 
@@ -61,9 +63,10 @@ def SearchByProfessor(filename,professorname):
         print("The file could not be opened.")
         quit()
 
-    courseFound = False
+    courses = []
     # loop through courses in the json file and see if course exists
     for i in range(len(data)):
+        course = {"code": data[i]["code"], "sections": []}
         # check if course object has a sections object
         if(data[i].get('sections')):
             for section in data[i].get('sections'):
@@ -71,10 +74,14 @@ def SearchByProfessor(filename,professorname):
                 if(section.get('teachers')):
                     for professor in section['teachers']:
                         if(professor == professorname):
-                            print("Found")
-                            courseFound = True
-                            break
-    if(not courseFound):
+                            course["sections"].append(section)
+        if len(course["sections"]) > 0:
+            courses.append(course)
+    
+    for course in courses:
+        display_course(course)
+
+    if(len(courses) == 0):
         print("Course not found.")
 
 ## Displays an array of courses formatted as a table.
@@ -83,7 +90,7 @@ def SearchByProfessor(filename,professorname):
 #  showsections -- when this flag is set, the sections for a course are displayed
 #  showmeetings -- when this flag is set, the meetings for a course are displayed.
 #                  Note that the showsections flag must also be set.
-def display_courses(courses, showsections=False, showmeetings=False):
+def display_courses(courses, showsections=True, showmeetings=True):
     for course in courses:
         display_course(course, showsections, showmeetings)
 
@@ -94,17 +101,22 @@ def display_courses(courses, showsections=False, showmeetings=False):
 #  showmeetings -- when this flag is set, the meetings for a coruse are displayed.
 #                  Note that the showsections flag must also be set.
 #  courses -- the list of all courses that are being displayed (used for table formatting)
-def display_course(course, showsections=False, showmeetings=False, courses=None):
-    if courses == None:
-        courses = [course]
-    sections = []
-    for course in courses:
-        sections.extend(course["sections"])
-    maxCourseLen = get_max_property_length(courses, "code", "COURSE")
+def display_course(course):
     print("\n" + course["code"])
     print("|")
-    if (showsections):
-        display_sections(course["sections"])
+    display_sections(course["sections"])
+
+## Displays specific sections from a course formatted as a table.
+#
+#  course -- the course to display
+#  showsections -- when this flag is set, the sections for a course are displayed
+#  showmeetings -- when this flag is set, the meetings for a coruse are displayed.
+#                  Note that the showsections flag must also be set.
+#  courses -- the list of all courses that are being displayed (used for table formatting)
+def display_course_sections(course, sections):
+    print("\n" + course["code"])
+    print("|")
+    display_sections(sections)
 
 ## Displays the sections of a course formatted as a table.
 #
@@ -153,7 +165,8 @@ def display_sections(sections):
             continueTree = True
         else:
             continueTree = False
-        display_meeting_info(section["meetings"], continueTree)
+        if "meetings" in section:
+            display_meeting_info(section["meetings"], continueTree)
         i += 1
 
 ## Displays the meeting information for a section formatted in a table.
@@ -242,6 +255,10 @@ def get_max_property_length(objects, property, title):
     propertyLen = max(len(title)+3, maxLen+3)
     return (titleLen, propertyLen)
 
-# SearchCourseByCode('../../courses.json','ACCT1220')
-# SearchCourseByName('../../courses.json','Intro Financial Accounting')
-# SearchByProfessor('../../courses.json','P. Lassou')
+if __name__ == "__main__":
+    print("1 -- Search by course code")
+    print("2 -- Search by course name")
+    print("3 -- Search by professor")
+    SearchCourseByCode("out.json", "ACCT*1220")
+    # SearchCourseByName("out.json", "Software Engineering")
+    # SearchByProfessor("out.json", "D. Gillis")
