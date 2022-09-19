@@ -23,10 +23,3 @@ https://www.pythontutorial.net/python-basics/python-read-text-file/
 
 Charles Horbrow on Stack Overflow provided a way to do a try-catch block without the file error getting in the way of other errors (for debugging purposes)
 https://stackoverflow.com/questions/5627425/what-is-a-good-way-to-handle-exceptions-when-trying-to-read-a-file-in-python
-
-# Tests
-To manually run unit tests run
-```
-$ make test
-```
-Testing functions are stored in tests/test_courseparser.py
