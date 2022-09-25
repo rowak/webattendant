@@ -1,5 +1,25 @@
 # CIS3760
 
+## CourseLoader Spreadsheet
+
+The spreadsheet can be found in the root directory as CourseLoader.xlsm.  
+
+It is a macro enabled spreedsheet that enables a user to type in five courses as well as their section code and it will plot a timetable using data parsed in Sprint 1.  
+
+### Running
+When opening the spreadsheet, macros may have been disabled by your operating system. Macros must be enabled in order for the sheet to work as intended.  
+
+To run, simply type the course code e.g. CIS\*3760 (this can be with or without the asterisk '\*') in column H. Followed by the section code e.g. 0101 in column I.  
+
+Up to 5 courses can be plotted and the user will be notified by an alert if there are any scheduling conflicts. Addtionally, conflicting timeslots will appear grey on the schedule.
+
+### Source Code
+All source code is written using Visual Basic for Applications, this allows the program to be interactive using macros. Addtionally, this program works on both MacOS and Windows versions of Excel. We've achieved cross-platform capability by avoiding Windows exclusive features such as ActiveX VB elements.  
+
+To view the source code you can right click on the "Schedule" sheet in the bottom left corner. All necessary attributions are listed in comments above subroutines. 
+
+Any further info on CourseLoader will be documented in this repository's wiki.
+
 ## Testing
 Unit tests can be run using  `make test`. Tests are also run automatically when you push your code to GitLab.
 
