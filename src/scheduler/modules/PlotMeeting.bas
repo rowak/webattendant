@@ -46,65 +46,77 @@ Function PlotMeeting(courseCode As String, sectionCode As String, meetingType As
     Dim day As Variant
     Dim i As Integer
     Dim error As Integer
+    Dim attemptPlot As Boolean
     'default return value is True for successful plot, set to false on error
     PlotMeeting = True
+    attemptPlot = True
     
-    start = getTimeRow(startTime)
-    fin = getTimeRow(endTime)
+    If meetingType = "EXAM" And Worksheets("Schedule").Range("I10").Value <> "" Then
+        attemptPlot = False
+    End If
     
-    ' Checking if time range is valid
-    If start <> 34 And fin <> 34 Then
-        For Each day In Split(daysOfWeek, ",")
-            col = getColumn(CStr(day))
-            ' Checking if the current day of the week is valid
-            If col <> "G" Then
-                For i = start To fin
-                    With Worksheets("Schedule").Range(col & i)
-                        ' If the block is starting then add top border
-                        If i = start Then
-                            .Value = courseCode & " " & sectionCode
-                            .Borders(xlEdgeTop).LineStyle = xlContinuous
+    If attemptPlot = True Then
+        start = getTimeRow(startTime)
+        fin = getTimeRow(endTime)
+        ' Checking if time range is valid
+        If start <> 34 And fin <> 34 Then
+            For Each day In Split(daysOfWeek, ",")
+                col = getColumn(CStr(day))
+                ' Checking if the current day of the week is valid
+                If col <> "G" Then
+                    For i = start To fin
+                        With Worksheets("Schedule").Range(col & i)
+                            ' If the block is starting then add top border
+                            If i = start Then
+                                If meetingType <> "EXAM" Or .Value = "" Then
+                                    .Value = courseCode & " " & sectionCode
+                                End If
+                                    
+                                .Borders(xlEdgeTop).LineStyle = xlContinuous
+                                ' Add thicker border if block is exam
+                                If meetingType = "EXAM" Then
+                                    .Borders(xlEdgeTop).Weight = xlThick
+                                End If
+                            ' If cell is under block starting time then display meeting type
+                            ElseIf i = (start + 1) Then
+                                If meetingType <> "EXAM" Or .Value = "" Then
+                                    .Value = meetingType
+                                End If
+                            End If
+                        
+                            ' If the block is ending then add bottom border
+                            If i = fin Then
+                                .Borders(xlEdgeBottom).LineStyle = xlContinuous
+                                ' Add thicker border if block is exam
+                                If meetingType = "EXAM" Then
+                                    .Borders(xlEdgeBottom).Weight = xlThick
+                                End If
+                            End If
+                        
+                            ' Add side border to any cell
+                            .Borders(xlEdgeLeft).LineStyle = xlContinuous
+                            .Borders(xlEdgeRight).LineStyle = xlContinuous
                             ' Add thicker border if block is exam
                             If meetingType = "EXAM" Then
-                                .Borders(xlEdgeTop).Weight = xlThick
+                                .Borders(xlEdgeLeft).Weight = xlThick
+                                .Borders(xlEdgeRight).Weight = xlThick
                             End If
-                        ' If cell is under block starting time then display meeting type
-                        ElseIf i = (start + 1) Then
-                            .Value = meetingType
-                        End If
                         
-                        ' If the block is ending then add bottom border
-                        If i = fin Then
-                            .Borders(xlEdgeBottom).LineStyle = xlContinuous
-                            ' Add thicker border if block is exam
-                            If meetingType = "EXAM" Then
-                                .Borders(xlEdgeBottom).Weight = xlThick
+                            ' Colours from start to finish, and if a cell is already coloured it gets changed to grey to show a conflict
+                            If .Interior.ColorIndex <> xlNone Then
+                                If meetingType <> "EXAM" Then
+                                    .Interior.ColorIndex = 16 ' Grey
+                                    ' return false on error
+                                    PlotMeeting = False
+                                End If
+                            Else
+                                .Interior.ColorIndex = cval ' Colour of current course
                             End If
-                        End If
-                        
-                        ' Add side border to any cell
-                        .Borders(xlEdgeLeft).LineStyle = xlContinuous
-                        .Borders(xlEdgeRight).LineStyle = xlContinuous
-                        ' Add thicker border if block is exam
-                        If meetingType = "EXAM" Then
-                            .Borders(xlEdgeLeft).Weight = xlThick
-                            .Borders(xlEdgeRight).Weight = xlThick
-                        End If
-                        
-                        ' Colours from start to finish, and if a cell is already coloured it gets changed to grey to show a conflict
-                        If .Interior.ColorIndex <> xlNone Then
-                            If meetingType <> "EXAM" Then
-                                .Interior.ColorIndex = 16 ' Grey
-                                ' return false on error
-                                PlotMeeting = False
-                            End If
-                        Else
-                            .Interior.ColorIndex = cval ' Colour of current course
-                        End If
-                    End With
-                Next i
-            End If
-        Next day
+                        End With
+                    Next i
+                End If
+            Next day
+        End If
     End If
     
 End Function
