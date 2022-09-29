@@ -131,6 +131,13 @@ Function checkConflict(row As Integer) As Boolean
     checkConflict = result
 End Function
 
+' Given a row number, it will check if the rows after that share the same
+' name and course code generate any conflicts.
+' Exams will get ignored
+' Eg, line 2 has ACCT*1220 and 0101
+'       It will check if line 2 and line 3 generate conflicts
+'       Line 4 is an exam so it gets ignored
+'       Stops on line 5 because the section code is different
 Function checkCourseConflict(rowStart As Integer) As Boolean
     Dim courseCode As String
     Dim sectionCode As String
@@ -144,32 +151,43 @@ Function checkCourseConflict(rowStart As Integer) As Boolean
         result = True
     End If
     
+    ' Reads the necessary data from the row to check if it changes
     If result = False Then
         courseCode = Worksheets("Data").Range("A" & rowStart).Value
         sectionCode = Worksheets("Data").Range("C" & rowStart).Value
+        ' To start off, these are set to the current entry
         nextCode = courseCode
         nextSection = sectionCode
     
+       ' Must be a course, in case it goes too far
         If courseCode = "" Then
             result = True
         End If
     End If
     
     If result = False Then
+        ' Set i equal to the first row
         i = rowStart
-        While nextCode = courseCode And nextSection = sectionCode
+        ' Checks if the course code and section code grabbed are the same
+        While nextCode = courseCode And nextSection = sectionCode And result = False
+            ' Check if the row generates a conflict
             If checkConflict(i) = True Then
                 result = True
             End If
-        
+            ' Go to the next row and set what that row's code and section are
             i = i + 1
-            nextCourse = Worksheets("Data").Range("A" & i).Value
+            nextCode = Worksheets("Data").Range("A" & i).Value
             nextSection = Worksheets("Data").Range("C" & i).Value
         Wend
     End If
     
+    ' Returns what result was grabbed
     checkCourseConflict = result
 End Function
 
 Sub DaysFunctions()
+'for debugging
+    Worksheets("Schedule").Range("A34").Value = lowestDay()
+' B35 should be the starting row of a course
+    Worksheets("Schedule").Range("B34").Value = checkCourseConflict(CInt(Worksheets("Schedule").Range("B35").Value))
 End Sub
