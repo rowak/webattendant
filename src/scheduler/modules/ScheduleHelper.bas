@@ -17,8 +17,8 @@ End Function
 Sub addSuggestedCourse(newCourseRow As Integer, position As Integer)
     Dim courseCode As String
     Dim sectionCode As String
-    courseCode = Worksheets("Data").Cells(newCourseRow + 2, "A").Value
-    sectionCode = Worksheets("Data").Cells(newCourseRow + 2, "C").Value
+    courseCode = Worksheets("Data").Cells(newCourseRow, "A").Value
+    sectionCode = Worksheets("Data").Cells(newCourseRow, "C").Value
     Worksheets("Schedule").Cells(position + 5, "M") = courseCode & ", " & sectionCode
 End Sub
 
@@ -76,3 +76,4 @@ Sub ApplyCoursesToSchedule()
     
     Worksheets("Schedule").Range("M5:M9").Value = ""
 End Sub
+
