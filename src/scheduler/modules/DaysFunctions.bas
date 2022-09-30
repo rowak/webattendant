@@ -184,11 +184,90 @@ Function checkCourseConflict(rowStart As Integer) As Boolean
     ' Returns what result was grabbed
     checkCourseConflict = result
 End Function
+' Function that checks if a given course row does not have any meetings times in the ignoredDays array
+' If valid course return true
+Function checkIgnoredDays(rowStart As Integer, ByRef ignoredDays() As String) As Boolean
+    Dim courseDays As String
+    Dim i As Integer
+    Dim sectionCode As String
+    Dim sameSection As Boolean
+    Dim courseCode As String
+    Dim newRow As Integer
+
+    sectionCode = Worksheets("Data").Range("C" & rowStart).Value
+    courseCode = Worksheets("Data").Range("A" & rowStart).Value
+    checkIgnoredDays = True
+    
+    'loop through all days provided
+    For i = 0 To UBound(ignoredDays)
+    'Loop through all LABS, SEMS, LECS to make sure none have meetings on specified day(s)
+        newRow = rowStart
+        sameSection = True
+        Do While sameSection = True
+            courseDays = Worksheets("Data").Range("F" & newRow).Value
+            ' If the courseDays string contains the day, return false (failure case)
+            If InStr(courseDays, ignoredDays(i)) <> 0 Or courseDays = "TBA" Then
+                checkIgnoredDays = False
+                Exit Function
+            End If
+            ' Check if the next row is the same section
+            newRow = newRow + 1
+            If sectionCode <> Worksheets("Data").Range("C" & newRow).Value Or courseCode <> Worksheets("Data").Range("A" & newRow).Value Then
+                sameSection = False
+            End If
+        Loop
+    Next i
+End Function
+
+'return the row number first section of a random course in the data sheet
+Function getRandomCourse() As Integer
+    Dim foundFirst As Boolean
+    foundFirst = False
+    Dim sectionCode As String
+    Dim courseCode As String
+    Dim randomCourseRow As Integer
+    randomCourseRow = Int(2 + Rnd * (6608))
+
+    
+    
+    courseCode = Worksheets("Data").Range("A" & randomCourseRow).Value
+    Do While foundFirst = False
+        'edge case for first row in sheet
+        If randomCourseRow = 1 Or randomCourseRow = 2 Then
+            getRandomCourse = 2
+            Exit Function
+        End If
+        sectionCode = Worksheets("Data").Range("C" & randomCourseRow).Value
+        If courseCode <> Worksheets("Data").Range("A" & randomCourseRow - 1).Value And Worksheets("Data").Range("C" & randomCourseRow - 1).Value <> sectionCode Then
+            foundFirst = True
+        Else
+            randomCourseRow = randomCourseRow - 1
+        End If
+    Loop
+    getRandomCourse = randomCourseRow
+End Function
 
 Function getLowestDayCourse() As Integer
     ' TODO: write a function that returns the ROW NUMBER of a course that occurs
     '       on the day with the least number of courses (using lowestDay())
     getLowestDayCourse = 4810
+End Function
+
+Function getNoTuesThurs() As Integer
+    Dim randomCourse As Integer
+    Dim validCourse As Boolean
+    validCourse = False
+    Dim Days(0 To 1) As String
+    Days(0) = "Tues"
+    Days(1) = "Thur"
+    Do While validCourse = False
+        randomCourse = getRandomCourse()
+        If checkCourseConflict(randomCourse) = False And checkIgnoredDays(randomCourse, Days) = True Then
+            validCourse = True
+            Exit Do
+        End If
+    Loop
+    getNoTuesThurs = randomCourse
 End Function
 
 Sub DaysFunctions()

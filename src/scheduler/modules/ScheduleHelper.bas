@@ -34,7 +34,7 @@ Sub GenerateCourses(functionType As String)
             Case "lowestDay"
                 newCourseRow = DaysFunctions.getLowestDayCourse()
             Case "noTuesThurs"
-                MsgBox "Not implemented"
+                newCourseRow = DaysFunctions.getNoTuesThurs()
             Case "noEvenings"
                 MsgBox "Not implemented"
             Case "noEarlyMornings"
