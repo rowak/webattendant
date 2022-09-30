@@ -130,12 +130,12 @@ Function PlotMeetingByRowNum(rowNum As Integer, courseColorIndex As Integer) As 
     Dim endTime As String
     Dim meetingDate As String
     
-    courseCode = Worksheets("Data").Cells(rowNum + 1, "A").Value
-    sectionCode = Worksheets("Data").Cells(rowNum + 1, "C").Value
-    meetingType = Worksheets("Data").Cells(rowNum + 1, "E").Value
-    daysOfWeek = Worksheets("Data").Cells(rowNum + 1, "F").Value
-    startTime = Worksheets("Data").Cells(rowNum + 1, "G").Value
-    endTime = Worksheets("Data").Cells(rowNum + 1, "H").Value
+    courseCode = Worksheets("Data").Cells(rowNum, "A").Value
+    sectionCode = Worksheets("Data").Cells(rowNum, "C").Value
+    meetingType = Worksheets("Data").Cells(rowNum, "E").Value
+    daysOfWeek = Worksheets("Data").Cells(rowNum, "F").Value
+    startTime = Worksheets("Data").Cells(rowNum, "G").Value
+    endTime = Worksheets("Data").Cells(rowNum, "H").Value
     meetingDate = Worksheets("Data").Cells(rowNum + 1, "I").Value
     
     PlotMeeting courseCode, sectionCode, meetingType, daysOfWeek, startTime, endTime, meetingDate, courseColorIndex
