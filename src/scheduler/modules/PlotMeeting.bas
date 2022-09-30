@@ -120,3 +120,45 @@ Function PlotMeeting(courseCode As String, sectionCode As String, meetingType As
     End If
     
 End Function
+
+Function PlotMeetingByRowNum(rowNum As Integer, courseColorIndex As Integer) As Boolean
+    Dim courseCode As String
+    Dim sectionCode As String
+    Dim meetingType As String
+    Dim daysOfWeek As String
+    Dim startTime As String
+    Dim endTime As String
+    Dim meetingDate As String
+    
+    courseCode = Worksheets("Data").Cells(rowNum + 1, "A").Value
+    sectionCode = Worksheets("Data").Cells(rowNum + 1, "C").Value
+    meetingType = Worksheets("Data").Cells(rowNum + 1, "E").Value
+    daysOfWeek = Worksheets("Data").Cells(rowNum + 1, "F").Value
+    startTime = Worksheets("Data").Cells(rowNum + 1, "G").Value
+    endTime = Worksheets("Data").Cells(rowNum + 1, "H").Value
+    meetingDate = Worksheets("Data").Cells(rowNum + 1, "I").Value
+    
+    PlotMeeting courseCode, sectionCode, meetingType, daysOfWeek, startTime, endTime, meetingDate, courseColorIndex
+End Function
+
+Sub PlotCourseByRowNum(rowNum As Integer, courseColorIndex As Integer)
+    Dim courseCode As String
+    Dim sectionCode As String
+    Dim nextCourse As String
+    Dim nextSection As String
+    Dim isValid As Boolean
+    Dim i As Integer
+    
+    courseCode = Worksheets("Data").Cells(rowNum + 1, "A").Value
+    sectionCode = Worksheets("Data").Cells(rowNum + 1, "C").Value
+    
+    nextCourse = courseCode
+    nextSection = sectionCode
+    i = rowNum
+    While nextCourse = courseCode And nextSection = sectionCode
+        isValid = PlotMeetingByRowNum(i, courseColorIndex)
+        i = i + 1
+        nextCourse = Worksheets("Data").Cells(i + 1, "A").Value
+        nextSection = Worksheets("Data").Cells(i + 1, "C").Value
+    Wend
+End Sub

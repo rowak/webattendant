@@ -185,9 +185,15 @@ Function checkCourseConflict(rowStart As Integer) As Boolean
     checkCourseConflict = result
 End Function
 
+Function getLowestDayCourse() As Integer
+    ' TODO: write a function that returns the ROW NUMBER of a course that occurs
+    '       on the day with the least number of courses (using lowestDay())
+    getLowestDayCourse = 4810
+End Function
+
 Sub DaysFunctions()
 'for debugging
-    Worksheets("Schedule").Range("A34").Value = lowestDay()
+    'Worksheets("Schedule").Range("A34").Value = lowestDay()
 ' B35 should be the starting row of a course
-    Worksheets("Schedule").Range("B34").Value = checkCourseConflict(CInt(Worksheets("Schedule").Range("B35").Value))
+    'Worksheets("Schedule").Range("B34").Value = checkCourseConflict(CInt(Worksheets("Schedule").Range("B35").Value))
 End Sub

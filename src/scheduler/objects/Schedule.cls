@@ -17,7 +17,7 @@ Attribute VB_Exposed = True
 Private Sub Worksheet_Change(ByVal Target As Range)
     Dim KeyCells As Range
     Dim i As Integer
-    Set KeyCells = Range("H5:I9")
+    Set KeyCells = Range("H5:I10")
 
     If Not Application.Intersect(KeyCells, Range(Target.Address)) _
             Is Nothing Then
@@ -30,3 +30,4 @@ Private Sub Worksheet_Change(ByVal Target As Range)
         Call GenTable.GenTable
     End If
 End Sub
+
