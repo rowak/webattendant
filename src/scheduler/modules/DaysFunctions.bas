@@ -287,6 +287,43 @@ Function containsLowestDay(row As Integer, day As String) As Boolean
     containsLowestDay = result
 End Function
 
+'checks if course start time is less than or equal to the time provided
+Function checkIgnoredTimes(rowStart as Integer, badTime as String)
+    Dim courseStartTime As String
+    Dim courseDays As String
+    Dim i As Integer
+    Dim sectionCode As String
+    Dim sameSection As Boolean
+    Dim courseCode As String
+    Dim newRow As Integer
+
+    sectionCode = Worksheets("Data").Range("C" & rowStart).Value
+    courseCode = Worksheets("Data").Range("A" & rowStart).Value
+    checkIgnoredTimes = True
+    'Loop through all LABS, SEMS, LECS to make sure none have meetings before specified time
+    newRow = rowStart
+    sameSection = True
+    Do While sameSection = True
+        courseStartTime = Worksheets("Data").Range("G" & newRow).Value
+        courseDays = Worksheets("Data").Range("F" & newRow).Value
+        ' Tba failure case
+        If  courseDays = "TBA" Then
+            checkIgnoredTimes = False
+            Exit Function
+        End If
+        ' If the courseDays string is less than or equal to given time, return false (failure case)
+        If  TimeValue(courseStartTime) <= TimeValue(badTime) Then
+            checkIgnoredTimes = False
+            Exit Function
+        End If
+        ' Check if the next row is the same section
+        newRow = newRow + 1
+        If sectionCode <> Worksheets("Data").Range("C" & newRow).Value Or courseCode <> Worksheets("Data").Range("A" & newRow).Value Then
+            sameSection = False
+        End If
+    Loop
+End Function
+
 Function getLowestDayCourse() As Integer
     ' TODO: write a function that returns the ROW NUMBER of a course that occurs
     '       on the day with the least number of courses (using lowestDay())
@@ -348,6 +385,22 @@ Function getNoFridays() As Integer
         End If
     Loop
     getNoFridays = randomCourse
+End Function
+
+Function getNoEarlyMornings() As Integer
+    Dim randomCourse As Integer
+    Dim validCourse As Boolean
+    validCourse = False
+    Dim badTime as String
+    badTime = "09:30AM"
+    Do While validCourse = False
+        randomCourse = getRandomCourse()
+        If checkCourseConflict(randomCourse) = False And checkIgnoredTimes(randomCourse, badTime) = True Then
+            validCourse = True
+            Exit Do
+        End If
+    Loop
+    getNoEarlyMornings = randomCourse
 End Function
 
 Sub DaysFunctions()
