@@ -225,10 +225,18 @@ Function getRandomCourse() As Integer
     Dim sectionCode As String
     Dim courseCode As String
     Dim randomCourseRow As Integer
-    randomCourseRow = Int(2 + Rnd * (6608))
 
-    
-    
+    ' only find courses that are open
+    Dim openCourse as Boolean
+    openCourse = False
+    Do While openCourse = False
+        randomCourseRow = Int(2 + Rnd * (6608))
+        if Worksheets("Data").Range("B" & randomCourseRow).Value = "Open" Then
+            openCourse = True
+        End If
+    Loop
+
+    'find the first row of the course
     courseCode = Worksheets("Data").Range("A" & randomCourseRow).Value
     Do While foundFirst = False
         'edge case for first row in sheet
@@ -237,7 +245,7 @@ Function getRandomCourse() As Integer
             Exit Function
         End If
         sectionCode = Worksheets("Data").Range("C" & randomCourseRow).Value
-        If courseCode <> Worksheets("Data").Range("A" & randomCourseRow - 1).Value And Worksheets("Data").Range("C" & randomCourseRow - 1).Value <> sectionCode Then
+        If courseCode <> Worksheets("Data").Range("A" & randomCourseRow - 1).Value Or Worksheets("Data").Range("C" & randomCourseRow - 1).Value <> sectionCode Then
             foundFirst = True
         Else
             randomCourseRow = randomCourseRow - 1
@@ -323,6 +331,23 @@ Function getNoTuesThurs() As Integer
     getNoTuesThurs = randomCourse
 End Function
 
+Function getNoFridays() As Integer
+    Dim randomCourse As Integer
+    Dim validCourse As Boolean
+    validCourse = False
+    Dim Days(0 To 0) As String
+    Days(0) = "Fri"
+    Do While validCourse = False
+        randomCourse = getRandomCourse()
+        If checkCourseConflict(randomCourse) = False And checkIgnoredDays(randomCourse, Days) = True Then
+            validCourse = True
+            Exit Do
+        End If
+    Loop
+    getNoFridays = randomCourse
+End Function
+
+End Function
 Sub DaysFunctions()
 'for debugging
     'Worksheets("Schedule").Range("A34").Value = lowestDay()
