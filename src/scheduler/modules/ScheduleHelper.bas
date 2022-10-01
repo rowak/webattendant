@@ -40,7 +40,7 @@ Sub GenerateCourses(functionType As String)
             Case "noEarlyMornings"
                 newCourseRow = DaysFunctions.getNoEarlyMornings()
             Case "noFridays"
-                MsgBox "Not implemented"
+                newCourseRow = DaysFunctions.getNoFridays()
         End Select
         addSuggestedCourse newCourseRow, i
         PlotMeeting.PlotCourseByRowNum newCourseRow, 16
