@@ -38,7 +38,7 @@ Sub GenerateCourses(functionType As String)
             Case "noEvenings"
                 MsgBox "Not implemented"
             Case "noEarlyMornings"
-                MsgBox "Not implemented"
+                newCourseRow = DaysFunctions.getNoEarlyMornings()
             Case "noFridays"
                 MsgBox "Not implemented"
         End Select
