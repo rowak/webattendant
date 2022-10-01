@@ -51,7 +51,9 @@ Function PlotMeeting(courseCode As String, sectionCode As String, meetingType As
     PlotMeeting = True
     attemptPlot = True
     
-    If meetingType = "EXAM" And Worksheets("Schedule").Range("I10").Value <> "" Then
+    If meetingType = "EXAM" And Worksheets("Schedule").CheckBoxes("Check Box 21").Value <> xlOn Then
+        attemptPlot = False
+    ElseIf courseCode = "" Then
         attemptPlot = False
     End If
     
@@ -119,6 +121,7 @@ Function PlotMeeting(courseCode As String, sectionCode As String, meetingType As
         End If
     End If
     
+    PlotMeeting = True
 End Function
 
 Function PlotMeetingByRowNum(rowNum As Integer, courseColorIndex As Integer) As Boolean
@@ -136,7 +139,7 @@ Function PlotMeetingByRowNum(rowNum As Integer, courseColorIndex As Integer) As 
     daysOfWeek = Worksheets("Data").Cells(rowNum, "F").Value
     startTime = Worksheets("Data").Cells(rowNum, "G").Value
     endTime = Worksheets("Data").Cells(rowNum, "H").Value
-    meetingDate = Worksheets("Data").Cells(rowNum + 1, "I").Value
+    meetingDate = Worksheets("Data").Cells(rowNum, "I").Value
     
     PlotMeeting courseCode, sectionCode, meetingType, daysOfWeek, startTime, endTime, meetingDate, courseColorIndex
 End Function
@@ -149,8 +152,8 @@ Sub PlotCourseByRowNum(rowNum As Integer, courseColorIndex As Integer)
     Dim isValid As Boolean
     Dim i As Integer
     
-    courseCode = Worksheets("Data").Cells(rowNum + 1, "A").Value
-    sectionCode = Worksheets("Data").Cells(rowNum + 1, "C").Value
+    courseCode = Worksheets("Data").Cells(rowNum, "A").Value
+    sectionCode = Worksheets("Data").Cells(rowNum, "C").Value
     
     nextCourse = courseCode
     nextSection = sectionCode
@@ -158,7 +161,8 @@ Sub PlotCourseByRowNum(rowNum As Integer, courseColorIndex As Integer)
     While nextCourse = courseCode And nextSection = sectionCode
         isValid = PlotMeetingByRowNum(i, courseColorIndex)
         i = i + 1
-        nextCourse = Worksheets("Data").Cells(i + 1, "A").Value
-        nextSection = Worksheets("Data").Cells(i + 1, "C").Value
+        nextCourse = Worksheets("Data").Cells(i, "A").Value
+        nextSection = Worksheets("Data").Cells(i, "C").Value
     Wend
 End Sub
+

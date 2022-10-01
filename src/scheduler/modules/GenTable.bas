@@ -54,6 +54,11 @@ Sub GenTable()
     End If
 End Sub
 
+Sub ShowExamsToggled()
+    Call GenEmptyTable.GenEmptyTable
+    Call GenTable
+End Sub
+
 ' Calculates the total number of meetings in all course sections.
 Function getTotalSectionMeetings() As Integer
     Dim meeting As String

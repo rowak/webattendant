@@ -27,6 +27,12 @@ Sub GenerateCourses(functionType As String)
     Dim newCourseRow As Integer
     Dim neededCourses As Integer ' Number of suggested courses needed
     Dim i As Integer
+    
+    If Worksheets("Schedule").CheckBoxes("Check Box 21").Value = xlOn Then
+        MsgBox "Exams must be hidden for the schedule helper to function."
+        Exit Sub
+    End If
+    
     neededCourses = getNeededCourses()
 
     For i = 0 To neededCourses - 1
@@ -36,7 +42,7 @@ Sub GenerateCourses(functionType As String)
             Case "noTuesThurs"
                 newCourseRow = DaysFunctions.getNoTuesThurs()
             Case "noEvenings"
-                MsgBox "Not implemented"
+                newCourseRow = DaysFunctions.getNoEvenings()
             Case "noEarlyMornings"
                 newCourseRow = DaysFunctions.getNoEarlyMornings()
             Case "noFridays"
@@ -62,17 +68,21 @@ Sub ApplyCoursesToSchedule()
     
     i = 0
     j = 0
-    While i < 5
-        If Worksheets("Schedule").Cells(i + 5, "H") = "" Then
-            suggestedCourseSplit = Split(Worksheets("Schedule").Cells(j + 5, "M"), ", ")
-            courseCode = suggestedCourseSplit(0)
-            sectionCode = suggestedCourseSplit(1)
-            Worksheets("Schedule").Cells(i + 5, "H") = courseCode
-            Worksheets("Schedule").Cells(i + 5, "I") = sectionCode
-            j = j + 1
-        End If
-        i = i + 1
-    Wend
+    If neededCourses <> 0 Then
+        While i < 5
+            If Worksheets("Schedule").Cells(i + 5, "H") = "" Then
+                If Worksheets("Schedule").Cells(j + 5, "M") <> "" Then
+                    suggestedCourseSplit = Split(Worksheets("Schedule").Cells(j + 5, "M"), ", ")
+                    courseCode = suggestedCourseSplit(0)
+                    sectionCode = suggestedCourseSplit(1)
+                    Worksheets("Schedule").Cells(i + 5, "H") = courseCode
+                    Worksheets("Schedule").Cells(i + 5, "I") = sectionCode
+                End If
+                j = j + 1
+            End If
+            i = i + 1
+        Wend
+    End If
     
     Worksheets("Schedule").Range("M5:M9").Value = ""
 End Sub
