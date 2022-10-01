@@ -225,10 +225,21 @@ Function getRandomCourse() As Integer
     Dim sectionCode As String
     Dim courseCode As String
     Dim randomCourseRow As Integer
-    randomCourseRow = Int(2 + Rnd * (6608))
 
-    
-    
+    Dim totalSections As Integer
+    totalSections = Worksheets("Data").Range("A" & Rows.Count).End(xlUp).Row
+
+    ' only find courses that are open
+    Dim openCourse as Boolean
+    openCourse = False
+    Do While openCourse = False
+        randomCourseRow = Int(2 + Rnd * (totalSections))
+        if Worksheets("Data").Range("B" & randomCourseRow).Value = "Open" Then
+            openCourse = True
+        End If
+    Loop
+
+    'find the first row of the course
     courseCode = Worksheets("Data").Range("A" & randomCourseRow).Value
     Do While foundFirst = False
         'edge case for first row in sheet
@@ -237,7 +248,7 @@ Function getRandomCourse() As Integer
             Exit Function
         End If
         sectionCode = Worksheets("Data").Range("C" & randomCourseRow).Value
-        If courseCode <> Worksheets("Data").Range("A" & randomCourseRow - 1).Value And Worksheets("Data").Range("C" & randomCourseRow - 1).Value <> sectionCode Then
+        If courseCode <> Worksheets("Data").Range("A" & randomCourseRow - 1).Value Or Worksheets("Data").Range("C" & randomCourseRow - 1).Value <> sectionCode Then
             foundFirst = True
         Else
             randomCourseRow = randomCourseRow - 1
