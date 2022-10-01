@@ -1,6 +1,4 @@
 Attribute VB_Name = "DaysFunctions"
-
-
 ' A function that will return the percentage of a day that is occupied
 ' Give it the column value
 Function dayPercent(column As String) As Double
@@ -184,6 +182,7 @@ Function checkCourseConflict(rowStart As Integer) As Boolean
     ' Returns what result was grabbed
     checkCourseConflict = result
 End Function
+
 ' Function that checks if a given course row does not have any meetings times in the ignoredDays array
 ' If valid course return true
 Function checkIgnoredDays(rowStart As Integer, ByRef ignoredDays() As String) As Boolean
@@ -247,10 +246,64 @@ Function getRandomCourse() As Integer
     getRandomCourse = randomCourseRow
 End Function
 
+Function containsLowestDay(row As Integer, day As String) As Boolean
+    Dim i As String
+    Dim pos As Integer
+    Dim result As Boolean
+    Dim courseCode As String
+    Dim sectionCode As String
+    Dim curCourse As String
+    Dim curSection As String
+    
+    courseCode = Worksheets("Data").Range("A" & row).Value
+    sectionCode = Worksheets("Data").Range("C" & row).Value
+    result = False
+    i = row
+    curCourse = courseCode
+    curSection = sectionCode
+    If courseCode <> "" Then
+        While (curCourse = courseCode And sectionCode = curSection) And result <> True
+            pos = InStr(Worksheets("Data").Range("F" & i).Value, day)
+            If pos <> 0 And Worksheets("Data").Range("E" & i).Value <> "EXAM" Then
+                result = True
+            End If
+            i = i + 1
+            curCourse = Worksheets("Data").Range("A" & i).Value
+            curSection = Worksheets("Data").Range("C" & i).Value
+       Wend
+    End If
+    
+    containsLowestDay = result
+End Function
+
 Function getLowestDayCourse() As Integer
     ' TODO: write a function that returns the ROW NUMBER of a course that occurs
     '       on the day with the least number of courses (using lowestDay())
-    getLowestDayCourse = 4810
+    Dim day As String
+    Dim courseFound As Boolean
+    Dim courseRow As Integer
+    Dim found As Integer
+    
+    ' Find lowest day and say we haven't found the course
+    courseFound = False
+    day = lowestDay()
+    ' Default to first entry
+    found = 2
+    
+    While courseFound = False
+        ' Get a random course
+        courseRow = getRandomCourse()
+        ' Check if it contains the lowestDay
+        If containsLowestDay(courseRow, day) = True Then
+            ' check for conflicts
+            If checkCourseConflict(courseRow) = False And Worksheets("Data").Range("B" & courseRow).Value = "Open" Then
+                found = courseRow
+                courseFound = True
+            End If
+        End If
+    Wend
+    
+    getLowestDayCourse = found
 End Function
 
 Function getNoTuesThurs() As Integer
@@ -276,3 +329,4 @@ Sub DaysFunctions()
 ' B35 should be the starting row of a course
     'Worksheets("Schedule").Range("B34").Value = checkCourseConflict(CInt(Worksheets("Schedule").Range("B35").Value))
 End Sub
+

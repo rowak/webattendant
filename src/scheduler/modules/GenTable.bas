@@ -17,6 +17,7 @@ Sub GenTable()
     Dim totalMeetings As Integer
     Dim validCourse As Boolean
     Dim plotSuccess As Boolean
+    plotSuccess = True
     
     totalMeetings = getTotalSectionMeetings()
     ' Update the schedule for all five courses (if applicable)
