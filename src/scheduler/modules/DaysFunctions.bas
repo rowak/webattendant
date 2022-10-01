@@ -226,11 +226,14 @@ Function getRandomCourse() As Integer
     Dim courseCode As String
     Dim randomCourseRow As Integer
 
+    Dim totalSections As Integer
+    totalSections = Worksheets("Data").Range("A" & Rows.Count).End(xlUp).Row
+
     ' only find courses that are open
     Dim openCourse as Boolean
     openCourse = False
     Do While openCourse = False
-        randomCourseRow = Int(2 + Rnd * (6608))
+        randomCourseRow = Int(2 + Rnd * (totalSections))
         if Worksheets("Data").Range("B" & randomCourseRow).Value = "Open" Then
             openCourse = True
         End If
@@ -347,7 +350,6 @@ Function getNoFridays() As Integer
     getNoFridays = randomCourse
 End Function
 
-End Function
 Sub DaysFunctions()
 'for debugging
     'Worksheets("Schedule").Range("A34").Value = lowestDay()
