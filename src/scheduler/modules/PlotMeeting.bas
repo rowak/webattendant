@@ -1,5 +1,4 @@
 Attribute VB_Name = "PlotMeeting"
-
 ' Will get the column the day is in
 Public Function getColumn(day As String) As String
     If day = Worksheets("Schedule").Range("B1").Value Or day = "Mon" Then
@@ -124,6 +123,7 @@ Function PlotMeeting(courseCode As String, sectionCode As String, meetingType As
     PlotMeeting = True
 End Function
 
+' Gets data from from row and sends it to PlotMeeting to plot one row
 Function PlotMeetingByRowNum(rowNum As Integer, courseColorIndex As Integer) As Boolean
     Dim courseCode As String
     Dim sectionCode As String
@@ -158,6 +158,7 @@ Sub PlotCourseByRowNum(rowNum As Integer, courseColorIndex As Integer)
     nextCourse = courseCode
     nextSection = sectionCode
     i = rowNum
+    ' Start plotting course starting from given starting row and plot until course code or section code changes
     While nextCourse = courseCode And nextSection = sectionCode
         isValid = PlotMeetingByRowNum(i, courseColorIndex)
         i = i + 1
@@ -165,4 +166,5 @@ Sub PlotCourseByRowNum(rowNum As Integer, courseColorIndex As Integer)
         nextSection = Worksheets("Data").Cells(i, "C").Value
     Wend
 End Sub
+
 

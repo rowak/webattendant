@@ -68,6 +68,7 @@ Sub ApplyCoursesToSchedule()
     
     i = 0
     j = 0
+    ' Loops through five courses and if the course code is empty, split the course and put the course code in first column and section number in second column
     If neededCourses <> 0 Then
         While i < 5
             If Worksheets("Schedule").Cells(i + 5, "H") = "" Then
@@ -86,4 +87,5 @@ Sub ApplyCoursesToSchedule()
     
     Worksheets("Schedule").Range("M5:M9").Value = ""
 End Sub
+
 

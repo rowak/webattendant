@@ -367,6 +367,7 @@ Function getNoTuesThurs() As Integer
     Dim Days(0 To 1) As String
     Days(0) = "Tues"
     Days(1) = "Thur"
+    ' Get random course until there is one without a conflict and is not on a Tuesday or Thursday
     Do While validCourse = False
         randomCourse = getRandomCourse()
         If checkCourseConflict(randomCourse) = False And checkIgnoredDays(randomCourse, Days) = True Then
@@ -382,6 +383,7 @@ Function getNoFridays() As Integer
     validCourse = False
     Dim Days(0 To 0) As String
     Days(0) = "Fri"
+    ' Get random course until there is one without a conflict and is not on a Friday
     Do While validCourse = False
         randomCourse = getRandomCourse()
         If checkCourseConflict(randomCourse) = False And checkIgnoredDays(randomCourse, Days) = True Then
@@ -397,6 +399,7 @@ Function getNoEarlyMornings() As Integer
     validCourse = False
     Dim badTime As String
     badTime = "09:30AM"
+    ' Get random course until there is one without a conflict and not at or earlier than 9:30 AM
     Do While validCourse = False
         randomCourse = getRandomCourse()
         If checkCourseConflict(randomCourse) = False And checkIgnoredTimes(randomCourse, badTime, 0) = True Then
@@ -413,6 +416,7 @@ Function getNoEvenings() As Integer
     validCourse = False
     Dim badTime As String
     badTime = "05:00pm"
+    ' Get random course until there is one without a conflict and not at or later than 5:00 PM
     Do While validCourse = False
         randomCourse = getRandomCourse()
         If checkCourseConflict(randomCourse) = False And checkIgnoredTimes(randomCourse, badTime, 1) = True Then
@@ -422,4 +426,5 @@ Function getNoEvenings() As Integer
     Loop
     getNoEvenings = randomCourse
 End Function
+
 
