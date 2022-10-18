@@ -1,15 +1,7 @@
+printf "\033[1;33mUpdating packages...\033[0m\n"
 sudo apt update
 
 printf "\033[1;33mDeploying files...\033[0m\n"
-
-# Copy files to deploy directory
-sudo mkdir -p /app
-sudo cp -r src/flask/* venv /app
-
-# Update permissions of deploy directory
-sudo groupadd -f cis3760
-sudo chown root:cis3760 /app
-sudo chmod 770 /app
 
 # Set up nginx
 printf "\033[1;33mSetting up Nginx...\033[0m\n"
@@ -28,6 +20,15 @@ python3 -m venv venv
 . venv/bin/activate
 pip install Flask
 
+# Copy files to deploy directory
+sudo mkdir -p /app
+sudo cp -r src/flask/* venv /app
+
+# Update permissions of deploy directory
+sudo groupadd -f cis3760
+sudo chown root:cis3760 /app
+sudo chmod 770 /app
+
 # Set up Gunicorn
 printf "\033[1;33mSetting up Gunicorn...\033[0m\n"
 sudo apt install gunicorn -y
@@ -35,5 +36,7 @@ pip install gunicorn
 sudo cp config/gunicorn/cis3760.service /etc/systemd/system
 sudo systemctl restart cis3760.service
 sudo systemctl daemon-reload
+
+printf "\033[1;33mDone!\033[0m\n"
 
 deactivate
