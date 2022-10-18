@@ -28,9 +28,9 @@ pip install gunicorn
 sudo mkdir -p /app
 sudo cp -r src/flask/* venv /app
 sudo groupadd -f cis3760
-sudo useradd -g cis3760
+sudo useradd -g cis3760 cis3760
 sudo chown root:cis3760 /app
-sudo chmod 770 /app
+sudo chmod 771 /app
 sudo cp config/gunicorn/cis3760.service /etc/systemd/system
 sudo systemctl restart cis3760.service
 sudo systemctl daemon-reload
