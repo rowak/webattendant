@@ -1,0 +1,12 @@
+[Unit]
+Description=cis3760.service - Backend for CIS*3760 project.
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/app
+ExecStart=/app/venv/bin/gunicorn --bind=unix:/app/cis3760.sock wsgi:app
+
+[Install]
+WantedBy=multi-user.target
