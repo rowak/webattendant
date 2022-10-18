@@ -2,16 +2,24 @@
 To run you need to first have venv and flask installed.
 
 Once done, create a new venv folder:
+```bash
 	python3 -m venv venv
+```
 
 After that, activate the venv environment
+```bash
 	. venv/bin/activate
+```
 
 Once in, install Flask
+```bash
 	pip install Flask
+```
 
 Finally, you can run a localhost server
-	Flask --app flaskServer.py run
+```bash
+	flask --app flaskServer.py run
+```
 
 Keep in mind these things:
 	To exit the venv environment, type "deactivate"
