@@ -1,8 +1,10 @@
 PYINT = python3
 
+run:
+	./scripts/run.sh
+
 install:
-	sudo apt install nginx
-	# Insert install commands here
+	./scripts/install.sh
 
 test:
 	$(PYINT) -m unittest discover tests
