@@ -1,10 +1,8 @@
-APPDIR = /app
-
 sudo apt update
 
 # Set up nginx
 sudo apt install nginx -y
-sudo cp config/nginx/sites-available/cis3760.conf /etc/nginx/sites-available
+sudo cp config/nginx/cis3760.conf /etc/nginx/sites-available
 sudo ln -s /etc/nginx/sites-available/cis3760.conf /etc/nginx/sites-enabled
 sudo systemctl restart nginx
 
@@ -23,5 +21,9 @@ pip install gunicorn
 sudo cp config/gunicorn/cis3760.service /etc/systemd/system
 sudo systemctl daemon-reload
 sudo systemctl restart cis3760.service
+
+# Copy files to deploy directory
+sudo mkdir -p /app
+sudo cp -r src/flask/* venv /app
 
 deactivate
