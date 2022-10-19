@@ -14,6 +14,11 @@ python3 -m venv venv
 . venv/bin/activate
 pip install Flask
 
+# Set up Gunicorn
+printf "\033[1;33mSetting up Gunicorn...\033[0m\n"
+sudo apt install gunicorn -y
+pip install gunicorn
+
 # Set up Node
 printf "\033[1;33mSetting up Node...\033[0m\n"
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\

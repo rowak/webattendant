@@ -24,4 +24,10 @@ sudo useradd -g cis3760 cis3760
 sudo chown -R root:cis3760 /app
 sudo chmod 771 /app
 
+# Daemonize Flask
+printf "\033[1;33mSetting up Flask...\033[0m\n"
+sudo cp config/gunicorn/flask.service /etc/systemd/system
+sudo systemctl restart flask.service
+sudo systemctl daemon-reload
+
 printf "\033[1;33mDeployed to /app\033[0m\n"
