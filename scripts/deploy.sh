@@ -4,7 +4,6 @@
 
 # The install script must be run before this script can be run.
 
-
 # Set up nginx
 printf "\033[1;33mSetting up Nginx...\033[0m\n"
 sudo apt install nginx -y
@@ -18,11 +17,12 @@ printf "\033[1;33mDeploying files...\033[0m\n"
 sudo mkdir -p /app/backend
 npm run build
 sudo cp -r build/* /app
-sudo cp -r src/flask/* venv /app/backend
+sudo cp -r backend/* venv /app/backend
 sudo groupadd -f cis3760
 sudo useradd -g cis3760 cis3760
 sudo chown -R root:cis3760 /app
 sudo chmod 771 /app
+npm install /app
 
 # Daemonize Flask
 printf "\033[1;33mSetting up Flask...\033[0m\n"

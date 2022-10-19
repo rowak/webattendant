@@ -3,10 +3,10 @@ Description=flask.service - Flask backend for CIS*3760 project.
 After=network.target
 
 [Service]
-User=flask
-Group=flask
-WorkingDirectory=/app
-ExecStart=/app/venv/bin/gunicorn --bind=unix:/app/flask.sock wsgi:app
+User=cis3760
+Group=cis3760
+WorkingDirectory=/app/backend
+ExecStart=/app/backend/venv/bin/gunicorn --bind=0.0.0.0:5000 wsgi:app
 
 [Install]
 WantedBy=multi-user.target
