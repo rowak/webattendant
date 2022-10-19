@@ -1,8 +1,8 @@
 
 from flask import Flask, request
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__, static_folder='../webapp/build',  static_url_path='/')
 
 @app.route('/')
 def homePage():
-    return "hello world"
+    return app.send_static_file('index.html')
