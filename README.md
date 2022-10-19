@@ -3,6 +3,15 @@
 ## React/Flask App
 
 ### Running the app in development mode
+There are 2 different kinds of modes to run the app. Flask mode and React Mode
+
+#### Flask
+This will create a localhosted flask server
+```
+make run
+```
+
+#### React
 TODO
 
 ### Installing the app
