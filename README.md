@@ -1,5 +1,37 @@
 # CIS3760
 
+## React/Flask App
+
+### Running the app in development mode
+There are 2 different kinds of modes to run the app. Flask mode and React Mode
+
+#### Flask
+This will create a localhosted flask server
+```
+make run
+```
+
+#### React
+Run the following command inside of the project root.
+```
+npm start
+```
+
+### Installing the app
+You may need to install make using `sudo apt install make` before continuing.
+
+```
+make install
+```
+
+### Deploying the app
+The following command deploys the app to the /app directory on the system.
+```
+make deploy
+```
+
+The flask server is run as a daemon on port 5000, and the react app runs on port 3000.
+
 ## CourseLoader Spreadsheet
 
 The spreadsheet can be found in the root directory as CourseLoader.xlsm.  
