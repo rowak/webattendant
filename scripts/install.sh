@@ -35,6 +35,11 @@ sudo cp config/gunicorn/cis3760.service /etc/systemd/system
 sudo systemctl restart cis3760.service
 sudo systemctl daemon-reload
 
+#Set up Node
+printf "\033[1;33mSetting up Node...\033[0m\n"
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
+sudo apt-get install -y nodejs
+
 printf "\033[1;33mDone!\033[0m\n"
 
 deactivate
