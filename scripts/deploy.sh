@@ -16,18 +16,19 @@ sudo systemctl restart nginx
 printf "\033[1;33mDeploying files...\033[0m\n"
 sudo mkdir -p /app/backend
 npm run build
-sudo cp -r build/* /app
+sudo cp -r build /app
 sudo cp -r backend/* venv /app/backend
 sudo groupadd -f cis3760
 sudo useradd -g cis3760 cis3760
 sudo chown -R root:cis3760 /app
 sudo chmod 771 /app
-npm install /app
+sudo cp package.json /app
+sudo npm install /app
 
 # Daemonize Flask
 printf "\033[1;33mSetting up Flask...\033[0m\n"
-sudo cp config/gunicorn/flask.service /etc/systemd/system
-sudo systemctl restart flask.service
+sudo cp config/systemd/flask.service /etc/systemd/system
 sudo systemctl daemon-reload
+sudo systemctl restart flask.service
 
 printf "\033[1;33mDeployed to /app\033[0m\n"
