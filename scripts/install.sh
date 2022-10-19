@@ -1,8 +1,6 @@
 printf "\033[1;33mUpdating packages...\033[0m\n"
 sudo apt update
 
-printf "\033[1;33mDeploying files...\033[0m\n"
-
 # Set up nginx
 printf "\033[1;33mSetting up Nginx...\033[0m\n"
 sudo apt install nginx -y
@@ -21,19 +19,14 @@ python3 -m venv venv
 . venv/bin/activate
 pip install Flask
 
-# Set up Gunicorn
-printf "\033[1;33mSetting up Gunicorn...\033[0m\n"
-sudo apt install gunicorn -y
-pip install gunicorn
-sudo mkdir -p /app
-sudo cp -r src/flask/* venv /app
+# Deploy to /app
+printf "\033[1;33mDeploying files...\033[0m\n"
+sudo mkdir -p /app/backend
+sudo cp -r src/flask/* venv /app/backend
 sudo groupadd -f cis3760
 sudo useradd -g cis3760 cis3760
-sudo chown root:cis3760 /app
+sudo chown -R root:cis3760 /app
 sudo chmod 771 /app
-sudo cp config/gunicorn/cis3760.service /etc/systemd/system
-sudo systemctl restart cis3760.service
-sudo systemctl daemon-reload
 
 #Set up Node
 printf "\033[1;33mSetting up Node...\033[0m\n"
