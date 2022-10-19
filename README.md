@@ -12,7 +12,10 @@ make run
 ```
 
 #### React
-TODO
+Run the following command inside of the project root.
+```
+npm start
+```
 
 ### Installing the app
 You may need to install make using `sudo apt install make` before continuing.
