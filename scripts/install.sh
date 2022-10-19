@@ -1,3 +1,6 @@
+# This script installs the necessary packages and performs setup
+# needed to be able to run the app.
+
 printf "\033[1;33mUpdating packages...\033[0m\n"
 sudo apt update
 
@@ -15,6 +18,7 @@ pip install Flask
 printf "\033[1;33mSetting up Node...\033[0m\n"
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
 sudo apt-get install -y nodejs
+npm install
 
 printf "\033[1;33mDone!\033[0m\n"
 

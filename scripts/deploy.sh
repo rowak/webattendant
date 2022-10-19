@@ -1,3 +1,10 @@
+# This script deploys the app to /app on the system.
+# The frontend is deployed to /app and the backend is
+# deployed to /app/backend.
+
+# The install script must be run before this script can be run.
+
+
 # Set up nginx
 printf "\033[1;33mSetting up Nginx...\033[0m\n"
 sudo apt install nginx -y
@@ -9,6 +16,7 @@ sudo systemctl restart nginx
 # Deploy to /app
 printf "\033[1;33mDeploying files...\033[0m\n"
 sudo mkdir -p /app/backend
+sudo cp -r build/* /app
 sudo cp -r src/flask/* venv /app/backend
 sudo groupadd -f cis3760
 sudo useradd -g cis3760 cis3760
