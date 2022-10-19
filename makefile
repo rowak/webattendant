@@ -6,6 +6,9 @@ run:
 install:
 	./scripts/install.sh
 
+deploy:
+	./scripts/deploy.sh
+
 test:
 	$(PYINT) -m unittest discover tests
 
