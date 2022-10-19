@@ -1,20 +1,24 @@
 # CIS3760
 
-## React
-This is a basic React App which will serve as our webpage.
+## React/Flask App
 
-## Running the app
-```
-npm install
-npm start
-```
+### Running the app in development mode
+TODO
 
-## Building the app
+### Installing the app
+You may need to install make using `sudo apt install make` before continuing.
+
 ```
-npm run build
+make install
 ```
 
-Once built the flask server can be ran to serve the app.
+### Deploying the app
+The following command deploys the app to the /app directory on the system.
+```
+make deploy
+```
+
+The flask server is run as a daemon on port 5000, and the react app runs on port 3000.
 
 ## CourseLoader Spreadsheet
 
