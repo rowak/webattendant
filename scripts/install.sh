@@ -14,7 +14,7 @@ python3 -m venv venv
 . venv/bin/activate
 pip install Flask
 
-#Set up Node
+# Set up Node
 printf "\033[1;33mSetting up Node...\033[0m\n"
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
 sudo apt-get install -y nodejs
