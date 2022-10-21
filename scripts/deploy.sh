@@ -10,6 +10,8 @@ sudo apt install nginx -y
 sudo cp config/nginx/react.conf /etc/nginx/sites-available
 sudo ln -s /etc/nginx/sites-available/react.conf /etc/nginx/sites-enabled
 sudo rm /etc/nginx/sites-enabled/default
+echo "CA\nOntario\nGuelph\n\nTeam 201\nCIS*3760\n\n" | sudo openssl \
+    req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ssl_cert.key -out /etc/ssl/certs/ssl_cert.crt
 sudo systemctl restart nginx
 
 # Deploy to /app
