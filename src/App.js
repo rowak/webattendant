@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import Calendar from './calendar.js';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           Learn React
           TEAM 201
         </a>
+        <Calendar />
       </header>
     </div>
   );

@@ -24,6 +24,8 @@ printf "\033[1;33mSetting up Node...\033[0m\n"
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
 sudo apt-get install -y nodejs
 npm install
+npm install @fullcalendar/react
+npm install @fullcalendar/daygrid @fullcalendar/timegrid @fullcalendar/interaction
 
 printf "\033[1;33mDone!\033[0m\n"
 
