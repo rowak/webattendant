@@ -23,9 +23,13 @@ pip install gunicorn
 printf "\033[1;33mSetting up Node...\033[0m\n"
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
 sudo apt-get install -y nodejs
+
+# Install react
+printf "\033[1;33mInstalling React libraries...\033[0m\n"
 npm install
 npm install @fullcalendar/react
 npm install @fullcalendar/daygrid @fullcalendar/timegrid @fullcalendar/interaction
+npm install react-datalist-input
 
 printf "\033[1;33mDone!\033[0m\n"
 
