@@ -34,13 +34,7 @@ The following command deploys the app to the /app directory on the system.
 make deploy
 ```
 
-The flask server is automatically started as a daemon after this script finishes running, but the react server needs to be started manually using the following command:
-
-```
-cd /app && serve -s .
-```
-
-The flask server runs as a daemon on port 5000 and the react app run on port 3000.
+The flask server runs as a daemon on port 5000 and the react app run on port 3000. Both servers are started automatically.
 
 ## Configuration
 The deploy script creates basic config files for NGINX and Gunicorn that are necessary to run the app. The NGINX config is copied to /etc/nginx/sites-available/react.conf and a symlink is created to the config in /etc/nginx/sites-enabled. The flask service file is copied to /etc/systemd/system/flask.service. No additional changes are necessary.
