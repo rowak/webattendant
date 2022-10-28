@@ -1,0 +1,22 @@
+FROM node AS node-builder
+WORKDIR /app
+
+COPY . .
+RUN npm install && npm run build
+
+# Generate SSL certificate
+FROM alpine AS alpine
+RUN apk update && \
+    apk add --no-cache openssl && \
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj \
+        "/C=CA/ST=Ontario/L=Guelph/O=None/CN=cis3760" \
+        -keyout /etc/ssl/private/ssl_cert.key -out /etc/ssl/certs/ssl_cert.crt
+
+FROM nginx
+WORKDIR /app/build
+COPY --from=alpine /etc/ssl/certs/ssl_cert.crt /etc/ssl/certs/ssl_cert.crt
+COPY --from=alpine /etc/ssl/private/ssl_cert.key /etc/ssl/private/ssl_cert.key
+COPY config/nginx/react.conf /etc/nginx/conf.d/default.conf
+COPY --from=node-builder /app/build .
+
+CMD ["nginx", "-g", "daemon off;"]

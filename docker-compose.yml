@@ -1,0 +1,14 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile.flask
+    image: cis3760-flask
+  react:
+    build:
+      context: .
+      dockerfile: dockerfile.react
+    image: cis3760-react
+    ports:
+      - "80:80"
+      - "443:443"

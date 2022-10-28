@@ -1,5 +1,11 @@
 PYINT = python3
 
+build:
+	docker-compose build
+
+run-docker:
+	docker-compose up
+
 run:
 	./scripts/run.sh
 

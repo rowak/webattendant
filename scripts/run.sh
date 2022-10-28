@@ -1,7 +1,8 @@
 if [ -d "venv" ];
 then
     . venv/bin/activate
-    flask --app backend/flaskServer.py run
+    cd backend
+    flask --app flaskServer.py run
     deactivate
 else
     echo "Use 'make install' before running the app"
