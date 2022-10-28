@@ -4,6 +4,8 @@
 
 # The install script must be run before this script can be run.
 
+# This script is now deprecated by the docker files.
+
 # Set up nginx
 printf "\033[1;33mSetting up Nginx...\033[0m\n"
 sudo apt install nginx -y

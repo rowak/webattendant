@@ -3,13 +3,13 @@ from flask import Flask, request, jsonify, Response
 import json
 import random
 
-with open("backend/courseOutput.json") as file:
+with open("courseOutput.json") as file:
     courseList = json.load(file)
-app = Flask(__name__, static_folder='../build',  static_url_path='/')
+app = Flask(__name__, static_folder='..',  static_url_path='/')
 
 @app.route('/')
 def homePage():
-    return app.send_static_file("index.html")
+    return "hello world"
 
 @app.route('/allCourses', methods=['GET'])
 def allCourses():
