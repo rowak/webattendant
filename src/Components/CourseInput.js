@@ -11,7 +11,7 @@ class CourseInput extends React.Component {
             <div>
                 <h2>CourseLoader</h2>
                 <div>
-                    {this.genQueryButton("/randomCourse", "Random", "GET")}
+                    {this.genQueryButton("/api/randomCourse", "Random", "GET")}
                 </div>
                 <div>
                     <h5>Courses</h5>
@@ -103,8 +103,8 @@ class CourseInput extends React.Component {
                         headers: {},
                         data: formData,
                     })
-                    .then((res) => { console.log(res) })
-                    .catch((err) => { console.log(err) });
+                    .then((res) => { console.log(res["data"]) })
+                    .catch((err) => { console.log("err") });
                 }}>
                     {name}
                 </Button>
