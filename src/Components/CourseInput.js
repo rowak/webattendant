@@ -1,5 +1,7 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import axios from "axios";
 
 class CourseInput extends React.Component {
     colors = ['red', 'blue', 'orange', 'green', 'purple'];
@@ -8,6 +10,9 @@ class CourseInput extends React.Component {
         return (
             <div>
                 <h2>CourseLoader</h2>
+                <div>
+                    {this.genQueryButton("/api/randomCourse", "Random", "GET")}
+                </div>
                 <div>
                     <h5>Courses</h5>
                     {/* //iterate through colors and generate inputs with genCourseInput*/}
@@ -80,6 +85,30 @@ class CourseInput extends React.Component {
                 name={name}
                 placeholder={placeholder}
             ></input>
+        );
+    }
+
+    genQueryButton(url, name, query) {
+        return (
+            <>
+                <Button onClick={(e) => {
+                    let formData = new FormData();
+    
+                    // Adding files to the formdata
+                    formData.append("name", "Name");
+    
+                    axios({
+                        url: url,
+                        method: query,
+                        headers: {},
+                        data: formData,
+                    })
+                    .then((res) => { console.log(res["data"]) })
+                    .catch((err) => { console.log("err") });
+                }}>
+                    {name}
+                </Button>
+            </>
         );
     }
 }

@@ -38,3 +38,19 @@ The flask server runs as a daemon on port 5000 and the react app run on port 300
 
 ## Configuration
 The deploy script creates basic config files for NGINX and Gunicorn that are necessary to run the app. The NGINX config is copied to /etc/nginx/sites-available/react.conf and a symlink is created to the config in /etc/nginx/sites-enabled. The flask service file is copied to /etc/systemd/system/flask.service. No additional changes are necessary.
+
+## Server commands
+```
+sudo systemctl restart nginx
+```
+Restarts the nginx server. This does not change the status of the flask server, only the nginx component. Check wiki for more documentation on the flasks server aspect
+
+```
+sudo systemctl stop nginx
+```
+Stops the flask server. Should only be reserved for major problems.
+
+```
+sudo systemctl start nginx
+```
+Will start the server, use if the server has been stopped and a new instance needs to be started.
