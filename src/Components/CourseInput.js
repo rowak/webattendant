@@ -11,7 +11,7 @@ class CourseInput extends React.Component {
             <div>
                 <h2>CourseLoader</h2>
                 <div>
-                    {this.genQueryButton("/api/randomCourse", "Random", "GET")}
+                    {this.genQueryButton("/randomCourse", "Random", "GET")}
                 </div>
                 <div>
                     <h5>Courses</h5>

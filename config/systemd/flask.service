@@ -6,7 +6,7 @@ After=network.target
 User=cis3760
 Group=cis3760
 WorkingDirectory=/app/backend
-ExecStart=/app/backend/venv/bin/gunicorn --bind=0.0.0.0:5000 wsgi:app
+ExecStart=/app/backend/venv/bin/gunicorn --certfile /etc/ssl/certs/ssl_api_cert.crt --keyfile /etc/ssl/private/certs/ssl_api_cert.key --bind=0.0.0.0:443 wsgi:app
 
 [Install]
 WantedBy=multi-user.target

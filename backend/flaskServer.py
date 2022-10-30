@@ -2,10 +2,18 @@
 from flask import Flask, request, jsonify, Response
 import json
 import random
+import os
 
 with open("courseOutput.json") as file:
     courseList = json.load(file)
 app = Flask(__name__, static_folder='..',  static_url_path='/')
+ 
+@app.after_request
+def applyCaching(response):
+    # Disable CORS in development mode
+    if os.environ.get("FLASK_ENVIRONMENT", "") == "development":
+        response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 @app.route('/')
 def homePage():
@@ -35,7 +43,8 @@ def getCourse():
 @app.route('/randomCourse', methods=['GET'])
 def randomCourse():
     i = random.randint(0, len(courseList) - 1)
-    return courseList[i]
+    resp = Response(json.dumps(courseList[i]))
+    return resp
 
 # Finds a course in the course list based on a specific
 # course code and (optionally) a section code.
