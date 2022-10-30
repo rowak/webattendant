@@ -27,9 +27,6 @@ sudo apt-get install -y nodejs
 # Install React
 printf "\033[1;33mInstalling React libraries...\033[0m\n"
 npm install
-npm install @fullcalendar/react
-npm install @fullcalendar/daygrid @fullcalendar/timegrid @fullcalendar/interaction
-npm install react-datalist-input
 
 # Install Docker
 printf "\033[1;33mInstalling Docker...\033[0m\n"
