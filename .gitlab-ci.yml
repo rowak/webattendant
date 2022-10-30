@@ -1,0 +1,32 @@
+image: docker
+
+stages:
+  - build
+  - deploy
+
+build-job:
+  stage: build
+  before_script:
+    - apk update && apk add docker-compose && apk add make
+  script:
+    - make build
+
+deploy-job:
+  stage: deploy
+  only:
+    - main
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $VM_HOSTNAME >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - docker save -o cis3760-react.tar cis3760-react
+    - docker save -o cis3760-api.tar cis3760-api
+    - ssh rowak@$VM_HOSTNAME "sudo rm -rdf ~/temp"
+    - scp cis3760-*.tar rowak@$VM_HOSTNAME:~/temp
+    - scp -r . rowak@$VM_HOSTNAME:~/temp
+    - ssh rowak@$VM_HOSTNAME "cd ~/temp && sudo docker load -i cis3760-react.tar && sudo docker load -i cis3760-api.tar && sudo docker-compose up -d"
