@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+//import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import axios from "axios";
+import './css/bootstrap.min.css';
+import './css/dashboard.css';
 
 // Globally set the base API url for Axios (needed for local development)
 let apiURL = process.env.REACT_APP_API_URL;
