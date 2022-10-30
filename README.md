@@ -27,14 +27,28 @@ make install
 ```
 
 ## Deploying the app
-In order to run the app in a production environment, you will first need to build and deploy it.
+In order to run the app in a production environment, you will need to build and run the docker images.
 
-The following command deploys the app to the /app directory on the system.
+First, connect to the machine you want to deploy the app on using `ssh`. Clone the project repository and navigate into it.
+
+If you don't have `make` installed, you must install it using `sudo apt install make`.
+
+Run the following command to install docker and docker-compose:
 ```
-make deploy
+sudo apt install docker.io docker-compose
 ```
 
-The flask server runs as a daemon on port 5000 and the react app run on port 3000. Both servers are started automatically.
+Run this command to build the docker images (you may need to run this as root):
+```
+make build
+```
+
+Finally, you can run the app using (you may also need to run this as root):
+```
+docker-compose up -d
+```
+
+The app should now be running in the background as two docker containers on your machine (`cis3760-react` and `cis3760-api`).
 
 ## Configuration
 The deploy script creates basic config files for NGINX and Gunicorn that are necessary to run the app. The NGINX config is copied to /etc/nginx/sites-available/react.conf and a symlink is created to the config in /etc/nginx/sites-enabled. The flask service file is copied to /etc/systemd/system/flask.service. No additional changes are necessary.
