@@ -11,7 +11,9 @@ class CourseInput extends React.Component {
             <div>
                 <h2>CourseLoader</h2>
                 <div>
-                    {this.genQueryButton("/randomCourse", "Random", "GET")}
+                    {this.genQueryButton("/randomCourse", "Random", "GET", {})}
+                    {this.genQueryButton("/getCourse", "CIS*3760", "GET", {"code": "CIS*3760"})}
+                    {this.genQueryButton("/getCourse", "Section 0101", "GET", {"code": "CIS*3760", "sectionCode": "0101"})}
                 </div>
                 <div>
                     <h5>Courses</h5>
@@ -88,20 +90,15 @@ class CourseInput extends React.Component {
         );
     }
 
-    genQueryButton(url, name, query) {
+    genQueryButton(url, name, query, args) {
         return (
             <>
                 <Button onClick={(e) => {
-                    let formData = new FormData();
-    
-                    // Adding files to the formdata
-                    formData.append("name", "Name");
-    
                     axios({
                         url: url,
                         method: query,
                         headers: {},
-                        data: formData,
+                        params: args,
                     })
                     .then((res) => { console.log(res["data"]) })
                     .catch((err) => { console.log("err") });

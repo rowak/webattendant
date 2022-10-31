@@ -1,7 +1,9 @@
 /* Unused logo from default React installation
 import logo from "./logo.svg";
 */
-import "./App.css";
+import "./css/App.css";
+import './css/bootstrap.min.css';
+import './css/dashboard.css';
 /*
 Potentially useful library. Installed already by install.sh
 import DatalistInput from "react-datalist-input";
@@ -13,9 +15,10 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <CourseInput/>
-        <Calendar />
+        <h1>Team 201</h1>
       </header>
+      <CourseInput />
+      <Calendar />
     </div>
   );
 }
