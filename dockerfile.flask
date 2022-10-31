@@ -1,0 +1,18 @@
+# Generate SSL certificate
+FROM alpine AS alpine
+RUN apk update && \
+    apk add --no-cache openssl && \
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj \
+        "/C=CA/ST=Ontario/L=Guelph/O=None/CN=cis3760" \
+        -keyout /etc/ssl/private/ssl_api_cert.key -out /etc/ssl/certs/ssl_api_cert.crt
+
+FROM python:3.9
+WORKDIR /app
+
+COPY backend/* ./
+COPY --from=alpine /etc/ssl/certs/ssl_api_cert.crt /etc/ssl/certs/ssl_api_cert.crt
+COPY --from=alpine /etc/ssl/private/ssl_api_cert.key /etc/ssl/private/ssl_api_cert.key
+RUN pip install virtualenv flask gunicorn
+
+EXPOSE 80 443
+CMD ["gunicorn", "--certfile", "/etc/ssl/certs/ssl_api_cert.crt", "--keyfile", "/etc/ssl/private/ssl_api_cert.key", "-b", ":443", "wsgi:app"]
