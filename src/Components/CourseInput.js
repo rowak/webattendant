@@ -2,24 +2,36 @@ import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from "axios";
+import Terminal, {TerminalOutput} from 'react-terminal-ui';
+import './CourseInput.css';   
 
 class CourseInput extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { requestResult: "Press a Button!" };
+    }
     colors = ['red', 'blue', 'orange', 'green', 'purple'];
     searchTypes = ['Lowest Day', 'No Tuesday Thursday', 'No Evenings', 'No Early Mornings', 'No Fridays'];
     render() {
         return (
-            <div>
+            <div className='courseInput'>
                 <h2>CourseLoader</h2>
                 <div>
                     {this.genQueryButton("/randomCourse", "Random", "GET", {})}
-                    {this.genQueryButton("/getCourse", "CIS*3760", "GET", {"code": "CIS*3760"})}
-                    {this.genQueryButton("/getCourse", "Section 0101", "GET", {"code": "CIS*3760", "sectionCode": "0101"})}
+                    {this.genQueryButton("/getCourse", "CIS*3760", "GET", { "code": "CIS*3760" })}
+                    {this.genQueryButton("/getCourse", "Section 0101", "GET", { "code": "CIS*3760", "sectionCode": "0101" })}
+                </div>
+                <h3>Outputs:</h3>
+                <div className='terminalContainer' style={{width: "50%"}}>
+                    <Terminal startingInputValue='Press a Button!'>
+                        <TerminalOutput>{this.state.requestResult}</TerminalOutput>
+                    </Terminal>
                 </div>
                 <div>
-                    <h5>Courses</h5>
+                    <h5 className='courseInput_h5'>Courses</h5>
                     {/* //iterate through colors and generate inputs with genCourseInput*/}
                     {this.colors.map((inputColor) => (
-                        this.genCourseInput('text', 'courses', 'Course: (e.g CIS*3760)', {color: inputColor})
+                        this.genCourseInput('text', 'courses', 'Course: (e.g CIS*3760)', { color: inputColor })
                     ))}
 
                     <input
@@ -29,12 +41,12 @@ class CourseInput extends React.Component {
                         value="check"
                     ></input>
 
-                    <label for="ExamCheck">Show Exams?</label>
+                    <label className="courseInput_label" for="ExamCheck">Show Exams?</label>
 
                     <br></br>
                 </div>
-                <div class="parent">
-                    <div class="child">
+                <div className="choiceHolder">
+                    <div className="choiceSection">
                         <h6>Schedule Helper</h6>
                         {this.searchTypes.map((searchType) => (
                             <Form.Check
@@ -49,13 +61,13 @@ class CourseInput extends React.Component {
                         <h6>Suggested Courses</h6>
                         {this.searchTypes.map((searchType) => (
                             <div>
-                            {this.genInput('text', '', '', '', '', undefined)}
-                            <br/>
+                                {this.genInput('text', '', '', '', '', undefined)}
+                                <br />
                             </div>
                         ))}
                     </div>
                 </div>
-                <button type="button">Apply</button>
+                <Button>Apply</Button>
             </div>
         );
     }
@@ -79,7 +91,7 @@ class CourseInput extends React.Component {
             </>
         );
     }
-    genInput(type, id, list, name, placeholder, style ) {
+    genInput(type, id, list, name, placeholder, style) {
         return (
             <input
                 type={type}
@@ -92,20 +104,19 @@ class CourseInput extends React.Component {
 
     genQueryButton(url, name, query, args) {
         return (
-            <>
-                <Button onClick={(e) => {
-                    axios({
-                        url: url,
-                        method: query,
-                        headers: {},
-                        params: args,
-                    })
-                    .then((res) => { console.log(res["data"]) })
+            <Button onClick={(e) => {
+                axios({
+                    url: url,
+                    method: query,
+                    headers: {},
+                    params: args,
+                })
+
+                    .then((res) => { this.setState({ requestResult: JSON.stringify(res.data, null, 2) }) })
                     .catch((err) => { console.log("err") });
-                }}>
-                    {name}
-                </Button>
-            </>
+            }}>
+                {name}
+            </Button>
         );
     }
 }
