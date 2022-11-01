@@ -10,7 +10,7 @@ import DatalistInput from "react-datalist-input";
 */
 import Calendar from "./Components/Calendar.js";
 import CourseInput from "./Components/CourseInput";
-import CourseList from "./Components/CourseList";
+import ScheduledCoursesList from "./Components/ScheduledCoursesList";
 import CourseSearch from "./Components/CourseSearch";
 
 function App() {
@@ -25,7 +25,7 @@ function App() {
           <Calendar />
         </div>
         <div className="app-sidebar">
-          <CourseList />
+          <ScheduledCoursesList />
           <CourseSearch />
         </div>
       </div>

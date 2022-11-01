@@ -6,19 +6,21 @@ import '../css/CourseList.css';
 class CourseList extends React.Component {
     constructor(props) {
         super(props);
+        this.buttonVariant = props.buttonVariant;
+        this.buttonText = props.buttonText;
+        this.errorText = props.errorText;
         this.state = {courses: [{"code": "CIS*3760", "sections": [{"code": "0101"}]}]};
     }
 
     render() {
         return (
             <div className="courseList">
-                <h2>Courses</h2>
                 {this.getCourses()}
             </div>
         );
     }
 
-    addCourse(course) {
+    addCourse(course, buttonHandler) {
         this.state.push(course);
     }
 
@@ -32,7 +34,7 @@ class CourseList extends React.Component {
 
     getCourses() {
         if (this.state.courses.length === 0) {
-            return <h5 className="errorText">No courses added yet!</h5>;
+            return <h5 className="errorText">{this.props.errorText}</h5>;
         }
         else {
             return (
@@ -45,7 +47,7 @@ class CourseList extends React.Component {
                                 <h5>{course.code} ({course.sections[0].code})</h5>
                                 <p>Test</p>
                             </div>
-                            <Button variant="danger">Remove</Button>
+                            <Button variant={this.props.buttonVariant}>{this.props.buttonText}</Button>
                         </ListGroupItem>
                     </ListGroup>
                     );
