@@ -4,30 +4,3 @@
     border: 2px black;
     border-radius: 15px;
 }
-
-.courseListItem {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.courseListItem:not(:last-child) {
-    margin-bottom: 10px;
-}
-
-.courseListItem div {
-    display: inline-block;
-    width: 100%;
-}
-
-.courseListItem h5, .courseListItem p {
-    margin: 0;
-}
-
-.courseListItem Button {
-    height: 40px;
-}
-
-.errorText {
-    margin: 0;
-}
