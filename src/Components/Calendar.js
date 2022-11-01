@@ -17,7 +17,7 @@ import Button from 'react-bootstrap/Button';
 class Calendar extends React.Component {
   constructor(props) {
     super(props);
-    this.events = [{
+    this.state = {events: [{
         title: 'event 1',
         startTime: '10:00 am',
         endTime: '12:00 AM',
@@ -29,27 +29,25 @@ class Calendar extends React.Component {
         daysOfWeek: [1],
       }, {
         title: 'event 3',
-        startTime: '14:00',
+        startTime: '10:00',
         duration: "1:20",
         daysOfWeek: [1, 3, 5],
-      }, ];
+        color: 'white',
+      }, ] };
   }
 
   clearEvents() {
-    this.events = [];
+    this.setState({events: []});
   }
 
   addEvent(title, start, duration, days) {
     var newevent = {title: title, startTime: start, duration: duration, daysOfWeek: days};
-    console.log(newevent);
-    this.events.push(newevent);
-    console.log(this.events);
-    this.fullCalendar('rerenderEvents');
+    this.setState({events: [...this.state.events, newevent]});
   }
 
   render() {
     return (
-    <div className="App">
+    <div className="calendar">
       <FullCalendar
         plugins={[timeGridPlugin, interactionPlugin]}
         headerToolbar={false}
@@ -71,7 +69,7 @@ class Calendar extends React.Component {
             click: () => console.log('new event'),
           },
         }}*/
-        events={this.events}
+        events={this.state.events}
         allDaySlot={false}
         /*
         Tried out colour command to force change the colour. However cannot
@@ -81,12 +79,17 @@ class Calendar extends React.Component {
         /* This will log into the Javascript console the date you clicked */
         dateClick={(e) => console.log(e.dateStr)}
         /* This will log into the console the ID of the event you clicked */
-        eventClick={(e) => console.log(e.event.id)}
+        eventClick={(e) => console.log(e.event.title)}
       />
       <Button onClick={(e) => {
         this.addEvent("Event 4", "13:00", "1:00", [2]);
       }}>
         Add Course
+      </Button>
+      <Button onClick={(e) => {
+        this.clearEvents();
+      }}>
+        Clear
       </Button>
     </div> );
   }
