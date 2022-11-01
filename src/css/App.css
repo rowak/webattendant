@@ -1,5 +1,5 @@
 .App {
-
+    height: 100vh;
     background-color: #353C4A;
     color: white;
 }
@@ -39,3 +39,19 @@
     }
 }
 
+.app-content {
+    display: flex;
+    margin: 15px;
+}
+
+.app-sidebar {
+    display: flex;
+    flex-direction:column;
+    width: 40vw;
+    margin: 10px;
+}
+
+.calendar-wrap {
+    width: 60vw;
+    margin: 10px;
+}

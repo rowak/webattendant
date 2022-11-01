@@ -10,6 +10,8 @@ import DatalistInput from "react-datalist-input";
 */
 import Calendar from "./Components/Calendar.js";
 import CourseInput from "./Components/CourseInput";
+import CourseList from "./Components/CourseList";
+import CourseSearch from "./Components/CourseSearch";
 
 function App() {
   return (
@@ -18,7 +20,15 @@ function App() {
         <h1>Team 201</h1>
       </header>
       <CourseInput />
-      <Calendar />
+      <div className="app-content">
+        <div className="calendar-wrap">
+          <Calendar />
+        </div>
+        <div className="app-sidebar">
+          <CourseList />
+          <CourseSearch />
+        </div>
+      </div>
     </div>
   );
 }
