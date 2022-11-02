@@ -1,8 +1,12 @@
+body {
+    background: #353C4A !important;
+}
+
 .App {
     height: 100vh;
     background-color: #353C4A;
     color: white;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 .App-logo {

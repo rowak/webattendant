@@ -16,7 +16,6 @@ class CourseSearch extends React.Component {
     }
 
     render() {
-        console.log(this.state.courses);
         return (
             <div className="courseSearch">
                 <div className="courseSearchContent">
@@ -25,7 +24,7 @@ class CourseSearch extends React.Component {
                         <Form.Control type="text" placeholder="Enter a course name or code" value={this.state.query} onChange={this.queryChanged} onKeyDown={this.enterKeyHandler}></Form.Control>
                         <Button variant="secondary" onClick={this.search}>Search</Button>
                     </InputGroup>
-                    <CourseList buttonVariant="primary" buttonText="Add" errorText={this.state.errorText} courses={this.state.courses}/>
+                    <CourseList buttonVariant="primary" buttonText="Add" buttonCallback={this.props.buttonCallback} errorText={this.state.errorText} courses={this.state.courses}/>
                 </div>
             </div>
         );
@@ -59,7 +58,7 @@ class CourseSearch extends React.Component {
     }
 
     enterKeyHandler(e) {
-        if (e.key == "Enter") {
+        if (e.key === "Enter") {
             this.search()
         }
     }

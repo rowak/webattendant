@@ -6,9 +6,6 @@ import '../css/CourseList.css';
 class CourseList extends React.Component {
     constructor(props) {
         super(props);
-        this.buttonVariant = props.buttonVariant;
-        this.buttonText = props.buttonText;
-        this.errorText = props.errorText;
         this.state = {courses: props.courses};
     }
 
@@ -40,7 +37,7 @@ class CourseList extends React.Component {
                                     <h5>{course.code} ({course.sections[0].code})</h5>
                                     <p>{course.sections[0].name}</p>
                                 </div>
-                                <Button variant={this.props.buttonVariant}>{this.props.buttonText}</Button>
+                                <Button variant={this.props.buttonVariant} onClick={() => this.props.buttonCallback(course)}>{this.props.buttonText}</Button>
                             </ListGroupItem>
                         </ListGroup>
                         );
