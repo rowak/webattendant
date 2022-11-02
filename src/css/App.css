@@ -1,7 +1,12 @@
+body {
+    background: #353C4A !important;
+}
+
 .App {
     height: 100vh;
     background-color: #353C4A;
     color: white;
+    /* overflow: hidden; */
 }
 
 .App-logo {
@@ -47,11 +52,11 @@
 .app-sidebar {
     display: flex;
     flex-direction:column;
-    width: 40vw;
+    width: 35vw;
     margin: 10px;
 }
 
 .calendar-wrap {
-    width: 60vw;
+    width: 65vw;
     margin: 10px;
 }

@@ -5,24 +5,27 @@ import '../css/ScheduledCoursesList.css';
 class ScheduledCourseList extends React.Component {
     constructor(props) {
         super(props);
-        this.courseList = <CourseList buttonVariant="danger" buttonText="Remove" errorText="No courses have been added yet!"/>;
+        this.state = {
+            courses: props.courses
+        };
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        if (props.courses !== state.courses) {
+            return {
+                courses: props.courses
+            };
+        }
+        return null;
     }
 
     render() {
         return (
             <div className="scheduledCoursesList">
                 <h2>Courses</h2>
-                {this.courseList}
+                <CourseList buttonVariant="danger" buttonText="Remove" buttonCallback={this.props.buttonCallback} errorText="No courses have been added yet!" courses={this.state.courses}/>
             </div>
         );
-    }
-
-    addCourse(course) {
-        this.courseList.addCourse(course);
-    }
-
-    removeCourse(course) {
-        this.courseList.removeCourse(course);
     }
 }
 
