@@ -21,6 +21,12 @@ class App extends React.Component {
     };
   }
 
+  renderCalendar() {
+    return (
+        <Calendar courses={this.state.courses}/>
+    )
+  }
+
   render() {
     return (
       <div className="App">
@@ -29,7 +35,7 @@ class App extends React.Component {
         </header>
         <div className="app-content">
           <div className="calendar-wrap">
-            <Calendar />
+            {this.renderCalendar()}
           </div>
           <div className="app-sidebar">
             <CourseSearch courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} />
@@ -43,17 +49,19 @@ class App extends React.Component {
   // Callback that executes when the "Add" button in the
   // CourseSearch component is clicked.
   addCourseButtonCallback = (course) => {
+    console.log("addCourseButtonCallback called");
     let courses = this.state.courses;
     if (courses.length == 5) {
-      console.log("SCHEDULE IS FULL");
-      // TODO: notify user
+        console.log("SCHEDULE IS FULL");
+        // TODO: notify user
     }
     if (!this.hasCourse(courses, course)) {
-      courses.push(course);
+        courses.push(course);
     }
     this.setState({
-      courses: courses
+        courses: courses
     });
+    console.log(this.state.courses);
   }
 
   // Callback that executes when the "Remove" button in the
