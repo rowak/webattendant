@@ -5,7 +5,7 @@ import '../css/ScheduledCoursesList.css';
 class ScheduledCourseList extends React.Component {
     constructor(props) {
         super(props);
-        this.courseList = <CourseList buttonVariant="danger" buttonText="Remove" errorText="No courses have been added yet!"/>;
+        this.courseList = <CourseList buttonVariant="danger" buttonText="Remove" errorText="No courses have been added yet!" courses={props.courses}/>;
     }
 
     render() {
@@ -15,14 +15,6 @@ class ScheduledCourseList extends React.Component {
                 {this.courseList}
             </div>
         );
-    }
-
-    addCourse(course) {
-        this.courseList.addCourse(course);
-    }
-
-    removeCourse(course) {
-        this.courseList.removeCourse(course);
     }
 }
 

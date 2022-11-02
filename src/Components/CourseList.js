@@ -9,50 +9,43 @@ class CourseList extends React.Component {
         this.buttonVariant = props.buttonVariant;
         this.buttonText = props.buttonText;
         this.errorText = props.errorText;
-        this.state = {courses: [{"code": "CIS*3760", "sections": [{"code": "0101"}]}]};
+        this.state = {courses: props.courses};
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        if (props.courses !== state.courses) {
+            return {
+                courses: props.courses
+            };
+        }
+        return null;
     }
 
     render() {
-        return (
-            <div className="courseList">
-                {this.getCourses()}
-            </div>
-        );
-    }
-
-    addCourse(course, buttonHandler) {
-        this.state.push(course);
-    }
-
-    removeCourse(course) {
-        let courses = this.state.courses;
-        let idx = courses.indexOf(course);
-        if (idx != -1) {
-            courses.splice(idx, 1);
-        }
-    }
-
-    getCourses() {
         if (this.state.courses.length === 0) {
-            return <h5 className="errorText">{this.props.errorText}</h5>;
+            return (
+                <div className="courseList">
+                    <h5 className="errorText">{this.props.errorText}</h5>
+                </div>
+            );
         }
         else {
             return (
-                <React.Fragment>
-                {this.state.courses.map(course => {
-                    return (
-                    <ListGroup>
-                        <ListGroupItem className="courseListItem ms-0">
-                            <div>
-                                <h5>{course.code} ({course.sections[0].code})</h5>
-                                <p>Test</p>
-                            </div>
-                            <Button variant={this.props.buttonVariant}>{this.props.buttonText}</Button>
-                        </ListGroupItem>
-                    </ListGroup>
-                    );
-                })}
-                </React.Fragment>
+                <div className="courseList listOverflow">
+                    {this.state.courses.map((course, i) => {
+                        return (
+                        <ListGroup key={i}>
+                            <ListGroupItem className="courseListItem ms-0">
+                                <div>
+                                    <h5>{course.code} ({course.sections[0].code})</h5>
+                                    <p>{course.sections[0].name}</p>
+                                </div>
+                                <Button variant={this.props.buttonVariant}>{this.props.buttonText}</Button>
+                            </ListGroupItem>
+                        </ListGroup>
+                        );
+                    })}
+                </div>
             );
         }
     }

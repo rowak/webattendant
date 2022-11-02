@@ -15,9 +15,9 @@ def applyCaching(response):
         response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
-@app.route('/')
-def homePage():
-    return "hello world"
+@app.route('/ping')
+def healthCheck():
+    return "pong!"
 
 @app.route('/allCourses', methods=['GET'])
 def allCourses():
@@ -40,11 +40,89 @@ def getCourse():
     else:
         return course
 
+# Searches for courses given a query string.
+# Allowed searches include:
+#  - Search by course code
+#  - Search by course code and section
+#  - Search by course name
+#  - Search by professor name
+@app.route('/search', methods=['GET'])
+def search():
+    if "query" not in request.args:
+        return Response(json.dumps({"error": "No search query specified."}), status=400)
+
+    query = request.args["query"]
+    
+    return search(query)
+
 @app.route('/randomCourse', methods=['GET'])
 def randomCourse():
     i = random.randint(0, len(courseList) - 1)
     resp = Response(json.dumps(courseList[i]))
     return resp
+
+def search(query):
+    query = query.lower().strip()
+    queryParts = query.upper().split("*")
+    if len(queryParts) > 3:
+        # Query is in an unrecognized format
+        return []
+    elif len(queryParts) == 3:
+        # Query is (maybe) in the format COURSE*CODE*SECTIONCODE
+        courseCode = (queryParts[0] + queryParts[1]).upper()
+        sectionCode = queryParts[2].lstrip("0")
+    elif len(queryParts) == 2:
+        # Query is (maybe) in the format COURSE*CODE
+        courseCode = query.upper().replace("*", "")
+        sectionCode = None
+    else:
+        # Query is (maybe) in the format COURSECODE
+        courseCode = queryParts[0]
+        sectionCode = None
+
+    courses = []
+    for course in courseList:
+        # Check for courses with a matching course code
+        if course["code"].replace("*", "") == courseCode:
+            if sectionCode != None:
+                # Check for courses with a matching section code (if required)
+                for section in course["sections"]:
+                    if section["code"].lstrip("0") == sectionCode:
+                        courses.append(getCourseWithSection(course, sectionCode))
+            else:
+                for section in course["sections"]:
+                    courses.append(getCourseWithSection(course, section["code"]))
+        else:
+            for section in course["sections"]:
+                # Check for sections with a matching name
+                if courseNameMatchesQuery(section["name"], query):
+                    courses.append(getCourseWithSection(course, section["code"]))
+                # Check for sections with a matching instructor
+                else:
+                    for teacher in section["teachers"]:
+                        if teacher.lower().strip() == query:
+                            courses.append(getCourseWithSection(course, section["code"]))
+                            break
+    return courses
+
+# This is a simple method of determining if a course name
+# satisfies a search query. Each word in the query is compared
+# to each word in the course name. If all of the words in the
+# query match some or all of the words in the course name, then
+# the query matches the name. Words with less than 4 characters
+# are ignored.
+def courseNameMatchesQuery(courseName, query):
+    if len(query) <= 3:
+        return False
+    numMatchingWords = 0
+    queryWords = query.split(" ")
+    nameWords = courseName.lower().split(" ")
+    for wordQ in queryWords:
+        for wordN in nameWords:
+            if wordQ == wordN:
+                numMatchingWords += 1
+                break
+    return numMatchingWords >= len(queryWords)
 
 # Finds a course in the course list based on a specific
 # course code and (optionally) a section code.
@@ -66,6 +144,7 @@ def findCourse(code, sectionCode):
 # Returns a copy of a course object with only a specific section
 # (all others removed).
 def getCourseWithSection(course, sectionCode):
+    sectionCode = sectionCode.lstrip("0")
     courseCopy = course.copy()
     sections = []
     for section in course["sections"]:

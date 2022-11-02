@@ -3,4 +3,10 @@
     background: #282c34;
     border: 2px black;
     border-radius: 15px;
+    max-height: 650px;
+}
+
+.courseSearchContent {
+    overflow: hidden;
+    max-height: 600px;
 }

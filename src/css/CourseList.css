@@ -1,11 +1,16 @@
+.listOverflow {
+    overflow: auto;
+    max-height: 500px;
+}
+
 .courseListItem {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
 
-.courseListItem:not(:last-child) {
-    margin-bottom: 10px;
+.courseListItem {
+    margin-top: 10px;
 }
 
 .courseListItem > div {
@@ -22,5 +27,9 @@
 }
 
 .errorText {
-    margin: 0;
+    margin: 10px 0 0 0;
+}
+
+.courseListItem:hover {
+    background: lightgray;
 }

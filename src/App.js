@@ -14,6 +14,8 @@ import ScheduledCoursesList from "./Components/ScheduledCoursesList";
 import CourseSearch from "./Components/CourseSearch";
 
 function App() {
+  // let courses = [{"code": "CIS*3760", "sections": [{"code": "0101"}]}];
+  let courses = [];
   return (
     <div className="App">
       <header className="App-header">
@@ -25,8 +27,8 @@ function App() {
           <Calendar />
         </div>
         <div className="app-sidebar">
-          <ScheduledCoursesList />
-          <CourseSearch />
+          <ScheduledCoursesList courses={courses} />
+          <CourseSearch courses={courses} />
         </div>
       </div>
     </div>
