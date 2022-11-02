@@ -45,6 +45,17 @@ class Calendar extends React.Component {
     this.setState({events: [...this.state.events, newevent]});
   }
 
+  removeEvent(course, section) {
+    var newArray = [];
+    this.state.events.map((event) => {
+      if(event.title.includes(course) == false || event.title.includes(section) == false) {
+        newArray.push(event);
+      }
+    });
+
+    this.setState({events: newArray});
+  }
+
   render() {
     return (
     <div className="calendar">
@@ -90,6 +101,11 @@ class Calendar extends React.Component {
         this.clearEvents();
       }}>
         Clear
+      </Button>
+      <Button onClick={(e) => {
+        this.removeEvent("Event", "4");
+      }}>
+        Remove
       </Button>
     </div> );
   }
