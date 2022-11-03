@@ -50,21 +50,23 @@ class App extends React.Component {
   // Function to translate a list of days into an array of numbers
   translateDays = (days) => {
     let array = [];
-    for(let i = 0; i < days.length; i++) {
-      if(days[i].toLowerCase() === "mon") {
-        array.push(1);
-      } else if(days[i].toLowerCase() === "tues") {
-        array.push(2);
-      } else if(days[i].toLowerCase() === "wed") {
-        array.push(3);
-      } else if(days[i].toLowerCase() === "thurs") {
-        array.push(4);
-      } else if(days[i].toLowerCase() === "fri") {
-        array.push(5);
-      } else if(days[i].toLowerCase() === "sat") {
-        array.push(6);
-      } else {
-        array.push(0);
+    if(days != null) {
+      for(let i = 0; i < days.length; i++) {
+        if(days[i].toLowerCase() === "mon") {
+          array.push(1);
+        } else if(days[i].toLowerCase() === "tues") {
+          array.push(2);
+        } else if(days[i].toLowerCase() === "wed") {
+          array.push(3);
+        } else if(days[i].toLowerCase() === "thurs") {
+          array.push(4);
+        } else if(days[i].toLowerCase() === "fri") {
+          array.push(5);
+        } else if(days[i].toLowerCase() === "sat") {
+          array.push(6);
+        } else {
+          array.push(0);
+        }
       }
     }
     return array;
@@ -78,34 +80,44 @@ class App extends React.Component {
     if (courses.length === 5) {
         console.log("SCHEDULE IS FULL");
         // TODO: notify user
+        return;
     }
     if (!this.hasCourse(courses, course)) {
         console.log(course);
-        for(let i = 0; i < course.sections.length; i++) {
-          let sec = course.sections[i];
-          let entireCourse = {
-            code: course.code,
-            sectioncode: sec.code,
-            events: []
-          };
-          for(let j = 0; j < sec.meetings.length; j++) {
-            let meet = sec.meetings[j];
-            // A more event friendly format
-            // course: The main course
-            // sec: The section data
-            // meet: The meeting data
-            let newEvent = {
-              title: course.code.concat(" ", sec.code.concat(" ", meet.type)),
-              code: course.code,
-              startTime: moment(meet.startTime, ["h:mm A"]).format("HH:mm"),
-              endTime: moment(meet.endTime, ["h:mm A"]).format("HH:mm"),
-              daysOfWeek: this.translateDays(meet.daysOfWeek),
-              sectioncode: sec.code
-            };
-            entireCourse.events.push(newEvent);
+        // entire course will be all data about the course
+        let entireCourse = {
+          code: course.code,
+          events: []
+        };
+        if('sections' in course) {
+          for(let i = 0; i < course.sections.length; i++) {
+            let sec = course.sections[i];
+            // If you want to add any more data about the section, then specify
+            // it here (Eg, prof, type, ...)
+            // The calendar will not use this
+            entireCourse.sectioncode = sec.code;
+            if('meetings' in sec) {
+              for(let j = 0; j < sec.meetings.length; j++) {
+                let meet = sec.meetings[j];
+                // A more event friendly format
+                // Everything in newEvent will be included in the event listing
+                // Calendar will use this data for the display
+                let newEvent = {
+                  title: course.code.concat(" ", sec.code.concat(" ", meet.type)),
+                  code: course.code,
+                  startTime: moment(meet.startTime, ["h:mm A"]).format("HH:mm"),
+                  endTime: moment(meet.endTime, ["h:mm A"]).format("HH:mm"),
+                  daysOfWeek: this.translateDays(meet.daysOfWeek),
+                  sectioncode: sec.code
+                };
+                entireCourse.events.push(newEvent);
+              }
+            }
           }
-          courses.push(entireCourse);
+        } else {
+          entireCourse.sectioncode = "";
         }
+      courses.push(entireCourse);
     }
     this.setState({
         courses: courses

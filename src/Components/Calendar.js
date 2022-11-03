@@ -19,36 +19,30 @@ class Calendar extends React.Component {
         super(props);
         console.log(props.courses);
         this.state = {
-            events: [
-                // {
-                //     title: 'event 1',
-                //     startTime: '10:00 am',
-                //     endTime: '12:00 AM',
-                //     daysOfWeek: [1],
-                // }, {
-                //     title: 'event 2',
-                //     startTime: '9:00',
-                //     duration: "1",
-                //     daysOfWeek: [1],
-                // }, {
-                //     title: 'event 3',
-                //     startTime: '10:00',
-                //     duration: "1:20",
-                //     daysOfWeek: [1, 3, 5],
-                //     color: 'white',
-                // },
-            ]
+            events: []
         };
     }
 
-    clearEvents() {
-        this.setState({ events: [] });
-    }
+    // clearEvents() {
+    //     this.setState({ events: [] });
+    // }
 
-    addEvent(title, start, duration, days) {
-        var newevent = { title: title, startTime: start, duration: duration, daysOfWeek: days };
-        this.setState({ events: [...this.state.events, newevent] });
-    }
+    // addEvent(title, start, duration, days) {
+    //     var newevent = { title: title, startTime: start, duration: duration, daysOfWeek: days };
+    //     this.setState({ events: [...this.state.events, newevent] });
+    // }
+
+    componentDidUpdate(prevProps) {
+        if(prevProps !== this.props) {
+            let event = [];
+            for(let i = 0; i < this.props.courses.length; i++) {
+                for(let j = 0; j < this.props.courses[i].events.length; j++) {
+                    event.push(this.props.courses[i].events[j]);
+                }
+            }
+            this.setState({ events: event });
+        }
+    } 
 
     render() {
         return (
@@ -76,7 +70,7 @@ class Calendar extends React.Component {
                         click: () => console.log('new event'),
                       },
                     }}*/
-                    events={this.props.courses.events}
+                    events={this.state.events}
                     allDaySlot={false}
                     /*
                     Tried out colour command to force change the colour. However cannot
@@ -88,16 +82,6 @@ class Calendar extends React.Component {
                     /* This will log into the console the ID of the event you clicked */
                     eventClick={(e) => console.log(e.event.title)}
                 />
-                <Button onClick={(e) => {
-                    this.addEvent("Event 4", "13:00", "1:00", [2]);
-                }}>
-                    Add Course
-                </Button>
-                <Button onClick={(e) => {
-                    this.clearEvents();
-                }}>
-                    Clear
-                </Button>
             </div>);
     }
 }
