@@ -58,7 +58,7 @@ class App extends React.Component {
           array.push(2);
         } else if(days[i].toLowerCase() === "wed") {
           array.push(3);
-        } else if(days[i].toLowerCase() === "thurs") {
+        } else if(days[i].toLowerCase() === "thur") {
           array.push(4);
         } else if(days[i].toLowerCase() === "fri") {
           array.push(5);
