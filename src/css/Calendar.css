@@ -1,0 +1,14 @@
+.calendar-wrapper {
+    background: #282c34;
+    padding: 20px 25px 20px 25px;
+    border-radius: 15px;
+}
+
+.fc-day-today {
+    background-color: #282c34 !important;
+}
+
+.fc-col-header-cell a {
+    color: white !important;
+    text-decoration: none;
+}
