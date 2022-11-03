@@ -78,6 +78,7 @@ class Calendar extends React.Component {
             }}
             contentHeight={'auto'}
             eventStartEditable={false}
+            eventDurationEditable={false}
             /*
             Potential button to add more courses?
 
