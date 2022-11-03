@@ -12,6 +12,7 @@ import React from 'react';
 import Calendar from "./Components/Calendar.js";
 import ScheduledCoursesList from "./Components/ScheduledCoursesList";
 import CourseSearch from "./Components/CourseSearch";
+import moment from 'moment';
 
 class App extends React.Component {
   constructor() {
@@ -19,6 +20,12 @@ class App extends React.Component {
     this.state = {
       courses: []
     };
+  }
+
+  renderCalendar() {
+    return (
+        <Calendar courses={this.state.courses}/>
+    )
   }
 
   render() {
@@ -29,7 +36,7 @@ class App extends React.Component {
         </header>
         <div className="app-content">
           <div className="calendar-wrap">
-            <Calendar />
+            {this.renderCalendar()}
           </div>
           <div className="app-sidebar">
             <CourseSearch courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} />
@@ -40,20 +47,77 @@ class App extends React.Component {
     );
   }
 
+  // Function to translate a list of days into an array of numbers
+  translateDays = (days) => {
+    let array = [];
+    if(days != null) {
+      for(let i = 0; i < days.length; i++) {
+        if(days[i].toLowerCase() === "mon") {
+          array.push(1);
+        } else if(days[i].toLowerCase() === "tues") {
+          array.push(2);
+        } else if(days[i].toLowerCase() === "wed") {
+          array.push(3);
+        } else if(days[i].toLowerCase() === "thurs") {
+          array.push(4);
+        } else if(days[i].toLowerCase() === "fri") {
+          array.push(5);
+        } else if(days[i].toLowerCase() === "sat") {
+          array.push(6);
+        } else {
+          array.push(0);
+        }
+      }
+    }
+    return array;
+  }
+
   // Callback that executes when the "Add" button in the
   // CourseSearch component is clicked.
   addCourseButtonCallback = (course) => {
+    console.log("addCourseButtonCallback called");
     let courses = this.state.courses;
-    if (courses.length == 5) {
-      console.log("SCHEDULE IS FULL");
-      // TODO: notify user
+    if (courses.length === 5) {
+        console.log("SCHEDULE IS FULL");
+        // TODO: notify user
+        return;
     }
     if (!this.hasCourse(courses, course)) {
+        // Add new field to course for events
+        course.events = [];
+        if('sections' in course) {
+          for(let i = 0; i < course.sections.length; i++) {
+            let sec = course.sections[i];
+            if('meetings' in sec) {
+              for(let j = 0; j < sec.meetings.length; j++) {
+                let meet = sec.meetings[j];
+                // A more event friendly format
+                // Everything in newEvent will be included in the event listing
+                // Calendar will use this data for the display
+                // Calendar will not have access to course for a specific entry, so
+                // make sure each event has everything it needs
+                let newEvent = {
+                  title: course.code.concat(" ", sec.code.concat(" ", meet.type)),
+                  code: course.code,
+                  startTime: moment(meet.startTime, ["h:mm A"]).format("HH:mm"),
+                  endTime: moment(meet.endTime, ["h:mm A"]).format("HH:mm"),
+                  daysOfWeek: this.translateDays(meet.daysOfWeek),
+                  sectioncode: sec.code
+                };
+                // Basic ignore exams functionality
+                if(meet.type.toLowerCase() !== "exam") {
+                  course.events.push(newEvent);
+                }
+              }
+            }
+          }
+        }
       courses.push(course);
     }
     this.setState({
-      courses: courses
+        courses: courses
     });
+    console.log(this.state.courses);
   }
 
   // Callback that executes when the "Remove" button in the
