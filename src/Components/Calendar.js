@@ -33,16 +33,28 @@ class Calendar extends React.Component {
     //     this.setState({ events: [...this.state.events, newevent] });
     // }
 
-  removeEvent(course, section) {
-    var newArray = [];
-    this.state.events.map((event) => {
-      if(event.title.includes(course) == false || event.title.includes(section) == false) {
-        newArray.push(event);
-      }
-    });
+    removeEvent(course, section) {
+        var newArray = [];
+        this.state.events.map((event) => {
+            if(event.title.includes(course) == false || event.title.includes(section) == false) {
+            newArray.push(event);
+            }
+        });
+        this.setState({events: newArray});
+    }
 
-    this.setState({events: newArray});
-  }
+    componentDidUpdate(prevProps) {
+        if(prevProps !== this.props) {
+            let event = [];
+            for(let i = 0; i < this.props.courses.length; i++) {
+                for(let j = 0; j < this.props.courses[i].events.length; j++) {
+                    event.push(this.props.courses[i].events[j]);
+                }
+            }
+            this.setState({ events: event });
+        }
+    } 
+
 
   render() {
     return (
