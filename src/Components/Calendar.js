@@ -77,6 +77,7 @@ class Calendar extends React.Component {
                 weekday: 'short'
             }}
             contentHeight={'auto'}
+            eventStartEditable={false}
             /*
             Potential button to add more courses?
 
