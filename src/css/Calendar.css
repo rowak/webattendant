@@ -12,3 +12,7 @@
     color: white !important;
     text-decoration: none;
 }
+
+.fc-event{
+    cursor: pointer;
+}
