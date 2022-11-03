@@ -54,6 +54,7 @@ class Calendar extends React.Component {
         return (
             <div className="calendar">
                 <p>{JSON.stringify(this.props.courses)}</p>
+
                 <FullCalendar
                     plugins={[timeGridPlugin, interactionPlugin]}
                     headerToolbar={false}
@@ -75,7 +76,7 @@ class Calendar extends React.Component {
                         click: () => console.log('new event'),
                       },
                     }}*/
-                    events={this.state.events}
+                    events={this.props.courses.events}
                     allDaySlot={false}
                     /*
                     Tried out colour command to force change the colour. However cannot

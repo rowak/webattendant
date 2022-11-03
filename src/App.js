@@ -12,7 +12,6 @@ import React from 'react';
 import Calendar from "./Components/Calendar.js";
 import ScheduledCoursesList from "./Components/ScheduledCoursesList";
 import CourseSearch from "./Components/CourseSearch";
-import Button from 'react-bootstrap/Button';
 
 class App extends React.Component {
   constructor() {
@@ -42,47 +41,6 @@ class App extends React.Component {
             <CourseSearch courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} />
             <ScheduledCoursesList courses={this.state.courses} buttonCallback={this.removeCourseButtonCallback} />
           </div>
-          <Button onClick={(e) => {
-            let event = {
-    "code": "CIS*3210",
-    "sections": [{
-        "academicLevel": "Undergraduate",
-        "availableCapacity": 0,
-        "capacity": 95,
-        "code": "0101",
-        "credits": 0.5,
-        "id": "7254",
-        "location": "Guelph",
-        "meetings": [{
-            "date": null,
-            "daysOfWeek": ["Mon", "Wed", "Fri"],
-            "endTime": "11:20AM",
-            "roomInfo": {
-                "building": "AD-S",
-                "roomNumber": "VIRTUAL (more)..."
-            },
-            "startTime": "10:30AM",
-            "type": "LEC"
-        },{
-            "date": null,
-            "daysOfWeek": ["Mon", "Wed", "Fri"],
-            "endTime": "11:20AM",
-            "roomInfo": {
-                "building": "AD-S",
-                "roomNumber": "VIRTUAL (more)..."
-            },
-            "startTime": "10:30AM",
-            "type": "LAB"
-        }],
-        "name": "Computer Networks",
-        "status": "Closed",
-        "teachers": ["TBA  TBA"],
-        "term": "Fall 2022"
-    }]
-};
-                    this.addCourseButtonCallback(event);
-          }}>test
-          </Button>
         </div>
       </div>
     );
@@ -124,20 +82,28 @@ class App extends React.Component {
         console.log(course);
         for(let i = 0; i < course.sections.length; i++) {
           let sec = course.sections[i];
-
+          let entireCourse = {
+            code: course.code,
+            sectioncode: sec.code,
+            events: []
+          };
           for(let j = 0; j < sec.meetings.length; j++) {
             let meet = sec.meetings[j];
             // A more event friendly format
+            // course: The main course
+            // sec: The section data
+            // meet: The meeting data
             let newEvent = {
-              title: sec.name, 
+              title: course.code.concat(" ", sec.code.concat(" ", meet.type)),
               code: course.code,
               startTime: meet.startTime,
               endTime: meet.endTime,
               daysOfWeek: this.translateDays(meet.daysOfWeek),
               sectioncode: sec.code
             };
-            courses.push(newEvent);
+            entireCourse.events.push(newEvent);
           }
+          courses.push(entireCourse);
         }
     }
     this.setState({
@@ -150,7 +116,7 @@ class App extends React.Component {
   // ScheduledCoursesList component is clicked.
   removeCourseButtonCallback = (course) => {
     let courses = this.state.courses;
-    while (this.hasCourse(courses, course)) {
+    if (this.hasCourse(courses, course)) {
       let idx = courses.indexOf(course);
       courses.splice(idx, 1);
     }
