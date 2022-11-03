@@ -34,7 +34,7 @@ class CourseList extends React.Component {
                         <ListGroup key={i}>
                             <ListGroupItem className="courseListItem ms-0">
                                 <div>
-                                    <h5>{course.code} ({course.sectioncode})</h5>
+                                    <h5>{course.code} ({course.sections[0].code})</h5>
                                     <p>{course.title}</p>
                                 </div>
                                 <Button variant={this.props.buttonVariant} onClick={() => this.props.buttonCallback(course)}>{this.props.buttonText}</Button>

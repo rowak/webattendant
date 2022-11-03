@@ -85,17 +85,13 @@ class App extends React.Component {
     if (!this.hasCourse(courses, course)) {
         console.log(course);
         // entire course will be all data about the course
-        let entireCourse = {
-          code: course.code,
-          events: []
-        };
+        course.events = [];
         if('sections' in course) {
           for(let i = 0; i < course.sections.length; i++) {
             let sec = course.sections[i];
             // If you want to add any more data about the section, then specify
             // it here (Eg, prof, type, ...)
             // The calendar will not use this
-            entireCourse.sectioncode = sec.code;
             if('meetings' in sec) {
               for(let j = 0; j < sec.meetings.length; j++) {
                 let meet = sec.meetings[j];
@@ -110,14 +106,14 @@ class App extends React.Component {
                   daysOfWeek: this.translateDays(meet.daysOfWeek),
                   sectioncode: sec.code
                 };
-                entireCourse.events.push(newEvent);
+                if(meet.type.toLowerCase() !== "exam") {
+                  course.events.push(newEvent);
+                }
               }
             }
           }
-        } else {
-          entireCourse.sectioncode = "";
         }
-      courses.push(entireCourse);
+      courses.push(course);
     }
     this.setState({
         courses: courses
