@@ -12,6 +12,7 @@ import React from 'react';
 import Calendar from "./Components/Calendar.js";
 import ScheduledCoursesList from "./Components/ScheduledCoursesList";
 import CourseSearch from "./Components/CourseSearch";
+import moment from 'moment';
 
 class App extends React.Component {
   constructor() {
@@ -96,8 +97,8 @@ class App extends React.Component {
             let newEvent = {
               title: course.code.concat(" ", sec.code.concat(" ", meet.type)),
               code: course.code,
-              startTime: meet.startTime,
-              endTime: meet.endTime,
+              startTime: moment(meet.startTime, ["h:mm A"]).format("HH:mm"),
+              endTime: moment(meet.endTime, ["h:mm A"]).format("HH:mm"),
               daysOfWeek: this.translateDays(meet.daysOfWeek),
               sectioncode: sec.code
             };
