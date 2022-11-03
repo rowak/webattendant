@@ -11,7 +11,7 @@ Libraries required for calendar to work
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import Button from 'react-bootstrap/Button';
+//import Button from 'react-bootstrap/Button';
 import "../css/Calendar.css";
 
 
@@ -33,15 +33,15 @@ class Calendar extends React.Component {
     //     this.setState({ events: [...this.state.events, newevent] });
     // }
 
-    removeEvent(course, section) {
-        var newArray = [];
-        this.state.events.map((event) => {
-            if(event.title.includes(course) == false || event.title.includes(section) == false) {
-            newArray.push(event);
-            }
-        });
-        this.setState({events: newArray});
-    }
+    // removeEvent(course, section) {
+    //     var newArray = [];
+    //     this.state.events.map((event) => {
+    //         if(event.title.includes(course) == false || event.title.includes(section) == false) {
+    //         newArray.push(event);
+    //         }
+    //     });
+    //     this.setState({events: newArray});
+    // }
 
     componentDidUpdate(prevProps) {
         if(prevProps !== this.props) {
@@ -98,21 +98,6 @@ class Calendar extends React.Component {
             /* This will log into the console the ID of the event you clicked */
             eventClick={(e) => console.log(e.event.title)}
         />
-        <Button onClick={(e) => {
-            this.addEvent("Event 4", "13:00", "1:00", [2]);
-        }}>
-            Add Course
-        </Button>
-        <Button onClick={(e) => {
-            this.clearEvents();
-        }}>
-            Clear
-        </Button>
-        <Button onClick={(e) => {
-            this.removeEvent("Event", "4");
-        }}>
-            Remove
-        </Button>
         </div>
     </div>
     );
