@@ -60,3 +60,13 @@ body {
     width: 65vw;
     margin: 10px;
 }
+
+@media (max-width: 800px) {
+    .app-content {
+        flex-direction: column-reverse;
+    }
+
+    .app-sidebar, .calendar-wrap {
+        width: auto;
+    }
+}
