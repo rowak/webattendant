@@ -22,7 +22,8 @@ class App extends React.Component {
     };
   }
   // variables
-  colours = ['#C09BD8', '#F5B400', '#8AC926', '#1982C4', '#6A4C93'];
+  colors = ['#C09BD8', '#F5B400', '#8AC926', '#1982C4', '#6A4C93'];
+  usedColors = [null, null, null, null, null];
 
   renderCalendar() {
     return (
@@ -74,6 +75,27 @@ class App extends React.Component {
     return array;
   }
 
+  // Reserves a unique color for a course.
+  getNextColor = (courseCode) => {
+    for (let i = 0; i < this.colors.length; i++) {
+      if (this.usedColors[i] === null) {
+        this.usedColors[i] = courseCode;
+        return this.colors[i]
+      }
+    }
+    return null;
+  }
+
+  // Frees the color used by a course so it can be used
+  // by other courses.
+  freeColor = (courseCode) => {
+    for (let i = 0; i < this.colors.length; i++) {
+      if (this.usedColors[i] === courseCode) {
+        this.usedColors[i] = null;
+      }
+    }
+  }
+
   // Callback that executes when the "Add" button in the
   // CourseSearch component is clicked.
   addCourseButtonCallback = (course) => {
@@ -85,6 +107,7 @@ class App extends React.Component {
         return;
     }
     if (!this.hasCourse(courses, course)) {
+        let color = this.getNextColor(course.code);
         // Add new field to course for events
         course.events = [];
         if('sections' in course) {
@@ -106,7 +129,9 @@ class App extends React.Component {
                   daysOfWeek: this.translateDays(meet.daysOfWeek),
                   sectioncode: sec.code,
                   //set colour based on how many courses are already in the schedule
-                  backgroundColor: this.colours[courses.length],
+                  backgroundColor: color,
+                  borderColor: color,
+                  originalBorderColor: color
                 };
                 // Basic ignore exams functionality
                 if(meet.type.toLowerCase() !== "exam") {
@@ -116,6 +141,7 @@ class App extends React.Component {
             }
           }
         }
+      course.color = color;
       courses.push(course);
     }
     this.setState({
@@ -132,6 +158,7 @@ class App extends React.Component {
       let idx = courses.indexOf(course);
       courses.splice(idx, 1);
     }
+    this.freeColor(course.code);
     this.setState({
       courses: courses
     });

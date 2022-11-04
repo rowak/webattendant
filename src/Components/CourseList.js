@@ -30,9 +30,13 @@ class CourseList extends React.Component {
             return (
                 <div className="courseList listOverflow">
                     {this.state.courses.map((course, i) => {
+                        let borderColor = "transparent";
+                        if (this.props.borderColors) {
+                            borderColor = course.color;
+                        }
                         return (
                         <ListGroup key={i}>
-                            <ListGroupItem className="courseListItem ms-0">
+                            <ListGroupItem className="courseListItem ms-0" style={{borderColor: borderColor}}>
                                 <div>
                                     <h5>{course.code} ({course.sections[0].code})</h5>
                                     <p>{course.sections[0].name}</p>
