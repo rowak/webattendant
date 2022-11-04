@@ -23,7 +23,14 @@ class ScheduledCourseList extends React.Component {
         return (
             <div className="scheduledCoursesList">
                 <h2>Courses</h2>
-                <CourseList buttonVariant="danger" buttonText="Remove" buttonCallback={this.props.buttonCallback} errorText="No courses have been added yet!" courses={this.state.courses}/>
+                <CourseList
+                    buttonVariant="danger"
+                    buttonText="Remove"
+                    buttonCallback={this.props.buttonCallback}
+                    errorText="No courses have been added yet!"
+                    courses={this.state.courses}
+                    borderColors={true}
+                />
             </div>
         );
     }

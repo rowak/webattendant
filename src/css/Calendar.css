@@ -15,4 +15,5 @@
 
 .fc-event{
     cursor: pointer;
+    border-width: 3px;
 }
