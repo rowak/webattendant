@@ -5,7 +5,7 @@
 }
 
 .fc-day-today {
-    background-color: #282c34 !important;
+    background-color: inherit !important;
 }
 
 .fc-col-header-cell a {
@@ -13,7 +13,7 @@
     text-decoration: none;
 }
 
-.fc-event{
+.fc-event {
     cursor: pointer;
     border-width: 3px;
 }
