@@ -7,9 +7,11 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    border-width: 5px;
+    border-color: transparent;
 }
 
-.courseListItem {
+.courseListGroup:not(:first-child) {
     margin-top: 10px;
 }
 

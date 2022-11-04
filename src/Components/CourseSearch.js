@@ -20,7 +20,7 @@ class CourseSearch extends React.Component {
             <div className="courseSearch">
                 <div className="courseSearchContent">
                     <h2>Search</h2>
-                    <InputGroup className="mb-1">
+                    <InputGroup className="mb-3">
                         <Form.Control type="text" placeholder="Enter a course name or code" value={this.state.query} onChange={this.queryChanged} onKeyDown={this.enterKeyHandler}></Form.Control>
                         <Button variant="secondary" onClick={this.search}>Search</Button>
                     </InputGroup>

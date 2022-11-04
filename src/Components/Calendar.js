@@ -51,6 +51,9 @@ class Calendar extends React.Component {
                     event.push(this.props.courses[i].events[j]);
                 }
             }
+            for (let i = 0; i < event.length; i++) {
+                event[i].borderColor = event[i].originalBorderColor;
+            }
             //check for conflicts between events
             //im sorry for the time complexity (it had to be done)
             for(let i = 0; i < event.length; i++) {
