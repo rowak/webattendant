@@ -11,7 +11,7 @@
     border-color: transparent;
 }
 
-.courseListItem {
+.courseListGroup:not(:first-child) {
     margin-top: 10px;
 }
 

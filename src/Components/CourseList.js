@@ -35,7 +35,7 @@ class CourseList extends React.Component {
                             borderColor = course.color;
                         }
                         return (
-                        <ListGroup key={i}>
+                        <ListGroup key={i} className="courseListGroup">
                             <ListGroupItem className="courseListItem ms-0" style={{borderColor: borderColor}}>
                                 <div>
                                     <h5>{course.code} ({course.sections[0].code})</h5>
