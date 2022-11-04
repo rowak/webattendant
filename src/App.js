@@ -21,6 +21,8 @@ class App extends React.Component {
       courses: []
     };
   }
+  // variables
+  colours = ['#C09BD8', '#F5B400', '#8AC926', '#1982C4', '#6A4C93'];
 
   renderCalendar() {
     return (
@@ -32,7 +34,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
-          <h1>Team 201</h1>
+          <h1>WebAttendant</h1>
         </header>
         <div className="app-content">
           <div className="calendar-wrap">
@@ -58,7 +60,7 @@ class App extends React.Component {
           array.push(2);
         } else if(days[i].toLowerCase() === "wed") {
           array.push(3);
-        } else if(days[i].toLowerCase() === "thurs") {
+        } else if(days[i].toLowerCase() === "thur") {
           array.push(4);
         } else if(days[i].toLowerCase() === "fri") {
           array.push(5);
@@ -102,7 +104,9 @@ class App extends React.Component {
                   startTime: moment(meet.startTime, ["h:mm A"]).format("HH:mm"),
                   endTime: moment(meet.endTime, ["h:mm A"]).format("HH:mm"),
                   daysOfWeek: this.translateDays(meet.daysOfWeek),
-                  sectioncode: sec.code
+                  sectioncode: sec.code,
+                  //set colour based on how many courses are already in the schedule
+                  backgroundColor: this.colours[courses.length],
                 };
                 // Basic ignore exams functionality
                 if(meet.type.toLowerCase() !== "exam") {

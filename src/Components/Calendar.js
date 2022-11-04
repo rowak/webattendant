@@ -18,7 +18,6 @@ import "../css/Calendar.css";
 class Calendar extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props.courses);
         this.state = {
             events: []
         };
@@ -48,13 +47,43 @@ class Calendar extends React.Component {
             let event = [];
             for(let i = 0; i < this.props.courses.length; i++) {
                 for(let j = 0; j < this.props.courses[i].events.length; j++) {
+                    
                     event.push(this.props.courses[i].events[j]);
+                }
+            }
+            //check for conflicts between events
+            //im sorry for the time complexity (it had to be done)
+            for(let i = 0; i < event.length; i++) {
+                //check overlaps
+                for(let j = i + 1; j < event.length; j++) {
+                    for(let k = 0; k < event[i].daysOfWeek.length; k++) {
+                        for(let l = 0; l < event[j].daysOfWeek.length; l++) {
+                            if(event[i].daysOfWeek[k] == event[j].daysOfWeek[l]) {
+                                if(event[i].startTime < event[j].startTime) {
+                                    if(event[i].endTime > event[j].startTime) {
+                                        //set border color on conflict (default is white)
+                                        event[i].borderColor = "red";
+                                        event[j].borderColor = "red";
+                                    }
+                                }
+                                else {
+                                    if(event[j].endTime > event[i].startTime) {
+                                        event[i].borderColor = "red";
+                                        event[j].borderColor = "red";
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             this.setState({ events: event });
         }
     } 
 
+    checkConflicts() {
+        
+    }
 
   render() {
     return (
@@ -77,6 +106,8 @@ class Calendar extends React.Component {
                 weekday: 'short'
             }}
             contentHeight={'auto'}
+            eventStartEditable={false}
+            eventDurationEditable={false}
             /*
             Potential button to add more courses?
 
