@@ -17,7 +17,7 @@ lint:
   before_script:
     - apk update && apk add make
   script:
-    - make lint
+    - make lint-ci
   dependencies:
     - build
 
