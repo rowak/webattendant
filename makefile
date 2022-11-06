@@ -15,6 +15,9 @@ install:
 deploy:
 	./scripts/deploy.sh
 
+lint:
+	npm run lint && pylint backend
+
 test:
 	$(PYINT) -m unittest discover tests
 

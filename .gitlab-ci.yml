@@ -2,6 +2,7 @@ image: docker
 
 stages:
   - build
+  - lint
   - deploy
 
 build-job:
@@ -10,6 +11,11 @@ build-job:
     - apk update && apk add docker-compose && apk add make
   script:
     - make build
+
+lint-job:
+  stage: lint
+  script:
+    - make lint
 
 deploy-job:
   stage: deploy
