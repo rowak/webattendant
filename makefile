@@ -21,7 +21,7 @@ lint:
 # TODO: test all python code instead of specific files
 # TODO: add CI linting for frontend
 lint-ci:
-	docker run --rm pylint courseparser.py wsgi.py flaskServer.py
+	docker run --rm cis3760-api pylint courseparser.py wsgi.py flaskServer.py
 
 test-api:
 	$(PYINT) -m unittest discover tests
