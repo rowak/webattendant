@@ -61,7 +61,7 @@ class Calendar extends React.Component {
                 for(let j = i + 1; j < event.length; j++) {
                     for(let k = 0; k < event[i].daysOfWeek.length; k++) {
                         for(let l = 0; l < event[j].daysOfWeek.length; l++) {
-                            if(event[i].daysOfWeek[k] == event[j].daysOfWeek[l]) {
+                            if(event[i].daysOfWeek[k] === event[j].daysOfWeek[l]) {
                                 if(event[i].startTime < event[j].startTime) {
                                     if(event[i].endTime > event[j].startTime) {
                                         //set border color on conflict (default is white)
