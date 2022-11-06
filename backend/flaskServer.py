@@ -1,13 +1,12 @@
-
-from flask import Flask, request, jsonify, Response
 import json
 import random
 import os
+from flask import Flask, request, Response
 
 with open("courseOutput.json") as file:
-    courseList = json.load(file)
+    course_list = json.load(file)
 app = Flask(__name__, static_folder='..',  static_url_path='/')
- 
+
 @app.after_request
 def applyCaching(response):
     # Disable CORS in development mode
@@ -16,29 +15,28 @@ def applyCaching(response):
     return response
 
 @app.route('/ping')
-def healthCheck():
+def health_check():
     return "pong!"
 
 @app.route('/allCourses', methods=['GET'])
-def allCourses():
-    return courseList
+def all_courses():
+    return course_list
 
 @app.route('/getCourse', methods=['GET'])
-def getCourse():
+def get_course():
     if "code" not in request.args:
         return Response(json.dumps({"error": "No course specified."}), status=400)
-    
+
     code = request.args["code"]
     if "sectionCode" in request.args:
         section = request.args["sectionCode"]
     else:
         section = None
-    course = findCourse(code, section)
+    course = find_course(code, section)
 
-    if course == None:
+    if course is None:
         return Response(json.dumps({"error": "Course not found."}), status=404)
-    else:
-        return course
+    return course
 
 # Searches for courses given a query string.
 # Allowed searches include:
@@ -52,56 +50,56 @@ def search():
         return Response(json.dumps({"error": "No search query specified."}), status=400)
 
     query = request.args["query"]
-    
-    return search(query)
+
+    return search_with_query(query)
 
 @app.route('/randomCourse', methods=['GET'])
-def randomCourse():
-    i = random.randint(0, len(courseList) - 1)
-    resp = Response(json.dumps(courseList[i]))
+def random_course():
+    i = random.randint(0, len(course_list) - 1)
+    resp = Response(json.dumps(course_list[i]))
     return resp
 
-def search(query):
+def search_with_query(query):
     query = query.lower().strip()
-    queryParts = query.upper().split("*")
-    if len(queryParts) > 3:
+    query_parts = query.upper().split("*")
+    if len(query_parts) > 3:
         # Query is in an unrecognized format
         return []
-    elif len(queryParts) == 3:
+    elif len(query_parts) == 3:
         # Query is (maybe) in the format COURSE*CODE*SECTIONCODE
-        courseCode = (queryParts[0] + queryParts[1]).upper()
-        sectionCode = queryParts[2].lstrip("0")
-    elif len(queryParts) == 2:
+        course_code = (query_parts[0] + query_parts[1]).upper()
+        section_code = query_parts[2].lstrip("0")
+    elif len(query_parts) == 2:
         # Query is (maybe) in the format COURSE*CODE
-        courseCode = query.upper().replace("*", "")
-        sectionCode = None
+        course_code = query.upper().replace("*", "")
+        section_code = None
     else:
         # Query is (maybe) in the format COURSECODE
-        courseCode = queryParts[0]
-        sectionCode = None
+        course_code = query_parts[0]
+        section_code = None
 
     courses = []
-    for course in courseList:
+    for course in course_list:
         # Check for courses with a matching course code
-        if course["code"].replace("*", "") == courseCode:
-            if sectionCode != None:
+        if course["code"].replace("*", "") == course_code:
+            if section_code != None:
                 # Check for courses with a matching section code (if required)
                 for section in course["sections"]:
-                    if section["code"].lstrip("0") == sectionCode:
-                        courses.append(getCourseWithSection(course, sectionCode))
+                    if section["code"].lstrip("0") == section_code:
+                        courses.append(get_course_with_section(course, section_code))
             else:
                 for section in course["sections"]:
-                    courses.append(getCourseWithSection(course, section["code"]))
+                    courses.append(get_course_with_section(course, section["code"]))
         else:
             for section in course["sections"]:
                 # Check for sections with a matching name
-                if courseNameMatchesQuery(section["name"], query):
-                    courses.append(getCourseWithSection(course, section["code"]))
+                if course_name_matches_query(section["name"], query):
+                    courses.append(get_course_with_section(course, section["code"]))
                 # Check for sections with a matching instructor
                 else:
                     for teacher in section["teachers"]:
                         if teacher.lower().strip() == query:
-                            courses.append(getCourseWithSection(course, section["code"]))
+                            courses.append(get_course_with_section(course, section["code"]))
                             break
     return courses
 
@@ -111,44 +109,43 @@ def search(query):
 # query match some or all of the words in the course name, then
 # the query matches the name. Words with less than 4 characters
 # are ignored.
-def courseNameMatchesQuery(courseName, query):
+def course_name_matches_query(course_name, query):
     if len(query) <= 3:
         return False
-    numMatchingWords = 0
-    queryWords = query.split(" ")
-    nameWords = courseName.lower().split(" ")
-    for wordQ in queryWords:
-        for wordN in nameWords:
-            if wordQ == wordN:
-                numMatchingWords += 1
+    num_matching_words = 0
+    query_words = query.split(" ")
+    name_words = course_name.lower().split(" ")
+    for word_q in query_words:
+        for word_n in name_words:
+            if word_q == word_n:
+                num_matching_words += 1
                 break
-    return numMatchingWords >= len(queryWords)
+    return num_matching_words >= len(query_words)
 
 # Finds a course in the course list based on a specific
 # course code and (optionally) a section code.
-def findCourse(code, sectionCode):
+def find_course(code, section_code):
     code = code.upper().replace("*", "")
-    if sectionCode != None:
-        sectionCode = sectionCode.lstrip("0")
-    for course in courseList:
+    if section_code is not None:
+        section_code = section_code.lstrip("0")
+    for course in course_list:
         if course["code"].replace("*", "") == code:
-            if sectionCode != None:
+            if section_code is not None:
                 for section in course["sections"]:
-                    if section["code"].lstrip("0") == sectionCode:
-                        return getCourseWithSection(course, sectionCode)
+                    if section["code"].lstrip("0") == section_code:
+                        return get_course_with_section(course, section_code)
                 return None
-            else:
-                return course
+            return course
     return None
 
 # Returns a copy of a course object with only a specific section
 # (all others removed).
-def getCourseWithSection(course, sectionCode):
-    sectionCode = sectionCode.lstrip("0")
-    courseCopy = course.copy()
+def get_course_with_section(course, section_code):
+    section_code = section_code.lstrip("0")
+    course_copy = course.copy()
     sections = []
     for section in course["sections"]:
-        if section["code"].lstrip("0") == sectionCode:
+        if section["code"].lstrip("0") == section_code:
             sections.append(section)
-    courseCopy["sections"] = sections
-    return courseCopy
+    course_copy["sections"] = sections
+    return course_copy
