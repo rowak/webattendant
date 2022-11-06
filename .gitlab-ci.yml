@@ -5,21 +5,23 @@ stages:
   - lint
   - deploy
 
-build-job:
+build:
   stage: build
   before_script:
     - apk update && apk add docker-compose && apk add make
   script:
     - make build
 
-lint-job:
+lint:
   stage: lint
   before_script:
     - apk update && apk add make
   script:
     - make lint
+  dependencies:
+    - build
 
-deploy-job:
+deploy:
   stage: deploy
   only:
     - main
