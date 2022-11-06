@@ -10,6 +10,7 @@ FROM python:3.9
 WORKDIR /app
 
 COPY backend/* ./
+COPY .pylintrc ./
 COPY --from=alpine /etc/ssl/certs/ssl_api_cert.crt /etc/ssl/certs/ssl_api_cert.crt
 COPY --from=alpine /etc/ssl/private/ssl_api_cert.key /etc/ssl/private/ssl_api_cert.key
 RUN pip install virtualenv flask gunicorn pylint
