@@ -18,8 +18,6 @@ lint:
     - apk update && apk add make
   script:
     - make lint-ci
-  dependencies:
-    - build
 
 deploy:
   stage: deploy
