@@ -1,7 +1,12 @@
 FROM node AS node-builder
 WORKDIR /app
-
 COPY . .
+
+# Stop here if building a linting image
+FROM node-builder as lint
+CMD ["npm", "run", "lint"]
+
+FROM node-builder as production
 RUN npm install && npm run build
 
 # Generate SSL certificate
