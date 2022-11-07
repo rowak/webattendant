@@ -14,6 +14,8 @@ build:
 
 lint:
   stage: lint
+  before_script:
+    - apk update && apk add make
   script:
     - make lint-ci
   dependencies:
