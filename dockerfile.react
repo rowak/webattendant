@@ -1,6 +1,11 @@
 FROM node AS node-builder
 WORKDIR /app
+RUN npm install eslint
 COPY . .
+
+# Stop here if building a linting image
+FROM node-builder as lint
+CMD ["npx", "eslint", "src/**/*.js"]
 
 FROM node-builder as production
 RUN npm install && npm run build
