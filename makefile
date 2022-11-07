@@ -19,8 +19,7 @@ lint:
 	npm run lint && pylint backend
 
 lint-ci:
-	docker build --file dockerfile.react -t cis3760-react-lint --target lint .
-	docker run --rm cis3760-react-lint
+	docker run -it --rm -v $(shell pwd):/data cytopia/eslint src
 	docker run --rm cis3760-api pylint /app
 
 test-api:
