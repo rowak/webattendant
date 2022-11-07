@@ -12,8 +12,8 @@ run:
 install:
 	./scripts/install.sh
 
-deploy:
-	./scripts/deploy.sh
+# deploy:
+	
 
 lint:
 	npm run lint && pylint backend
@@ -26,5 +26,5 @@ lint-ci:
 test-api:
 	$(PYINT) -m unittest discover tests
 
-clean:
-	find . -type d -name __pycache__ -prune -exec rm -rf {} \;
+#clean:
+#	find . -type d -name __pycache__ -prune -exec rm -rf {} \;

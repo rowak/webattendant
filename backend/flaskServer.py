@@ -5,7 +5,7 @@ from flask import Flask, request, Response
 
 with open("courseOutput.json") as file:
     course_list = json.load(file)
-app = Flask(__name__, static_folder='..',  static_url_path='/')
+app = Flask(__name__, static_folder='..', static_url_path='/')
 
 @app.after_request
 def applyCaching(response):
