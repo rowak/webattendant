@@ -1,5 +1,7 @@
-from flaskServer import app
+"""This is a bootstrap for the Flask server."""
+
 import os
+from flaskServer import app
 
 if __name__ == "__main__":
     if os.environ.get("FLASK_ENVIRONMENT", "") == "development":
