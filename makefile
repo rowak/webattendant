@@ -19,8 +19,8 @@ lint:
 	npm run lint && pylint backend
 
 lint-ci:
-	docker run --rm -v $(shell pwd):/data cytopia/eslint src
-	docker run --rm cis3760-api pylint /app
+	docker run --rm -v $(shell pwd):/data cytopia/eslint src/**/*.js
+#docker run --rm cis3760-api pylint /app
 
 test-api:
 	$(PYINT) -m unittest discover tests

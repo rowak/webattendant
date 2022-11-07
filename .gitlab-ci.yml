@@ -1,8 +1,8 @@
 image: docker
 
 stages:
-  - build
   - lint
+  - build
   - deploy
 
 build:
