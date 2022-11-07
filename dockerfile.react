@@ -1,8 +1,8 @@
 FROM node AS node-builder
 WORKDIR /app
-# RUN npm install eslint
+RUN npm install eslint
 COPY . .
-RUN npm install
+# RUN npm install
 
 # Stop here if building a linting image
 FROM node-builder as lint
