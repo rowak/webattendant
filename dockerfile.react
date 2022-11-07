@@ -1,6 +1,6 @@
 FROM node AS node-builder
 WORKDIR /app
-RUN npm install eslint
+RUN npm install eslint && npm install eslint-config-react-app
 COPY . .
 
 # Stop here if building a linting image
