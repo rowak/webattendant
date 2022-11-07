@@ -32,6 +32,10 @@ npm install
 printf "\033[1;33mInstalling Docker...\033[0m\n"
 sudo apt install docker.io docker-compose -y
 
+# Install Linter
+printf "\033[1;33mInstalling Linter...\033[0m\n"
+sudo apt install pylint -y
+
 printf "\033[1;33mDone!\033[0m\n"
 
 deactivate
