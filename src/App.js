@@ -55,7 +55,7 @@ class App extends React.Component {
     let array = [];
     if(days != null) {
       for(let i = 0; i < days.length; i++) {
-        if(days[i].toLowerCase() == "mon") {
+        if(days[i].toLowerCase() === "mon") {
           array.push(1);
         } else if(days[i].toLowerCase() === "tues") {
           array.push(2);

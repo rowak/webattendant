@@ -21,7 +21,7 @@ lint:
 lint-ci:
 	docker build --file dockerfile.react -t cis3760-react-lint --target lint .
 	docker run --rm cis3760-react-lint npx eslint "src/**/*.js"
-#docker run --rm cis3760-api pylint /app
+	docker run --rm cis3760-api pylint /app
 
 test-api:
 	$(PYINT) -m unittest discover tests
