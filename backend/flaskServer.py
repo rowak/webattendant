@@ -1,29 +1,44 @@
+'''
+The backend server that will service requests.
+Runs on localhost, but hosted through NGINX
+'''
 import json
 import random
 import os
 from flask import Flask, request, Response
 
-with open("courseOutput.json") as file:
+with open("courseOutput.json", encoding="utf-8") as file:
     course_list = json.load(file)
 app = Flask(__name__, static_folder='..', static_url_path='/')
 
 @app.after_request
-def applyCaching(response):
-    # Disable CORS in development mode
+def apply_caching(response):
+    '''
+    Disable CORS in development mode.
+    '''
     if os.environ.get("FLASK_ENVIRONMENT", "") == "development":
         response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
 @app.route('/ping')
 def health_check():
+    '''
+    A small request that will return "pong!"
+    '''
     return "pong!"
 
 @app.route('/allCourses', methods=['GET'])
 def all_courses():
+    '''
+    Debug function that will return every course stored.
+    '''
     return course_list
 
 @app.route('/getCourse', methods=['GET'])
 def get_course():
+    '''
+    A function that will get a course entry, including all sections.
+    '''
     if "code" not in request.args:
         return Response(json.dumps({"error": "No course specified."}), status=400)
 
@@ -38,14 +53,16 @@ def get_course():
         return Response(json.dumps({"error": "Course not found."}), status=404)
     return course
 
-# Searches for courses given a query string.
-# Allowed searches include:
-#  - Search by course code
-#  - Search by course code and section
-#  - Search by course name
-#  - Search by professor name
 @app.route('/search', methods=['GET'])
 def search():
+    '''
+    Searches for courses given a query string.
+    Allowed searches include:
+     - Search by course code
+     - Search by course code and section
+     - Search by course name
+     - Search by professor name
+    '''
     if "query" not in request.args:
         return Response(json.dumps({"error": "No search query specified."}), status=400)
 
@@ -55,17 +72,34 @@ def search():
 
 @app.route('/randomCourse', methods=['GET'])
 def random_course():
+    '''
+    A function that will return a random course.
+    '''
     i = random.randint(0, len(course_list) - 1)
-    resp = Response(json.dumps(course_list[i]))
+    course = course_list[i]
+    section = []
+    j = random.randint(0, len(course["sections"]) - 1)
+    section.append(course["sections"][j])
+    resp = {
+        'code': course["code"],
+        'sections': section
+    }
     return resp
 
 def search_with_query(query):
+    '''
+    Performs a search to find the course in the course_list array.
+    Will first parse the input to make sure it is in a recognizable format,
+    then will perform a search through the courses to see if it matches an
+    field in the input. If it does, then the course will be added.
+    '''
     query = query.lower().strip()
     query_parts = query.upper().split("*")
     if len(query_parts) > 3:
         # Query is in an unrecognized format
         return []
-    elif len(query_parts) == 3:
+
+    if len(query_parts) == 3:
         # Query is (maybe) in the format COURSE*CODE*SECTIONCODE
         course_code = (query_parts[0] + query_parts[1]).upper()
         section_code = query_parts[2].lstrip("0")
@@ -78,38 +112,59 @@ def search_with_query(query):
         course_code = query_parts[0]
         section_code = None
 
+    return search_each_course(query, course_code, section_code)
+
+def search_each_course(query, course_code, section_code):
+    '''
+    A function to perform the query on each individual course currently
+    stored.
+    '''
     courses = []
     for course in course_list:
         # Check for courses with a matching course code
         if course["code"].replace("*", "") == course_code:
-            if section_code != None:
-                # Check for courses with a matching section code (if required)
-                for section in course["sections"]:
-                    if section["code"].lstrip("0") == section_code:
-                        courses.append(get_course_with_section(course, section_code))
-            else:
-                for section in course["sections"]:
-                    courses.append(get_course_with_section(course, section["code"]))
+            code_match(courses, course, section_code)
         else:
-            for section in course["sections"]:
-                # Check for sections with a matching name
-                if course_name_matches_query(section["name"], query):
-                    courses.append(get_course_with_section(course, section["code"]))
-                # Check for sections with a matching instructor
-                else:
-                    for teacher in section["teachers"]:
-                        if teacher.lower().strip() == query:
-                            courses.append(get_course_with_section(course, section["code"]))
-                            break
+            other_search(courses, course, query)
     return courses
 
-# This is a simple method of determining if a course name
-# satisfies a search query. Each word in the query is compared
-# to each word in the course name. If all of the words in the
-# query match some or all of the words in the course name, then
-# the query matches the name. Words with less than 4 characters
-# are ignored.
+def code_match(courses, course, section_code):
+    '''
+    If the code matches the course, then this function is run.
+    '''
+    if section_code is not None:
+    # Check for courses with a matching section code (if required)
+        for section in course["sections"]:
+            if section["code"].lstrip("0") == section_code:
+                courses.append(get_course_with_section(course, section_code))
+    else:
+        for section in course["sections"]:
+            courses.append(get_course_with_section(course, section["code"]))
+
+def other_search(courses, course, query):
+    '''
+    Will perform the other kinds of searches on the file.
+    '''
+    for section in course["sections"]:
+        # Check for sections with a matching name
+        if course_name_matches_query(section["name"], query):
+            courses.append(get_course_with_section(course, section["code"]))
+        # Check for sections with a matching instructor
+        else:
+            for teacher in section["teachers"]:
+                if teacher.lower().strip() == query:
+                    courses.append(get_course_with_section(course, section["code"]))
+                    break
+
 def course_name_matches_query(course_name, query):
+    '''
+    This is a simple method of determining if a course name
+    satisfies a search query. Each word in the query is compared
+    to each word in the course name. If all of the words in the
+    query match some or all of the words in the course name, then
+    the query matches the name. Words with less than 4 characters
+    are ignored.
+    '''
     if len(query) <= 3:
         return False
     num_matching_words = 0
@@ -122,9 +177,11 @@ def course_name_matches_query(course_name, query):
                 break
     return num_matching_words >= len(query_words)
 
-# Finds a course in the course list based on a specific
-# course code and (optionally) a section code.
 def find_course(code, section_code):
+    '''
+    Finds a course in the course list based on a specific
+    course code and (optionally) a section code.
+    '''
     code = code.upper().replace("*", "")
     if section_code is not None:
         section_code = section_code.lstrip("0")
@@ -138,9 +195,11 @@ def find_course(code, section_code):
             return course
     return None
 
-# Returns a copy of a course object with only a specific section
-# (all others removed).
 def get_course_with_section(course, section_code):
+    '''
+    Returns a copy of a course object with only a specific section
+    (all others removed).
+    '''
     section_code = section_code.lstrip("0")
     course_copy = course.copy()
     sections = []

@@ -18,10 +18,10 @@ install:
 lint:
 	npm run lint && pylint backend
 
-# TODO: test all python code instead of specific files
-# TODO: add CI linting for frontend
 lint-ci:
-	docker run --rm cis3760-api pylint courseparser.py wsgi.py flaskServer.py
+	docker build --file dockerfile.react -t cis3760-react-lint --target lint .
+	docker run --rm cis3760-react-lint npx eslint "src/**/*.js"
+	docker run --rm cis3760-api pylint /app
 
 test-api:
 	$(PYINT) -m unittest discover tests

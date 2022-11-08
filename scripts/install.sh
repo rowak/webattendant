@@ -34,7 +34,7 @@ sudo apt install docker.io docker-compose -y
 
 # Install Linter
 printf "\033[1;33mInstalling Linter...\033[0m\n"
-sudo apt install pylint -y
+sudo apt install pylint==2.15.5 -y
 
 printf "\033[1;33mDone!\033[0m\n"
 

@@ -36,8 +36,10 @@ import json
 # 9: A hidden variable
 # 10: Academic level
 
-"""This class parses the input HTML course list into JSON."""
 class ParseData(HTMLParser):
+    '''
+    This class parses the input HTML course list into JSON.
+    '''
     # An explanation of the variables:
     # data_read : A variable that indicates what kind of data you are reading in.
     #            There is a list above which explains what each entry in the table
@@ -46,7 +48,7 @@ class ParseData(HTMLParser):
     # jdata    : A string which can be converted into a JSON data structure once
     #            completed
     def __init__(self):
-        super(ParseData, self).__init__()
+        super().__init__()
         self.data_read = -1
         self.store = ""
         self.store_lines = []  # Contains the same data as "store", but in an array
@@ -82,6 +84,9 @@ class ParseData(HTMLParser):
     #      If there is something in self.jdata, then it needs to be finished up
 
     def handle_starttag(self, tag, attrs):
+        '''
+        Function for handling each starting tag
+        '''
         if tag == "tr":
             if self.data_read == -1:
                 self.jdata = {}
@@ -95,79 +100,12 @@ class ParseData(HTMLParser):
                 self.store += " "
 
     def handle_endtag(self, tag):
+        '''
+        Function for handling all ending tags
+        '''
         if tag == "td" and self.data_read != -1:
             if self.store != "":
-                # Store will need to clean up extra spaces
-                self.store = self.store.strip()
-                if self.data_read == 0:
-                    # 0 is unique as it usually is a hidden index value.
-                    # However, it will only be 0 if it is the first entry.
-                    # In other words, we are done reading the previous jdata
-                    if len(self.jdata) != 0:
-                        # At this point, jdata can be converted to a JSON object and treated as
-                        # done and ready to be stored.
-                        if self.course["code"] == self.curr_course_code \
-                                or self.course["code"] == "":
-                            # Add the current section to the course
-                            self.course["code"] = self.curr_course_code
-                            self.course["sections"].append(self.jdata.copy())
-                        else:
-                            # Flush the current course because a new course was detected
-                            self.courses_array.append(self.course.copy())
-                            self.course["sections"] = [self.jdata.copy()]
-                            self.course["code"] = self.curr_course_code
-                        self.jdata = {}
-                elif self.data_read == 1:
-                    # Case for the term (Usually something like "Fall 2022")
-                    # Type: String
-                    self.jdata["term"] = self.store
-                elif self.data_read == 2:
-                    # Case for the status
-                    # Type: String
-                    self.jdata["status"] = self.store
-                elif self.data_read == 3:
-                    # Case for the code, id, and name. ID will be the section number
-                    # Type: String, Int, String
-                    course_info = self.store.split(" ")
-                    course_and_section_code = course_info[0].split("*")
-                    course_code = course_and_section_code[0] + "*" + course_and_section_code[1]
-                    section_code = course_and_section_code[2]
-                    section_id = course_info[1].replace("(", "").replace(")", "")
-                    course_name = " ".join(course_info[2:len(course_info)])
-                    self.jdata["code"] = section_code
-                    self.jdata["id"] = section_id
-                    self.jdata["name"] = course_name
-                    self.curr_course_code = course_code
-                elif self.data_read == 4:
-                    # Case for the location info (Guelph mostly)
-                    # Type: String
-                    self.jdata["location"] = self.store
-                elif self.data_read == 5:
-                    # Case for the meeting info
-                    # Type: CUSTOM
-                    meeting_info = ParseData.parse_meeting_info(self, self.store_lines)
-                    self.jdata["meetings"] = meeting_info
-                elif self.data_read == 6:
-                    # Case for the professor teaching the course
-                    # Type: String
-                    teachers = self.store.split(", ")
-                    self.jdata["teachers"] = teachers
-                elif self.data_read == 7:
-                    # Case for the capacity and avaialbel capacity
-                    # Type: Int, Int
-                    temp = self.store.split("/", 2)
-                    self.jdata["availableCapacity"] = int(temp[0])
-                    self.jdata["capacity"] = int(temp[1])
-                elif self.data_read == 8:
-                    # Case for the credits
-                    # Type: Float
-                    self.jdata["credits"] = float(self.store)
-                elif self.data_read == 10:
-                    self.jdata["academicLevel"] = self.store
-                elif self.data_read != 9:
-                    error = {"error": self.store}
-                    self.jdata["errors"].append(error)
-                # End of stuff to do with the store
+                ParseData.various_end_case(self)
             self.data_read += 1
             self.store = ""
             self.store_lines = []
@@ -181,39 +119,121 @@ class ParseData(HTMLParser):
                     self.jdata = {}
             self.data_read = -1
 
+    def various_end_case(self):
+        '''
+        Acts as a makeshift switch statement
+        '''
+        # Store will need to clean up extra spaces
+        self.store = self.store.strip()
+        if self.data_read == 0:
+            # 0 is unique as it usually is a hidden index value.
+            # However, it will only be 0 if it is the first entry.
+            # In other words, we are done reading the previous jdata
+            if len(self.jdata) != 0:
+                # At this point, jdata can be converted to a JSON object and treated as
+                # done and ready to be stored.
+                ParseData.handle_0_case(self)
+        elif self.data_read == 1:
+            # Case for the term (Usually something like "Fall 2022")
+            # Type: String
+            self.jdata["term"] = self.store
+        elif self.data_read == 2:
+            # Case for the status
+            # Type: String
+            self.jdata["status"] = self.store
+        elif self.data_read == 3:
+            # Case for the code, id, and name. ID will be the section number
+            # Type: String, Int, String
+            ParseData.handle_3_case(self)
+        elif self.data_read == 4:
+            # Case for the location info (Guelph mostly)
+            # Type: String
+            self.jdata["location"] = self.store
+        elif self.data_read == 5:
+            # Case for the meeting info
+            # Type: CUSTOM
+            meeting_info = ParseData.parse_meeting_info(self, self.store_lines)
+            self.jdata["meetings"] = meeting_info
+        elif self.data_read == 6:
+            # Case for the professor teaching the course
+            # Type: String
+            teachers = self.store.split(", ")
+            self.jdata["teachers"] = teachers
+        elif self.data_read == 7:
+            # Case for the capacity and avaialbel capacity
+            # Type: Int, Int
+            temp = self.store.split("/", 2)
+            self.jdata["availableCapacity"] = int(temp[0])
+            self.jdata["capacity"] = int(temp[1])
+        elif self.data_read == 8:
+            # Case for the credits
+            # Type: Float
+            self.jdata["credits"] = float(self.store)
+        elif self.data_read == 10:
+            self.jdata["academicLevel"] = self.store
+        elif self.data_read != 9:
+            error = {"error": self.store}
+            self.jdata["errors"].append(error)
+        # End of stuff to do with the store
+
+    def handle_0_case(self):
+        '''
+        Method for handling the 0 or first case
+        '''
+        if self.course["code"] == self.curr_course_code \
+                        or self.course["code"] == "":
+            # Add the current section to the course
+            self.course["code"] = self.curr_course_code
+            self.course["sections"].append(self.jdata.copy())
+        else:
+            # Flush the current course because a new course was detected
+            self.courses_array.append(self.course.copy())
+            self.course["sections"] = [self.jdata.copy()]
+            self.course["code"] = self.curr_course_code
+        self.jdata = {}
+
+    def handle_3_case(self):
+        '''
+        Method for handling the 0 case
+        '''
+        course_info = self.store.split(" ")
+        course_and_section_code = course_info[0].split("*")
+        course_code = course_and_section_code[0] + "*" + course_and_section_code[1]
+        section_code = course_and_section_code[2]
+        section_id = course_info[1].replace("(", "").replace(")", "")
+        course_name = " ".join(course_info[2:len(course_info)])
+        self.jdata["code"] = section_code
+        self.jdata["id"] = section_id
+        self.jdata["name"] = course_name
+        self.curr_course_code = course_code
+
     def handle_data(self, data):
+        '''
+        A small function to handle the data for each tag if the read
+        variable is set
+        '''
         if self.data_read != -1:
             self.store += data
             self.store_lines.append(data)
 
-    # Parses the HTML meeting information and converts it into a dictionary representing
-    # a meeting_info object
-    #
-    # meeting_lines -- an array with each element representing the inner text of a <div>
-    #                 from the meeting information of the HTML document
     def parse_meeting_info(self, meeting_lines):
+        '''
+        Parses the HTML meeting information and converts it into a dictionary representing
+        a meeting_info object
+
+        meeting_lines -- an array with each element representing the inner text of a <div>
+                         from the meeting information of the HTML document
+        '''
         all_meeting_info = []
 
         line_iterator = iter(meeting_lines)
         curr_line = next(line_iterator)
-        while curr_line != None:
+        while curr_line is not None:
             meeting_info = {}
             room_info = {}
 
             # Parse meeting_type
-            if curr_line.startswith("Distance Education"):
-                meeting_type = "Distance Education"
-            else:
-                line_split = curr_line.split(" ")
-                meeting_type = line_split[0]
-            meeting_info["type"] = meeting_type
-
-            # Parse daysOfWeek
-            days = curr_line.replace(meeting_type + " ", "")
-            if days == "Days TBA":
-                meeting_info["daysOfWeek"] = None
-            else:
-                meeting_info["daysOfWeek"] = days.split(", ")
+            ParseData.perform_meeting_type(self, curr_line, meeting_info)
 
             # Parse startTime and endTime
             times_line = next(line_iterator)
@@ -227,7 +247,7 @@ class ParseData(HTMLParser):
                 meeting_info["endTime"] = None
 
             # Parse date (only for exams)
-            if meeting_type == "EXAM":
+            if meeting_info["type"] == "EXAM":
                 # Special Case: Exam is a one-time event, so it occurs on a specific day
                 match = re.search(r'\((\d+/\d+/\d+)\)', times_line)
                 meeting_info["date"] = match.group(1)
@@ -236,8 +256,7 @@ class ParseData(HTMLParser):
 
             # Parsing building (stored in roomInfo)
             building_line = next(line_iterator)
-            if building_line != "Room TBA" and building_line != "Room VIRTUAL"\
-                    and building_line != "Room GNHS":
+            if building_line not in ["Room TBA", "Room VIRTUAL", "Room GNHS"]:
                 room_info["building"] = building_line
                 curr_line = next(line_iterator)
             else:
@@ -256,21 +275,47 @@ class ParseData(HTMLParser):
             meeting_info["roomInfo"] = room_info
 
             all_meeting_info.append(meeting_info)
-            if curr_line != None:
+            if curr_line is not None:
                 curr_line = next(line_iterator, None)
 
         return all_meeting_info
 
+    def perform_meeting_type(self, curr_line, meeting_info):
+        '''
+        A function to get the meeting type and the days.
+        '''
+        if curr_line.startswith("Distance Education"):
+            meeting_info["type"] = "Distance Education"
+        else:
+            line_split = curr_line.split(" ")
+            meeting_info["type"] = line_split[0]
+
+        # Parse daysOfWeek
+        days = curr_line.replace(meeting_info["type"] + " ", "")
+        if days == "Days TBA":
+            meeting_info["daysOfWeek"] = None
+        else:
+            meeting_info["daysOfWeek"] = days.split(", ")
+
+    def error(self, message):
+        print(message)
+
+
 def export_to_json(dictionary, filename):
-    with open(filename, "w") as outfile:
+    '''
+    Basic function to port to json
+    '''
+    with open(filename, "w", encoding="utf-8") as outfile:
         json.dump(dictionary, outfile)
 
-def ParseCourses(in_filename, out_filename):
-    # A small try catch for opening the file and reading line by line
-    # It would be too much memory to read all at once, so it will read line
-    # by line
+def parse_courses(in_filename, out_filename):
+    '''
+    A small try catch for opening the file and reading line by line
+    It would be too much memory to read all at once, so it will read line
+    by line
+    '''
     try:
-        with open(in_filename, "r") as file:
+        with open(in_filename, "r", encoding="utf-8") as file:
             parser = ParseData()
             for line in file:
                 parser.feed(line.strip())
@@ -283,6 +328,6 @@ def ParseCourses(in_filename, out_filename):
 
 # Entry point of the program
 if __name__ == "__main__":
-    in_filename = sys.argv[1]
-    out_filename = sys.argv[2]
-    ParseCourses(in_filename, out_filename)
+    IN_FILENAME = sys.argv[1]
+    OUT_FILENAME = sys.argv[2]
+    parse_courses(IN_FILENAME, OUT_FILENAME)
