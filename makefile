@@ -24,7 +24,11 @@ lint-ci:
 	docker run --rm --env PYTHONPATH=. cis3760-api pylint /app
 
 test-api:
-	$(PYINT) -m unittest discover tests
+	$(PYINT) -m unittest discover backend/test
 
-#clean:
-#	find . -type d -name __pycache__ -prune -exec rm -rf {} \;
+test-ci:
+	docker run --rm --env PYTHONPATH=. cis3760-api $(PYINT) -m unittest discover .
+
+# Removes all __pycache__ files recursively
+clean:
+	find . -type d -name __pycache__ -prune -exec rm -rf {} \;
