@@ -1,12 +1,15 @@
+"""This module tests classes in the courseparser module."""
 import unittest
 from courseparser import ParseData
 
 class TestCourseParser(unittest.TestCase):
+    """This class tests methods in the ParseData class."""
     def setUp(self):
         self.parser = ParseData()
 
     def test_parse_meeting_info_parses_normal_lecture_lab_exam(self):
-        meetingInfoInput = [
+        """Test if parse_meeting_info parses a normal meeting with a lecture, lab, and exam"""
+        meeting_info_input = [
             "LEC Mon, Wed, Fri",
             "11:00AM - 11:50AM",
             "ROZH",
@@ -22,7 +25,7 @@ class TestCourseParser(unittest.TestCase):
             "MACN",
             ", Room 113"
         ]
-        meetingInfoExpected = [
+        meeting_info_expected = [
             {
                 "type": "LEC", "daysOfWeek": ["Mon", "Wed", "Fri"],
                 "startTime": "11:00AM", "endTime": "11:50AM", "date": None,
@@ -48,16 +51,18 @@ class TestCourseParser(unittest.TestCase):
                 }
             }
         ]
-        meetingInfoResult = self.parser.parse_meeting_info(meetingInfoInput)
-        self.assertEqual(meetingInfoResult, meetingInfoExpected, "MeetingInfo objects do not match.")
-    
-    def test_parse_meeting_info_parses_TBA_days_TBA_times_TBA_room(self):
-        meetingInfoInput = [
+        meeting_info_result = self.parser.parse_meeting_info(meeting_info_input)
+        self.assertEqual(meeting_info_result, meeting_info_expected, \
+                "MeetingInfo objects do not match.")
+
+    def test_parse_meeting_info_parses_tba_days_tba_times_tba_room(self):
+        """Test if parse_meeting_info parses a meeting with TBA days, TBA times, and a TBA room."""
+        meeting_info_input = [
             "LEC Days TBA",
             "Times TBA",
             "Room TBA"
         ]
-        meetingInfoExpected = [
+        meeting_info_expected = [
             {
                 "type": "LEC", "daysOfWeek": None,
                 "startTime": None, "endTime": None, "date": None,
@@ -67,17 +72,19 @@ class TestCourseParser(unittest.TestCase):
                 }
             }
         ]
-        meetingInfoResult = self.parser.parse_meeting_info(meetingInfoInput)
-        self.assertEqual(meetingInfoResult, meetingInfoExpected, "MeetingInfo objects do not match.")
+        meeting_info_result = self.parser.parse_meeting_info(meeting_info_input)
+        self.assertEqual(meeting_info_result, meeting_info_expected, \
+                "MeetingInfo objects do not match.")
 
     def test_parse_meeting_info_parses_virtual_room(self):
-        meetingInfoInput = [
+        """Test if parse_meeting_info parses a meeting with a virtual room."""
+        meeting_info_input = [
             "LEC Mon, Wed",
             "2:00PM - 3:00PM",
-            "AD-S", 
+            "AD-S",
             ", Room VIRTUAL"
         ]
-        meetingInfoExpected = [
+        meeting_info_expected = [
             {
                 "type": "LEC", "daysOfWeek": ["Mon", "Wed"],
                 "startTime": "2:00PM", "endTime": "3:00PM", "date": None,
@@ -87,22 +94,24 @@ class TestCourseParser(unittest.TestCase):
                 }
             }
         ]
-        meetingInfoResult = self.parser.parse_meeting_info(meetingInfoInput)
-        self.assertEqual(meetingInfoResult, meetingInfoExpected, "MeetingInfo objects do not match.")
-    
+        meeting_info_result = self.parser.parse_meeting_info(meeting_info_input)
+        self.assertEqual(meeting_info_result, meeting_info_expected, \
+                "MeetingInfo objects do not match.")
+
     def test_parse_meeting_info_parses_exam(self):
-        meetingInfoInput = [
+        """Test if parse_meeting_info parses a meeting with an exam."""
+        meeting_info_input = [
             "LEC Mon, Wed",
             "2:00PM - 3:00PM",
-            "AD-S", 
+            "AD-S",
             ", Room VIRTUAL",
-            
+
             "EXAM Fri",
             "5:00PM - 7:00PM (2022/09/16)",
             "MACN",
             ", Room 113"
         ]
-        meetingInfoExpected = [
+        meeting_info_expected = [
             {
                 "type": "LEC", "daysOfWeek": ["Mon", "Wed"],
                 "startTime": "2:00PM", "endTime": "3:00PM", "date": None,
@@ -111,7 +120,6 @@ class TestCourseParser(unittest.TestCase):
                     "roomNumber": "VIRTUAL"
                 }
             },
-
             {
                 "type": "EXAM", "daysOfWeek": ["Fri"],
                 "startTime": "5:00PM", "endTime": "7:00PM", "date": "2022/09/16",
@@ -121,20 +129,22 @@ class TestCourseParser(unittest.TestCase):
                 }
             }
         ]
-        meetingInfoResult = self.parser.parse_meeting_info(meetingInfoInput)
-        self.assertEqual(meetingInfoResult, meetingInfoExpected, "MeetingInfo objects do not match.")
+        meeting_info_result = self.parser.parse_meeting_info(meeting_info_input)
+        self.assertEqual(meeting_info_result, meeting_info_expected, \
+                "MeetingInfo objects do not match.")
 
-    def test_parse_meeting_info_parses_DE(self):
-        meetingInfoInput = [
+    def test_parse_meeting_info_parses_de(self):
+        """Test if parse_meeting_info parses a distance education meeting."""
+        meeting_info_input = [
             "Distance Education Days TBA",
             "Times TBA",
             "Room TBA",
-            
+
             "EXAM Fri",
             "5:00PM - 7:00PM (2022/09/16)",
             "Room TBA"
         ]
-        meetingInfoExpected = [
+        meeting_info_expected = [
             {
                 "type": "Distance Education", "daysOfWeek": None,
                 "startTime": None, "endTime": None, "date": None,
@@ -143,7 +153,6 @@ class TestCourseParser(unittest.TestCase):
                     "roomNumber": "TBA"
                 }
             },
-
             {
                 "type": "EXAM", "daysOfWeek": ["Fri"],
                 "startTime": "5:00PM", "endTime": "7:00PM", "date": "2022/09/16",
@@ -153,8 +162,9 @@ class TestCourseParser(unittest.TestCase):
                 }
             }
         ]
-        meetingInfoResult = self.parser.parse_meeting_info(meetingInfoInput)
-        self.assertEqual(meetingInfoResult, meetingInfoExpected, "MeetingInfo objects do not match.")
-      
+        meeting_info_result = self.parser.parse_meeting_info(meeting_info_input)
+        self.assertEqual(meeting_info_result, meeting_info_expected, \
+                "MeetingInfo objects do not match.")
+
 if __name__ == "__main__":
     unittest.main()
