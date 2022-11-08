@@ -154,7 +154,7 @@ def other_search(courses, course, query):
             for teacher in section["teachers"]:
                 if teacher.lower().strip() == query:
                     courses.append(get_course_with_section(course, section["code"]))
-                    return
+                    break
 
 def course_name_matches_query(course_name, query):
     '''
