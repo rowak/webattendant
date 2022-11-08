@@ -3,6 +3,7 @@ image: docker
 stages:
   - build
   - lint
+  - test
   - deploy
 
 build:
@@ -18,6 +19,15 @@ lint:
     - apk update && apk add make
   script:
     - make lint-ci
+  dependencies:
+    - build
+
+test:
+  stage: test
+  before_script:
+    - apk update && apk add make
+  script:
+    - make test-ci
   dependencies:
     - build
 

@@ -1,5 +1,5 @@
 import unittest
-from src.parser import ParseData
+from courseparser import ParseData
 
 class TestCourseParser(unittest.TestCase):
     def setUp(self):

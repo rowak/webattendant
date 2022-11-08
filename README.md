@@ -50,6 +50,12 @@ docker-compose up -d
 
 The app should now be running in the background as two docker containers on your machine (`cis3760-react` and `cis3760-api`).
 
+## Testing
+The API can be tested using:
+```
+make test-api
+```
+
 ## Configuration
 The deploy script creates basic config files for NGINX and Gunicorn that are necessary to run the app. The NGINX config is copied to /etc/nginx/sites-available/react.conf and a symlink is created to the config in /etc/nginx/sites-enabled. The flask service file is copied to /etc/systemd/system/flask.service. No additional changes are necessary.
 
