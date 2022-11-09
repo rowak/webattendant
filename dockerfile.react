@@ -1,7 +1,7 @@
 FROM node AS node-builder
 WORKDIR /app
-RUN npm install eslint && npm install eslint-config-react-app && npm install jest-environment-jsdom && npm install @testing-library/jest-dom && npm install @testing-library/react && npm install identity-obj-proxy
 COPY . .
+RUN npm install
 
 # Stop here if building a linting image
 FROM node-builder as lint
@@ -12,7 +12,7 @@ FROM node-builder as test
 CMD ["npx", "jest"]
 
 FROM node-builder as production
-RUN npm install && npm run build
+RUN npm run build
 
 # Generate SSL certificate
 FROM alpine AS alpine
