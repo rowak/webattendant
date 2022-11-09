@@ -1,6 +1,6 @@
 FROM node AS node-builder
 WORKDIR /app
-RUN npm install eslint && npm install eslint-config-react-app && npm install jest-environment-jsdom
+RUN npm install eslint && npm install eslint-config-react-app && npm install jest-environment-jsdom && npm install @testing-library/jest-dom && npm install @testing-library/react
 COPY . .
 
 # Stop here if building a linting image
