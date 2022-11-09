@@ -23,6 +23,9 @@ lint-ci:
 	docker run --rm cis3760-react-lint npx eslint "src/**/*.js"
 	docker run --rm --env PYTHONPATH=. cis3760-api pylint /app
 
+test:
+	npx jest
+
 test-api:
 	$(PYINT) -m unittest discover backend/test
 
