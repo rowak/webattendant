@@ -30,6 +30,8 @@ test-api:
 	$(PYINT) -m unittest discover backend/test
 
 test-ci:
+	docker build --file dockerfile.react -t cis3760-react-test --target test .
+	docker run --rm cis3760-react-test npx jest
 	docker run --rm --env PYTHONPATH=. cis3760-api $(PYINT) -m unittest discover .
 
 # Removes all __pycache__ files recursively

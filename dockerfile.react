@@ -8,7 +8,7 @@ FROM node-builder as lint
 CMD ["npx", "eslint", "src/**/*.js"]
 
 # Stop here if building a testing image
-FROM node-builder as lint
+FROM node-builder as test
 CMD ["npx", "jest"]
 
 FROM node-builder as production
