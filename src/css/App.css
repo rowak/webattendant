@@ -61,6 +61,13 @@ body {
     margin: 10px;
 }
 
+.error-notifications {
+    position: fixed;
+    right: 0px; bottom: 0px;
+    width: 30vw;
+    padding: 1px;
+}
+
 @media (max-width: 800px) {
     .app-content {
         flex-direction: column-reverse;

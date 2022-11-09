@@ -13,12 +13,15 @@ import Calendar from "./Components/Calendar.js";
 import ScheduledCoursesList from "./Components/ScheduledCoursesList";
 import CourseSearch from "./Components/CourseSearch";
 import moment from 'moment';
+import Alert from 'react-bootstrap/Alert';
 
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      courses: []
+      courses: [],
+      fullError: 0,
+      conflictError: 0
     };
   }
   // variables
@@ -45,9 +48,37 @@ class App extends React.Component {
             <CourseSearch courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} />
             <ScheduledCoursesList courses={this.state.courses} buttonCallback={this.removeCourseButtonCallback} />
           </div>
+          <div className="error-notifications">
+            { this.showFullAlert() }
+            { this.showConflictAlert() }
+          </div>
         </div>
       </div>
     );
+  }
+
+  showFullAlert = () => {
+    if(this.state.fullError) {
+      return (
+        <Alert key='warning' variant='warning'
+        onClose={() => this.setState({fullError: 0})} dismissible>
+          <Alert.Heading>Full Schedule</Alert.Heading>
+          <p>You can only have up to 5 courses selected at once.</p>
+        </Alert>
+      );
+    }
+  }
+
+  showConflictAlert = () => {
+    if(this.state.conflictError) {
+      return (
+        <Alert key='danger' variant='danger'
+        onClose={() => this.setState({conflictError: 0})} dismissible>
+          <Alert.Heading>Conflict</Alert.Heading>
+          <p>You cannot add a course that is already in your schedule.</p>
+        </Alert>
+      );
+    }
   }
 
   // Function to translate a list of days into an array of numbers
@@ -99,11 +130,12 @@ class App extends React.Component {
   // Callback that executes when the "Add" button in the
   // CourseSearch component is clicked.
   addCourseButtonCallback = (course) => {
-    console.log("addCourseButtonCallback called");
+    // console.log("addCourseButtonCallback called");
     let courses = this.state.courses;
     if (courses.length === 5) {
-        console.log("SCHEDULE IS FULL");
+        // console.log("SCHEDULE IS FULL");
         // TODO: notify user
+        this.setState({fullError: 1});
         return;
     }
     if (!this.hasCourse(courses, course)) {
@@ -143,11 +175,13 @@ class App extends React.Component {
         }
       course.color = color;
       courses.push(course);
+    } else {
+      this.setState({conflictError: 1});
     }
     this.setState({
         courses: courses
     });
-    console.log(this.state.courses);
+    // console.log(this.state.courses);
   }
 
   // Callback that executes when the "Remove" button in the
