@@ -36,7 +36,7 @@ def create_course_sort(sec_list):
     '''
     new_list = {}
     for sec in sec_list:
-        code = sec['code']
+        code = sec['code'].upper().replace("*", "")
         if code not in new_list:
             new_list[code] = []
 
