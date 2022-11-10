@@ -11,6 +11,76 @@ with open("courseOutput.json", encoding="utf-8") as file:
     course_list = json.load(file)
 app = Flask(__name__, static_folder='..', static_url_path='/')
 
+def create_section_list(list_c):
+    '''
+    A function to create a new list, where each entry acts
+    as a single section entry.
+    '''
+    new_list = []
+    for course in list_c:
+        for section in course['sections']:
+            new_entry = {
+                'code': course["code"],
+                'sections': []
+            }
+            new_entry['sections'].append(section)
+            new_list.append(new_entry)
+
+    return new_list
+
+def create_course_sort(sec_list):
+    '''
+    A function that will return a dictionary where every key will be a course
+    code and every value will be an array of all the courses that share the code
+    in a format similar to what we return.
+    '''
+    new_list = {}
+    for sec in sec_list:
+        code = sec['code'].upper().replace("*", "")
+        if code not in new_list:
+            new_list[code] = []
+
+        new_list[code].append(sec)
+
+    return new_list
+
+def create_name_sort(sec_list):
+    '''
+    A function that will return a dictionary where every key will be a course
+    name and every value will be an array of all the courses that share the name
+    in a format similar to what we return.
+    '''
+    new_list = {}
+    for sec in sec_list:
+        name = sec['sections'][0]['name']
+        if name not in new_list:
+            new_list[name] = []
+
+        new_list[name].append(sec)
+
+    return new_list
+
+def create_prof_sort(sec_list):
+    '''
+    A function that will return a dictionary where every key will be a professor's name
+    and every value will be an array of all the courses that share the name
+    in a format similar to what we return.
+    '''
+    new_list = {}
+    for sec in sec_list:
+        for prof in sec['sections'][0]['teachers']:
+            if prof not in new_list:
+                new_list[prof] = []
+            new_list[prof].append(sec)
+
+    return new_list
+
+section_list = create_section_list(course_list)
+course_sort = create_course_sort(section_list)
+name_sort = create_name_sort(section_list)
+prof_sort = create_prof_sort(section_list)
+
+
 @app.after_request
 def apply_caching(response):
     '''
