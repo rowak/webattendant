@@ -5,20 +5,22 @@ from api import app
 
 class TestSearch(unittest.TestCase):
     """This class tests methods in the api module."""
-    
-    # Helper method for sending GET /search
+
     def search(self, params):
+        """Helper method for sending GET /search"""
         result = app.test_client().get("/search", query_string=params)
         return json.loads(result.get_data(as_text=True))
 
     def test_search_course_code_returns_valid_courses(self):
+        """Test if searching by course code returns the correct courses."""
         result = self.search({
             "query": "CIS*3760"
         })
         for course in result:
             assert course["code"] == "CIS*3760"
-    
+
     def test_search_course_name_returns_valid_courses(self):
+        """Test if searching by course name returns the correct courses."""
         result = self.search({
             "query": "Software Engineering"
         })
@@ -27,6 +29,7 @@ class TestSearch(unittest.TestCase):
                 assert section["name"] == "Software Engineering"
 
     def test_search_professor_returns_valid_courses(self):
+        """Test if searching by professor name returns the correct courses."""
         result = self.search({
             "query": "G. Klotz"
         })
