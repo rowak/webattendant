@@ -27,7 +27,7 @@ test:
 	npx jest
 
 test-api:
-	PYTHONPATH=backend $(PYINT) -m unittest discover backend/test
+	(cd backend && PYTHONPATH=. $(PYINT) -m unittest discover test)
 
 test-ci:
 	docker build --file dockerfile.react -t cis3760-react-test --target test .

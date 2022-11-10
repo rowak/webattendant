@@ -138,7 +138,7 @@ def search():
 
     query = request.args["query"]
 
-    return search_with_query(query)
+    return json.dumps(search_with_query(query))
 
 @app.route('/randomCourse', methods=['GET'])
 def random_course():
@@ -196,6 +196,7 @@ def search_each_course(query, course_code, section_code):
             code_match(courses, course, section_code)
         else:
             other_search(courses, course, query)
+
     return courses
 
 def code_match(courses, course, section_code):
