@@ -18,7 +18,7 @@ pip install Flask
 
 Finally, you can run a localhost server
 ```bash
-flask --app flaskServer.py run
+flask --app api.py run
 ```
 
 Keep in mind these things:

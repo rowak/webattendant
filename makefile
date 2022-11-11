@@ -12,19 +12,25 @@ run:
 install:
 	./scripts/install.sh
 
-# deploy:
-	
-
 lint:
-	npm run lint && pylint backend
+	npx eslint "src/**/*.js" && PYTHONPATH=backend pylint backend
 
-# TODO: test all python code instead of specific files
-# TODO: add CI linting for frontend
 lint-ci:
-	docker run --rm cis3760-api pylint courseparser.py wsgi.py flaskServer.py
+	docker build --file dockerfile.react -t cis3760-react-lint --target lint .
+	docker run --rm cis3760-react-lint npx eslint "src/**/*.js"
+	docker run --rm --env PYTHONPATH=. cis3760-api pylint /app
+
+test:
+	npx jest
 
 test-api:
-	$(PYINT) -m unittest discover tests
+	(cd backend && PYTHONPATH=. $(PYINT) -m unittest discover test)
 
-#clean:
-#	find . -type d -name __pycache__ -prune -exec rm -rf {} \;
+test-ci:
+	docker build --file dockerfile.react -t cis3760-react-test --target test .
+	docker run --rm cis3760-react-test npx jest
+	docker run --rm --env PYTHONPATH=. cis3760-api $(PYINT) -m unittest discover .
+
+# Removes all __pycache__ files recursively
+clean:
+	find . -type d -name __pycache__ -prune -exec rm -rf {} \;
