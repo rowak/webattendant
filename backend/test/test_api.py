@@ -37,5 +37,14 @@ class TestSearch(unittest.TestCase):
             for section in course["sections"]:
                 assert "G. Klotz" in section["teachers"]
 
+    def test_search_returns_invalid_courses(self):
+        '''
+        Will test if given an invalid input, it will give an invalid response
+        '''
+        result = self.search({
+            "query": "INVALIDCOURSE"
+        })
+        assert len(result) == 0
+
 if __name__ == "__main__":
     unittest.main()
