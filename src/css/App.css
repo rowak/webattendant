@@ -76,4 +76,12 @@ body {
     .app-sidebar, .calendar-wrap {
         width: auto;
     }
+
+    .error-notifications {
+        position: fixed;
+        left: 0;
+        width: 95%;
+        margin: auto;
+        z-index: 1000;
+    }
 }
