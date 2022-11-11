@@ -52,7 +52,7 @@ class TestSearch(unittest.TestCase):
             for section in course["sections"]:
                 assert section["name"] == "Software Engineering"
 
-    def test_search_course_name_returns_valid_courses(self):
+    def test_search_partial_course_name_returns_valid_courses(self):
         """Test if searching by course name returns the correct courses."""
         result = self.search({
             "query": "Software"
