@@ -12,11 +12,8 @@ run:
 install:
 	./scripts/install.sh
 
-# deploy:
-	
-
 lint:
-	npm run lint && PYTHONPATH=backend pylint backend
+	npx eslint "src/**/*.js" && PYTHONPATH=backend pylint backend
 
 lint-ci:
 	docker build --file dockerfile.react -t cis3760-react-lint --target lint .
