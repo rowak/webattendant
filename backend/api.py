@@ -52,7 +52,7 @@ def create_name_sort(sec_list):
     '''
     new_list = {}
     for sec in sec_list:
-        name = sec['sections'][0]['name']
+        name = sec['sections'][0]['name'].lower().strip()
         if name not in new_list:
             new_list[name] = []
 
@@ -69,9 +69,10 @@ def create_prof_sort(sec_list):
     new_list = {}
     for sec in sec_list:
         for prof in sec['sections'][0]['teachers']:
-            if prof not in new_list:
-                new_list[prof] = []
-            new_list[prof].append(sec)
+            newprof = prof.lower().strip()
+            if newprof not in new_list:
+                new_list[newprof] = []
+            new_list[newprof].append(sec)
 
     return new_list
 
@@ -190,42 +191,43 @@ def search_each_course(query, course_code, section_code):
     stored.
     '''
     courses = []
-    for course in course_list:
-        # Check for courses with a matching course code
-        if course["code"].replace("*", "") == course_code:
-            code_match(courses, course, section_code)
-        else:
-            other_search(courses, course, query)
-
+    if course_code in course_sort:
+        courses = courses + code_match(course_sort[course_code], section_code)
+    else:
+        courses = courses + other_search(query)
     return courses
 
-def code_match(courses, course, section_code):
+def code_match(course, section_code):
     '''
     If the code matches the course, then this function is run.
     '''
+    result = course
+    # If the section code is provided, then look through each entry
+    # to see if there is a match
     if section_code is not None:
-    # Check for courses with a matching section code (if required)
-        for section in course["sections"]:
-            if section["code"].lstrip("0") == section_code:
-                courses.append(get_course_with_section(course, section_code))
-    else:
-        for section in course["sections"]:
-            courses.append(get_course_with_section(course, section["code"]))
+        # Check for courses with a matching section code (if required)
+        result = []
+        for entry in course:
+            for section in entry["sections"]:
+                if section["code"].lstrip("0") == section_code:
+                    result.append(entry)
+    return result
 
-def other_search(courses, course, query):
+def other_search(query):
     '''
     Will perform the other kinds of searches on the file.
     '''
-    for section in course["sections"]:
-        # Check for sections with a matching name
-        if course_name_matches_query(section["name"], query):
-            courses.append(get_course_with_section(course, section["code"]))
-        # Check for sections with a matching instructor
-        else:
-            for teacher in section["teachers"]:
-                if teacher.lower().strip() == query:
-                    courses.append(get_course_with_section(course, section["code"]))
-                    break
+    result = []
+    if query in prof_sort:
+        result = prof_sort[query]
+    elif query.lower().strip() in name_sort:
+        result = name_sort[query.lower().strip()]
+    else:
+        result = []
+        for entry in section_list:
+            if course_name_matches_query(entry["sections"][0]["name"], query):
+                result.append(entry)
+    return result
 
 def course_name_matches_query(course_name, query):
     '''
@@ -256,26 +258,29 @@ def find_course(code, section_code):
     code = code.upper().replace("*", "")
     if section_code is not None:
         section_code = section_code.lstrip("0")
-    for course in course_list:
-        if course["code"].replace("*", "") == code:
-            if section_code is not None:
-                for section in course["sections"]:
-                    if section["code"].lstrip("0") == section_code:
-                        return get_course_with_section(course, section_code)
-                return None
-            return course
+
+    if code in course_sort:
+        if section_code is not None:
+            for course in course_sort[code]:
+                if course["sections"][0]["code"].lstrip("0") == section_code:
+                    return course
+        else:
+            return course_sort[code]
+
     return None
 
-def get_course_with_section(course, section_code):
-    '''
-    Returns a copy of a course object with only a specific section
-    (all others removed).
-    '''
-    section_code = section_code.lstrip("0")
-    course_copy = course.copy()
-    sections = []
-    for section in course["sections"]:
-        if section["code"].lstrip("0") == section_code:
-            sections.append(section)
-    course_copy["sections"] = sections
-    return course_copy
+# Old code for getting a section
+#
+# def get_course_with_section(course, section_code):
+#     '''
+#     Returns a copy of a course object with only a specific section
+#     (all others removed).
+#     '''
+#     section_code = section_code.lstrip("0")
+#     course_copy = course.copy()
+#     sections = []
+#     for section in course["sections"]:
+#         if section["code"].lstrip("0") == section_code:
+#             sections.append(section)
+#     course_copy["sections"] = sections
+#     return course_copy

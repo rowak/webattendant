@@ -11,6 +11,13 @@ class TestSearch(unittest.TestCase):
         result = app.test_client().get("/search", query_string=params)
         return json.loads(result.get_data(as_text=True))
 
+    def get_query(self, params):
+        '''
+        Helper function for sending GET /getCourse
+        '''
+        result = app.test_client().get("/getCourse", query_string=params)
+        return json.loads(result.get_data(as_text=True))
+
     def test_search_course_code_returns_valid_courses_with_star_uppercase(self):
         """Test if searching by course code (CIS*3760) returns the correct courses."""
         result = self.search({
@@ -78,6 +85,15 @@ class TestSearch(unittest.TestCase):
             "query": "INVALIDCOURSE"
         })
         assert len(result) == 0
+
+    def test_find_course(self):
+        '''
+        Will test the find course function, to see if it returns something
+        '''
+        result = self.get_query({
+            "code": "CIS*3760", "sectionCode": "0101"
+        })
+        assert 'code' in result
 
 if __name__ == "__main__":
     unittest.main()
