@@ -79,5 +79,26 @@ class TestSearch(unittest.TestCase):
         })
         assert len(result) == 0
 
+class TestGetCourse(unittest.TestCase):
+    '''
+    A class to test the getCourse functionality
+    '''
+
+    def get_query(self, params):
+        '''
+        Helper function for sending GET /getCourse
+        '''
+        result = app.test_client().get("/getCourse", query_string=params)
+        return json.loads(result.get_data(as_text=True))
+
+    def test_find_course(self):
+        '''
+        Will test the find course function, to see if it returns something
+        '''
+        result = self.get_query({
+            "code": "CIS*3760", "sectionCode": "0101"
+        })
+        assert 'code' in result
+
 if __name__ == "__main__":
     unittest.main()
