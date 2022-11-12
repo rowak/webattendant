@@ -21,13 +21,13 @@ class Calendar extends React.Component {
             events: []
         };
     }
-    
+
     componentDidUpdate(prevProps) {
-        if(prevProps !== this.props) {
+        if (prevProps !== this.props) {
             let event = [];
-            for(let i = 0; i < this.props.courses.length; i++) {
-                for(let j = 0; j < this.props.courses[i].events.length; j++) {
-                    
+            for (let i = 0; i < this.props.courses.length; i++) {
+                for (let j = 0; j < this.props.courses[i].events.length; j++) {
+
                     event.push(this.props.courses[i].events[j]);
                 }
             }
@@ -36,72 +36,73 @@ class Calendar extends React.Component {
             }
             //check for conflicts between events
             //im sorry for the time complexity (it had to be done)
-            for(let i = 0; i < event.length; i++) {
+            for (let i = 0; i < event.length; i++) {
+                console.log(event[i].daysOfWeek);
                 //check overlaps
-                for(let j = i + 1; j < event.length; j++) {
-                    for(let k = 0; k < event[i].daysOfWeek.length; k++) {
-                        for(let l = 0; l < event[j].daysOfWeek.length; l++) {
-                            if(event[i].daysOfWeek[k] === event[j].daysOfWeek[l]) {
-                                if(event[i].startTime < event[j].startTime) {
-                                    if(event[i].endTime > event[j].startTime) {
-                                        //set border color on conflict (default is white)
-                                        event[i].borderColor = "red";
-                                        event[j].borderColor = "red";
-                                    }
-                                }
-                                else {
-                                    if(event[j].endTime > event[i].startTime) {
-                                        event[i].borderColor = "red";
-                                        event[j].borderColor = "red";
-                                    }
-                                }
-                            }
+                this.checkConflicts(event[i], event, i);
+            }
+            this.setState({ events: event });
+        }
+    }
+
+    checkConflicts(currEvent, events, i) {
+        for (let j = i + 1; j < events.length; j++) {
+            for(let day = 0; day < 7; day++) {
+                if(currEvent.daysOfWeek.includes(day) && events[j].daysOfWeek.includes(day)) {
+                    if (currEvent.startTime < events[j].startTime) {
+                        if (currEvent.endTime > events[j].startTime) {
+                            this.highlightConflict(currEvent, events[j]);
+                        }
+                    }
+                    else {
+                        if (events[j].endTime > currEvent.startTime) {
+                            this.highlightConflict(currEvent, events[j]);
                         }
                     }
                 }
             }
-            this.setState({ events: event });
         }
-    } 
-
-    checkConflicts() {
-        
     }
-
-  render() {
-    return (
-    <div className="calendar-wrapper">
-        <div className="calendar">
-        <h2>Schedule</h2>
-        <FullCalendar
-            plugins={[timeGridPlugin, interactionPlugin]}
-            headerToolbar={false}
-            initialView="timeGridWeek"
-            slotMinTime = {'07:00:00'}
-            slotMaxTime = {'24:00:00'}
-            editable={true}
-            eventTimeFormat = {{
-            hour: 'numeric',
-            minute: '2-digit',
-            meridiem: 'short',
-            }}
-            dayHeaderFormat={{
-                weekday: 'short'
-            }}
-            contentHeight={'auto'}
-            eventStartEditable={false}
-            eventDurationEditable={false}
-            events={this.state.events}
-            allDaySlot={false}
-            /* This will log into the Javascript console the date you clicked */
-            dateClick={(e) => console.log(e.dateStr)}
-            /* This will log into the console the ID of the event you clicked */
-            eventClick={(e) => console.log(e.event.title)}
-        />
-        </div>
-    </div>
-    );
-  }
+    
+    //set border color on conflict (default is white)
+    highlightConflict(event1, event2) {
+        event1.borderColor = "red";
+        event2.borderColor = "red";
+    }
+    render() {
+        return (
+            <div className="calendar-wrapper">
+                <div className="calendar">
+                    <h2>Schedule</h2>
+                    <FullCalendar
+                        plugins={[timeGridPlugin, interactionPlugin]}
+                        headerToolbar={false}
+                        initialView="timeGridWeek"
+                        slotMinTime={'07:00:00'}
+                        slotMaxTime={'24:00:00'}
+                        editable={true}
+                        eventTimeFormat={{
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            meridiem: 'short',
+                        }}
+                        dayHeaderFormat={{
+                            weekday: 'short'
+                        }}
+                        contentHeight={'auto'}
+                        eventStartEditable={false}
+                        eventDurationEditable={false}
+                        events={this.state.events}
+                        allDaySlot={false}
+                        /* This will log into the Javascript console the date you clicked */
+                        dateClick={(e) => console.log(e.dateStr)}
+                        /* This will log into the console the ID of the event you clicked */
+                        eventClick={(e) => console.log(e.event.title)}
+                    />
+                </div>
+            </div>
+        );
+    }
 }
 
 export default Calendar;
