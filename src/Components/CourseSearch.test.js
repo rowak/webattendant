@@ -8,22 +8,74 @@ test('CourseSearch rendered', () => {
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Search");
 });
 
-// test if course search works
+//
 test('CourseSearch displaying courses list', () => {
     //supply course data and check if it appears
     render(<CourseSearch courses={[
         {
-            code: 'hello world',
+            code: 'CIS*3760',
             sections: [
                 {
-                    name: 'testing-section',
+                    name: '0101',
                 }
             ]
         }
     ]} />);
-    expect(screen.getByRole("heading", { level: 5 })).toHaveTextContent("hello world");
+    expect(screen.getByRole("heading", { level: 5 })).toHaveTextContent("CIS*3760");
     //find <p> tag with text "testing section"
-    expect(screen.getByText("testing-section")).toBeInTheDocument();
+    expect(screen.getByText("0101")).toBeInTheDocument();
 });
+
+test('CourseSearch displaying Add button', () => {
+    //supply course data and check if it appears
+    render(<CourseSearch courses={[
+        {
+            code: 'CIS*3760',
+            sections: [
+                {
+                    name: '0101',
+                }
+            ]
+        }
+    ]} />);
+    
+    const buttons = screen.getAllByRole("button", { children: "Add"});
+    //console.log(buttons);
+    expect(buttons);
+    //find <p> tag with text "testing section"
+    expect(screen.getByText("0101")).toBeInTheDocument();
+
+});
+
+test('CourseSearch displaying Search as a button', () => {
+    //supply course data and check if it appears
+    render(<CourseSearch courses={[
+        {
+            code: 'CIS*3760',
+            sections: [
+                {
+                    name: '0101',
+                }
+            ]
+        }
+    ]} />);
+    
+    const buttons = screen.getAllByRole("button", { children: "Search"});
+
+    expect(buttons);
+
+    expect(screen.getByText("0101")).toBeInTheDocument();
+
+});
+
+
+
+
+
+
+
+
+
+
 
 
