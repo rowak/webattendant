@@ -45,9 +45,10 @@ test('Scheduled Course List displaying Remove button', () => {
     //find <p> tag with text "testing section"
     expect(screen.getByText("testing-section")).toBeInTheDocument();
 
-    const buttons = screen.getAllByRole("button", { children: "Remove"});
+    const buttons = screen.getAllByRole("button", { children: "Remove"})[0];
 
-    expect(buttons);
+    expect(buttons).toHaveClass("btn btn-danger");
+    
 });
 
 

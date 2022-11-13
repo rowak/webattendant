@@ -39,9 +39,9 @@ test('CourseSearch displaying Add button', () => {
         }
     ]} />);
     
-    const buttons = screen.getAllByRole("button", { children: "Add"});
-    //console.log(buttons);
-    expect(buttons);
+    const button = screen.getAllByRole("button", { children: "Add"})[1];
+    //console.log(buttons.getAttribute("type"));
+    expect(button).toHaveClass("btn btn-primary");
     //find <p> tag with text "testing section"
     expect(screen.getByText("0101")).toBeInTheDocument();
 
@@ -60,9 +60,9 @@ test('CourseSearch displaying Search as a button', () => {
         }
     ]} />);
     
-    const buttons = screen.getAllByRole("button", { children: "Search"});
+    const button = screen.getAllByRole("button", { children: "Search"})[0];
 
-    expect(buttons);
+    expect(button).toHaveClass("btn btn-secondary");
 
     expect(screen.getByText("0101")).toBeInTheDocument();
 
