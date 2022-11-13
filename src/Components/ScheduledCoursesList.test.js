@@ -50,10 +50,3 @@ test('Scheduled Course List displaying Remove button', () => {
     expect(buttons).toHaveClass("btn btn-danger");
     
 });
-
-
-
-
-
-
-
