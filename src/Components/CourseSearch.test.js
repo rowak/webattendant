@@ -67,15 +67,3 @@ test('CourseSearch displaying Search as a button', () => {
     expect(screen.getByText("0101")).toBeInTheDocument();
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
