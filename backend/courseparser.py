@@ -256,7 +256,8 @@ class ParseData(HTMLParser):
 
             # Parsing building (stored in roomInfo)
             building_line = next(line_iterator)
-            if building_line not in ["Room TBA", "Room VIRTUAL", "Room GNHS"]:
+            if building_line not in ["Room TBA", "Room VIRTUAL", "Room GNHS"] and \
+                    re.search("Room \d+", building_line) is None:
                 room_info["building"] = building_line
                 curr_line = next(line_iterator)
             else:
@@ -264,7 +265,10 @@ class ParseData(HTMLParser):
 
             # Parse roomNumber (stored in roomInfo)
             room_line = curr_line
-            if building_line == "Room TBA" or room_line == "Room TBA":
+            room_num = re.search("Room (\d+)", building_line)
+            if room_num is not None:
+                room_info["roomNumber"] = room_num.group(1)
+            elif building_line == "Room TBA" or room_line == "Room TBA":
                 room_info["roomNumber"] = "TBA"
             elif building_line == "Room VIRTUAL" or room_line == "Room VIRTUAL":
                 room_info["roomNumber"] = "VIRTUAL"
