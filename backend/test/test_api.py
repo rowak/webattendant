@@ -80,7 +80,10 @@ class TestSearch(unittest.TestCase):
         assert len(result) == 0
 
     def test_search_course_code_with_section_number(self):
-        """Test if searching by course code (CIS*3760) and 0101 section number returns the correct courses."""
+        """
+        Test if searching by course code (CIS*3760)
+        and 0101 section number returns the correct courses.
+        """
         result = self.search({
             "query": "CIS*3760*0101"
         })
