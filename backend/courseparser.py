@@ -236,15 +236,7 @@ class ParseData(HTMLParser):
             ParseData.perform_meeting_type(self, curr_line, meeting_info)
 
             # Parse startTime and endTime
-            times_line = next(line_iterator)
-            if times_line != "Times TBA":
-                time_split = times_line.split(" - ")
-                end_time_split = time_split[1].split(" ")
-                meeting_info["startTime"] = time_split[0]
-                meeting_info["endTime"] = end_time_split[0]
-            else:
-                meeting_info["startTime"] = None
-                meeting_info["endTime"] = None
+            times_line = ParseData.parse_times(self, line_iterator, meeting_info)
 
             # Parse date (only for exams)
             if meeting_info["type"] == "EXAM":
@@ -257,7 +249,7 @@ class ParseData(HTMLParser):
             # Parsing building (stored in roomInfo)
             building_line = next(line_iterator)
             if building_line not in ["Room TBA", "Room VIRTUAL", "Room GNHS"] and \
-                    re.search("Room \d+", building_line) is None:
+                    re.search(r"Room \d+", building_line) is None:
                 room_info["building"] = building_line
                 curr_line = next(line_iterator)
             else:
@@ -265,7 +257,7 @@ class ParseData(HTMLParser):
 
             # Parse roomNumber (stored in roomInfo)
             room_line = curr_line
-            room_num = re.search("Room (\d+)", building_line)
+            room_num = re.search(r"Room (\d+)", building_line)
             if room_num is not None:
                 room_info["roomNumber"] = room_num.group(1)
             elif building_line == "Room TBA" or room_line == "Room TBA":
@@ -300,6 +292,22 @@ class ParseData(HTMLParser):
             meeting_info["daysOfWeek"] = None
         else:
             meeting_info["daysOfWeek"] = days.split(", ")
+
+    def parse_times(self, line_iterator, meeting_info):
+        """
+        Parse the start and end times of the meeting and return
+        the current line.
+        """
+        times_line = next(line_iterator)
+        if times_line != "Times TBA":
+            time_split = times_line.split(" - ")
+            end_time_split = time_split[1].split(" ")
+            meeting_info["startTime"] = time_split[0]
+            meeting_info["endTime"] = end_time_split[0]
+        else:
+            meeting_info["startTime"] = None
+            meeting_info["endTime"] = None
+        return times_line
 
     def error(self, message):
         print(message)
