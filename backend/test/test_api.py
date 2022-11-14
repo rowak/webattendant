@@ -118,12 +118,18 @@ class TestGetCourse(unittest.TestCase):
         assert 'code' in result
 
 class TestGetRandomCourse(unittest.TestCase):
-    
+    '''
+    A class to test the getRandomCourse functionality
+    '''
+
     def get_query(self, params):
-        
+        '''
+        Get query, sending GET /randomCourse
+        '''
+
         result = app.test_client().get("/randomCourse", query_string=params)
         return json.loads(result.get_data(as_text=True))
-    
+
     def test_get_random_course(self):
         '''
         Test if get random course returns a random course as a result
@@ -145,7 +151,7 @@ class TestGetAllCourses(unittest.TestCase):
         '''
         result = app.test_client().get("/allCourses", query_string=params)
         return json.loads(result.get_data(as_text=True))
-    
+
     def test_get_all_courses(self):
         '''
         Test if get all courses returns a non empty array of results
