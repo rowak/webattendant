@@ -100,5 +100,20 @@ class TestGetCourse(unittest.TestCase):
         })
         assert 'code' in result
 
+class TestGetRandomCourse(unittest.TestCase):
+    
+    def get_query(self, params):
+        
+        result = app.test_client().get("/randomCourse", query_string=params)
+        return json.loads(result.get_data(as_text=True))
+    
+    def test_get_random_course(self):
+
+        result = self.get_query({
+            "code": "CIS*3760", "sectionCode": "0101"
+        })
+        assert 'code' in result
+
+
 if __name__ == "__main__":
     unittest.main()
