@@ -79,6 +79,16 @@ class TestSearch(unittest.TestCase):
         })
         assert len(result) == 0
 
+    def test_search_course_code_with_section_number(self):
+        """
+        Test if searching by course code (CIS*3760)
+        and 0101 section number returns the correct courses.
+        """
+        result = self.search({
+            "query": "CIS*3760*0101"
+        })
+        assert result[0]['sections'][0]['code']=='0101'
+
 class TestGetCourse(unittest.TestCase):
     '''
     A class to test the getCourse functionality
@@ -96,9 +106,62 @@ class TestGetCourse(unittest.TestCase):
         Will test the find course function, to see if it returns something
         '''
         result = self.get_query({
+            "code": "CIS*3760"
+        })
+        for course in result:
+            assert 'code' in course
+
+    def test_find_course_with_section_code(self):
+        '''
+        Will test the find course function with section code, to see if it returns something
+        '''
+        result = self.get_query({
             "code": "CIS*3760", "sectionCode": "0101"
         })
         assert 'code' in result
+
+class TestGetRandomCourse(unittest.TestCase):
+    '''
+    A class to test the getRandomCourse functionality
+    '''
+
+    def get_query(self, params):
+        '''
+        Get query, sending GET /randomCourse
+        '''
+
+        result = app.test_client().get("/randomCourse", query_string=params)
+        return json.loads(result.get_data(as_text=True))
+
+    def test_get_random_course(self):
+        '''
+        Test if get random course returns a random course as a result
+        '''
+        result = self.get_query({
+            "code": "CIS*3760", "sectionCode": "0101"
+        })
+        assert 'code' in result
+
+
+class TestGetAllCourses(unittest.TestCase):
+    '''
+    A class to test the all courses functionality
+    '''
+
+    def get_query(self, params):
+        '''
+        Helper function for sending GET /allCourses
+        '''
+        result = app.test_client().get("/allCourses", query_string=params)
+        return json.loads(result.get_data(as_text=True))
+
+    def test_get_all_courses(self):
+        '''
+        Test if get all courses returns a non empty array of results
+        '''
+        result = self.get_query({
+        })
+        assert len(result) != 0
 
 if __name__ == "__main__":
     unittest.main()
