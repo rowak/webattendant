@@ -4,3 +4,7 @@
     border: 2px black;
     border-radius: 15px;
 }
+
+.termSubheader {
+    float: right;
+}

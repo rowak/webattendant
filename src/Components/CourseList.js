@@ -6,7 +6,7 @@ import '../css/CourseList.css';
 class CourseList extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {courses: props.courses};
+        this.state = {courses: props.courses, term: props.term};
     }
 
     static getDerivedStateFromProps(props, state) {
@@ -15,11 +15,16 @@ class CourseList extends React.Component {
                 courses: props.courses
             };
         }
+        else if (props.term !== state.term) {
+            return {
+                term: props.term
+            }
+        }
         return null;
     }
 
     render() {
-        if (this.state.courses.length === 0) {
+        if (this.getNumVisisbleCourses() === 0) {
             return (
                 <div className="courseList">
                     <h5 className="errorText">{this.props.errorText}</h5>
@@ -34,21 +39,35 @@ class CourseList extends React.Component {
                         if (this.props.borderColors) {
                             borderColor = course.color;
                         }
-                        return (
-                        <ListGroup key={i} className="courseListGroup">
-                            <ListGroupItem className="courseListItem ms-0" style={{borderColor: borderColor}}>
-                                <div>
-                                    <h5>{course.code} ({course.sections[0].code})</h5>
-                                    <p>{course.sections[0].name}</p>
-                                </div>
-                                <Button variant={this.props.buttonVariant} onClick={() => this.props.buttonCallback(course)}>{this.props.buttonText}</Button>
-                            </ListGroupItem>
-                        </ListGroup>
-                        );
+                        if (this.props.term === course.sections[0].term) {
+                            return (
+                            <ListGroup key={i} className="courseListGroup">
+                                <ListGroupItem className="courseListItem ms-0" style={{borderColor: borderColor}}>
+                                    <div>
+                                        <h5>{course.code} ({course.sections[0].code})</h5>
+                                        <p>{course.sections[0].name}</p>
+                                    </div>
+                                    <Button variant={this.props.buttonVariant} onClick={() => this.props.buttonCallback(course)}>{this.props.buttonText}</Button>
+                                </ListGroupItem>
+                            </ListGroup>
+                            );
+                        }
+                        return (null);
                     })}
                 </div>
             );
         }
+    }
+
+    getNumVisisbleCourses() {
+        let numCourses = 0;
+        let courses = this.state.courses;
+        for (let i = 0; i < courses.length; i++) {
+            if (courses[i].sections[0].term === this.state.term) {
+                numCourses++;
+            }
+        }
+        return numCourses;
     }
 }
 

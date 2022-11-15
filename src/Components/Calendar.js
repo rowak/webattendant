@@ -11,6 +11,8 @@ Libraries required for calendar to work
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import ToggleButton from 'react-bootstrap/ToggleButton'
 import "../css/Calendar.css";
 
 
@@ -18,17 +20,29 @@ class Calendar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            events: []
+            events: [],
+            termSelectors: props.termSelectors,
+            term: props.term
         };
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        if (props.term !== state.term) {
+            return {
+                term: props.term
+            }
+        }
+        return null;
     }
 
     componentDidUpdate(prevProps) {
         if (prevProps !== this.props) {
             let event = [];
             for (let i = 0; i < this.props.courses.length; i++) {
-                for (let j = 0; j < this.props.courses[i].events.length; j++) {
-
-                    event.push(this.props.courses[i].events[j]);
+                if (this.props.courses[i].sections[0].term === this.state.term) {
+                    for (let j = 0; j < this.props.courses[i].events.length; j++) {
+                        event.push(this.props.courses[i].events[j]);
+                    }
                 }
             }
             for (let i = 0; i < event.length; i++) {
@@ -37,7 +51,6 @@ class Calendar extends React.Component {
             //check for conflicts between events
             //im sorry for the time complexity (it had to be done)
             for (let i = 0; i < event.length; i++) {
-                console.log(event[i].daysOfWeek);
                 //check overlaps
                 this.checkConflicts(event[i], event, i);
             }
@@ -72,6 +85,17 @@ class Calendar extends React.Component {
     render() {
         return (
             <div className="calendar-wrapper">
+                <div className="term-selectors">
+                    <ButtonGroup>
+                        {this.state.termSelectors?.map((selector, i) => {
+                            let variant = "secondary";
+                            if (this.state.term === selector) {
+                                variant = "primary";
+                            }
+                            return <ToggleButton key={i} variant={variant} onClick={() => this.props.termSelectorCallback(selector)}>{selector}</ToggleButton>
+                        })}
+                    </ButtonGroup>
+                </div>
                 <div className="calendar">
                     <h2>Schedule</h2>
                     <FullCalendar
