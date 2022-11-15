@@ -17,3 +17,11 @@
     cursor: pointer;
     border-width: 3px;
 }
+
+.term-selectors {
+    float: right;
+}
+
+.term-selectors .btn {
+    margin-left: 5px;
+}

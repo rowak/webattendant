@@ -21,7 +21,9 @@ class App extends React.Component {
     this.state = {
       courses: [],
       fullError: 0,
-      conflictError: 0
+      conflictError: 0,
+      termSelectors: ["Fall 2022", "Winter 2023"],
+      term: "Fall 2022"
     };
   }
   // variables
@@ -30,7 +32,12 @@ class App extends React.Component {
 
   renderCalendar() {
     return (
-        <Calendar courses={this.state.courses}/>
+        <Calendar
+          courses={this.state.courses}
+          termSelectors={this.state.termSelectors}
+          termSelectorCallback={this.changeTermButtonCallback}
+          term={this.state.term}
+        />
     )
   }
 
@@ -45,8 +52,8 @@ class App extends React.Component {
             {this.renderCalendar()}
           </div>
           <div className="app-sidebar">
-            <CourseSearch courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} />
-            <ScheduledCoursesList courses={this.state.courses} buttonCallback={this.removeCourseButtonCallback} />
+            <CourseSearch courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} term={this.state.term} />
+            <ScheduledCoursesList courses={this.state.courses} buttonCallback={this.removeCourseButtonCallback} term={this.state.term} />
           </div>
           <div className="error-notifications">
             { this.showFullAlert() }
@@ -130,11 +137,8 @@ class App extends React.Component {
   // Callback that executes when the "Add" button in the
   // CourseSearch component is clicked.
   addCourseButtonCallback = (course) => {
-    // console.log("addCourseButtonCallback called");
     let courses = this.state.courses;
     if (courses.length === 5) {
-        // console.log("SCHEDULE IS FULL");
-        // TODO: notify user
         this.setState({fullError: 1});
         return;
     }
@@ -181,7 +185,6 @@ class App extends React.Component {
     this.setState({
         courses: courses
     });
-    // console.log(this.state.courses);
   }
 
   // Callback that executes when the "Remove" button in the
@@ -195,6 +198,14 @@ class App extends React.Component {
     this.freeColor(course.code);
     this.setState({
       courses: courses
+    });
+  }
+
+  // Callback that executes when the one of the term selector buttons
+  // in the Calendar component is clicked.
+  changeTermButtonCallback = (term) => {
+    this.setState({
+      term: term
     });
   }
 
