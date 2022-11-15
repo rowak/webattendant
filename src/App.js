@@ -12,6 +12,8 @@ import React from 'react';
 import Calendar from "./Components/Calendar.js";
 import ScheduledCoursesList from "./Components/ScheduledCoursesList";
 import CourseSearch from "./Components/CourseSearch";
+import ScheduleHelper from "./Components/ScheduleHelper"
+import CourseInfo from "./Components/CourseInfo"
 import moment from 'moment';
 import Alert from 'react-bootstrap/Alert';
 
@@ -54,10 +56,12 @@ class App extends React.Component {
         <div className="app-content">
           <div className="calendar-wrap">
             {this.renderCalendar()}
+            <CourseInfo />
           </div>
           <div className="app-sidebar">
             <CourseSearch courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} term={this.state.term} />
             <ScheduledCoursesList courses={this.state.courses} buttonCallback={this.removeCourseButtonCallback} term={this.state.term} />
+            <ScheduleHelper />
           </div>
           <div className="error-notifications">
             { this.renderFullAlert() }
