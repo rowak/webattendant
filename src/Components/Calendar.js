@@ -87,7 +87,7 @@ class Calendar extends React.Component {
             <div className="calendar-wrapper">
                 <div className="term-selectors">
                     <ButtonGroup>
-                        {this.state.termSelectors.map((selector, i) => {
+                        {this.state.termSelectors?.map((selector, i) => {
                             let variant = "secondary";
                             if (this.state.term === selector) {
                                 variant = "primary";
