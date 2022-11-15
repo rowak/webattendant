@@ -52,6 +52,7 @@ class CourseList extends React.Component {
                             </ListGroup>
                             );
                         }
+                        return (null);
                     })}
                 </div>
             );

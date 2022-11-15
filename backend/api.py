@@ -11,8 +11,8 @@ with open("courseOutputF22.json", encoding="utf-8") as file:
     course_list = json.load(file)
 with open("courseOutputW23.json", encoding="utf-8") as file:
     course_list_temp = json.load(file)
-    for course in course_list_temp:
-        course_list.append(course)
+    for c in course_list_temp:
+        course_list.append(c)
 app = Flask(__name__, static_folder='..', static_url_path='/')
 
 def create_section_list(list_c):
@@ -198,7 +198,7 @@ def search_with_query(query, term):
             if term is None or term == section["term"].lower():
                 final_courses.append(course)
                 break
-    
+
     return final_courses
 
 def search_each_course(query, course_code, section_code):
