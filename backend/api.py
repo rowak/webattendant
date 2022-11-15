@@ -7,8 +7,12 @@ import random
 import os
 from flask import Flask, request, Response
 
-with open("courseOutput.json", encoding="utf-8") as file:
+with open("courseOutputF22.json", encoding="utf-8") as file:
     course_list = json.load(file)
+with open("courseOutputW23.json", encoding="utf-8") as file:
+    course_list_temp = json.load(file)
+    for course in course_list_temp:
+        course_list.append(course)
 app = Flask(__name__, static_folder='..', static_url_path='/')
 
 def create_section_list(list_c):
@@ -138,8 +142,11 @@ def search():
         return Response(json.dumps({"error": "No search query specified."}), status=400)
 
     query = request.args["query"]
+    term = None
+    if "term" in request.args:
+        term = request.args["term"].lower()
 
-    return json.dumps(search_with_query(query))
+    return Response(json.dumps(search_with_query(query, term)), mimetype="application/json")
 
 @app.route('/randomCourse', methods=['GET'])
 def random_course():
@@ -157,7 +164,7 @@ def random_course():
     }
     return resp
 
-def search_with_query(query):
+def search_with_query(query, term):
     '''
     Performs a search to find the course in the course_list array.
     Will first parse the input to make sure it is in a recognizable format,
@@ -183,7 +190,16 @@ def search_with_query(query):
         course_code = query_parts[0]
         section_code = None
 
-    return search_each_course(query, course_code, section_code)
+    courses = search_each_course(query, course_code, section_code)
+
+    final_courses = []
+    for course in courses:
+        for section in course["sections"]:
+            if term is None or term == section["term"].lower():
+                final_courses.append(course)
+                break
+    
+    return final_courses
 
 def search_each_course(query, course_code, section_code):
     '''
