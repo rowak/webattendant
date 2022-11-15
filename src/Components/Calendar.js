@@ -113,6 +113,7 @@ class Calendar extends React.Component {
                         dayHeaderFormat={{
                             weekday: 'short'
                         }}
+                        contentHeight={'850px'}
                         expandRows={'true'}
                         eventStartEditable={false}
                         eventDurationEditable={false}
