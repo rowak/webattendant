@@ -36,18 +36,22 @@ class CourseList extends React.Component {
                 <div className="courseList listOverflow">
                     {this.state.courses.map((course, i) => {
                         let borderColor = "transparent";
+                        let bgColor = "white";
                         if (this.props.borderColors) {
                             borderColor = course.color;
+                        }
+                        if (course.sections[0].status === "Closed") {
+                            bgColor = "#ff8b96";
                         }
                         if (this.props.term === course.sections[0].term) {
                             return (
                             <ListGroup key={i} className="courseListGroup">
-                                <ListGroupItem className="courseListItem ms-0" style={{borderColor: borderColor}}>
+                                <ListGroupItem className="courseListItem ms-0" style={{borderColor: borderColor, background: bgColor}}>
                                     <div>
                                         <h5>{course.code} ({course.sections[0].code})</h5>
                                         <p>{course.sections[0].name}</p>
                                     </div>
-                                    <Button variant={this.props.buttonVariant} onClick={() => this.props.buttonCallback(course)}>{this.props.buttonText}</Button>
+                                    {this.renderButton(course)}
                                 </ListGroupItem>
                             </ListGroup>
                             );
@@ -55,6 +59,19 @@ class CourseList extends React.Component {
                         return (null);
                     })}
                 </div>
+            );
+        }
+    }
+
+    renderButton(course) {
+        if (course.sections[0].status === "Open") {
+            return (
+                <Button variant={this.props.buttonVariant} onClick={() => this.props.buttonCallback(course)}>{this.props.buttonText}</Button>
+            );
+        }
+        else {
+            return (
+                <Button variant={this.props.buttonVariant} onClick={() => this.props.buttonCallback(course)} disabled>{this.props.buttonText}</Button>
             );
         }
     }
