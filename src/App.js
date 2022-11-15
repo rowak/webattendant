@@ -20,8 +20,8 @@ class App extends React.Component {
     super();
     this.state = {
       courses: [],
-      fullError: 0,
-      conflictError: 0,
+      fullError: false,
+      conflictError: false,
       termSelectors: ["Fall 2022", "Winter 2023"],
       term: "Fall 2022"
     };
@@ -60,36 +60,54 @@ class App extends React.Component {
             <ScheduledCoursesList courses={this.state.courses} buttonCallback={this.removeCourseButtonCallback} term={this.state.term} />
           </div>
           <div className="error-notifications">
-            { this.showFullAlert() }
-            { this.showConflictAlert() }
+            { this.renderFullAlert() }
+            { this.renderConflictAlert() }
           </div>
         </div>
       </div>
     );
   }
 
+  renderFullAlert = () => {
+    return (
+      <Alert
+          key='warning'
+          variant='warning'
+          show={this.state.fullError}
+          onClose={() => this.setState({fullError: false})} dismissible>
+        <Alert.Heading>Full Schedule</Alert.Heading>
+        <p>You can only have up to 5 courses selected at once.</p>
+      </Alert>
+    );
+  }
+
+  renderConflictAlert = () => {
+    return (
+      <Alert
+          key='danger'
+          variant='danger'
+          show={this.state.conflictError}
+          onClose={() => this.setState({conflictError: false})} dismissible>
+        <Alert.Heading>Conflict</Alert.Heading>
+        <p>You cannot add a course that is already in your schedule.</p>
+      </Alert>
+    );
+  }
+
   showFullAlert = () => {
-    if(this.state.fullError) {
-      return (
-        <Alert key='warning' variant='warning'
-        onClose={() => this.setState({fullError: 0})} dismissible>
-          <Alert.Heading>Full Schedule</Alert.Heading>
-          <p>You can only have up to 5 courses selected at once.</p>
-        </Alert>
-      );
-    }
+    this.setState({fullError: true}, () => {
+      window.setTimeout(() => {
+        this.setState({fullError: false})
+      }, 4000);
+    });
   }
 
   showConflictAlert = () => {
-    if(this.state.conflictError) {
-      return (
-        <Alert key='danger' variant='danger'
-        onClose={() => this.setState({conflictError: 0})} dismissible>
-          <Alert.Heading>Conflict</Alert.Heading>
-          <p>You cannot add a course that is already in your schedule.</p>
-        </Alert>
-      );
-    }
+    this.setState({conflictError: true}, () => {
+      window.setTimeout(() => {
+        this.setState({conflictError: false})
+      }, 4000);
+    })
   }
 
   // Function to translate a list of days into an array of numbers
@@ -177,7 +195,7 @@ class App extends React.Component {
   addCourseButtonCallback = (course) => {
     let courses = this.state.courses;
     if (!this.checkMaxCoursesInTerm()) {
-        this.setState({fullError: 1});
+        this.showFullAlert();
         return;
     }
     if (!this.hasCourse(courses, course)) {
@@ -218,7 +236,7 @@ class App extends React.Component {
       course.color = color;
       courses.push(course);
     } else {
-      this.setState({conflictError: 1});
+      this.showConflictAlert();
     }
     this.setState({
         courses: courses
