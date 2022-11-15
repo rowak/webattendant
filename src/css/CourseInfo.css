@@ -1,11 +1,8 @@
-.scheduledCoursesList {
+.courseInfo {
     padding: 20px 25px 20px 25px;
     background: #282c34;
     border: 2px black;
     border-radius: 15px;
+    max-height: 650px;
     margin-bottom: 20px;
-}
-
-.termSubheader {
-    float: right;
 }
