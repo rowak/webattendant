@@ -7,7 +7,13 @@ import React from 'react'; // Required to interact with the React DOM
 
 // Basic test case to see if the calendar
 test('Calendar rendered', () => {
-  render(<Calendar courses={[]} />);
+  let callback = () => {}
+  render(<Calendar 
+    courses={[]}
+    term=""
+    termSelectors={[""]}
+    termSelectorCallback={callback}
+    />);
   expect(screen.getByRole("heading", {level: 2})).toHaveTextContent("Schedule");
   expect(screen.getByRole('grid')).toBeInTheDocument();
 });
