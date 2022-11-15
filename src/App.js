@@ -28,7 +28,11 @@ class App extends React.Component {
   }
   // variables
   colors = ['#C09BD8', '#F5B400', '#8AC926', '#1982C4', '#6A4C93'];
-  usedColors = [null, null, null, null, null];
+  // Used colors are stored in an object like {"code": "CIS*3760", "term": "Fall 2022"}.
+  // Each position in the usedColors array represents a color (in order) in the colors array.
+  // Each color can be assigned to only one course at a time, but the same color can be
+  // assigned to courses in other terms.
+  usedColors = [[], [], [], [], []];
 
   renderCalendar() {
     return (
@@ -115,30 +119,64 @@ class App extends React.Component {
 
   // Reserves a unique color for a course.
   getNextColor = (courseCode) => {
+    let courseObj = {"code": courseCode, "term": this.state.term};
     for (let i = 0; i < this.colors.length; i++) {
-      if (this.usedColors[i] === null) {
-        this.usedColors[i] = courseCode;
+      if (this.colorHasTerm(this.usedColors[i], courseObj.term) === -1) {
+        this.usedColors[i].push(courseObj);
         return this.colors[i]
       }
     }
     return null;
   }
 
+  colorHasTerm = (color, term) => {
+    for (let i = 0; i < color.length; i++) {
+      if (color[i].term === term) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  colorHasCourse = (color, code) => {
+    for (let i = 0; i < color.length; i++) {
+      if (color[i].code === code) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   // Frees the color used by a course so it can be used
   // by other courses.
   freeColor = (courseCode) => {
+    let courseObj = {"code": courseCode, "term": this.state.term};
     for (let i = 0; i < this.colors.length; i++) {
-      if (this.usedColors[i] === courseCode) {
-        this.usedColors[i] = null;
+      let termIndex = this.colorHasTerm(this.usedColors[i], courseObj.term);
+      let courseIndex = this.colorHasCourse(this.usedColors[i], courseObj.code);
+      if (termIndex !== -1 && courseIndex !== -1) {
+        console.log(courseObj.term + " " + i);
+        this.usedColors[i].splice(this.colorHasTerm(this.usedColors[i], courseObj.term), 1);
       }
     }
+  }
+
+  checkMaxCoursesInTerm = () => {
+    let numCourses = 0;
+    for (let i = 0; i < this.state.courses.length; i++) {
+      let course = this.state.courses[i];
+      if (course.sections[0].term === this.state.term) {
+        numCourses++;
+      }
+    }
+    return numCourses < 5;
   }
 
   // Callback that executes when the "Add" button in the
   // CourseSearch component is clicked.
   addCourseButtonCallback = (course) => {
     let courses = this.state.courses;
-    if (courses.length === 5) {
+    if (!this.checkMaxCoursesInTerm()) {
         this.setState({fullError: 1});
         return;
     }
@@ -211,7 +249,7 @@ class App extends React.Component {
 
   hasCourse(courses, course) {
     for (let i = 0; i < courses.length; i++) {
-      if (courses[i].code === course.code) {
+      if (courses[i].code === course.code && courses[i].sections[0].term === this.state.term) {
         return true;
       }
     }
