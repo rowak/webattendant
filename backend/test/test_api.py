@@ -138,7 +138,7 @@ class TestGetRandomCourse(unittest.TestCase):
         Test if get random course returns a random course as a result
         '''
         result = self.get_query({
-            "code": "CIS*3760", "sectionCode": "0101"
+            "term": "Fall 2022", "courses": []
         })
         assert 'code' in result
 

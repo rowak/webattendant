@@ -5,6 +5,7 @@ Runs on localhost, but hosted through NGINX
 import json
 import random
 import os
+from datetime import datetime
 from flask import Flask, request, Response
 
 with open("courseOutputF22.json", encoding="utf-8") as file:
@@ -122,6 +123,7 @@ def get_course():
         section = request.args["sectionCode"]
     else:
         section = None
+
     course = find_course(code, section)
 
     if course is None:
@@ -154,29 +156,113 @@ def random_course():
     A function that will return a random course.
     '''
     found = True
-    course = None
+    course = {}
     section = None
     term = None
+    courses = None
+    names = None
     count = 0
 
     if "term" in request.args:
         term = request.args["term"]
 
-    while found and count < 100:
-        count += 1
-        i = random.randint(0, len(section_list) - 1)
-        course = section_list[i]
-        section = course["sections"][0]
-        if section["status"].lower() == "open":
-            if term is not None:
-                if section["term"].lower() == term.lower():
+    courses = reconstruct_courses(request.args.getlist("courses[]"))
+    names = construct_names(courses)
+
+
+    if term is not None:
+        while found and count < 100:
+            count += 1
+            i = random.randint(0, len(section_list) - 1)
+            course = section_list[i]
+            section = course["sections"][0]
+            if section["status"].lower() == "open" and section["term"].lower() == term.lower():
+                if check_conflict(course, courses) and in_names(course, names) is False:
                     found = False
-            else:
-                found = False
-        if found is not False:
-            course = {}
+            if found is not False:
+                course = {}
 
     return course
+
+def reconstruct_courses(basic_courses):
+    '''
+    A function to reconstruct the course list based on limited data
+    '''
+    courses = []
+    for entry in basic_courses:
+        basic = entry.split(':')
+        for course in section_list:
+            if course["code"] == basic[0]:
+                if course["sections"][0]["code"] == basic[1]:
+                    if course["sections"][0]["term"] == basic[2]:
+                        courses.append(course)
+    return courses
+
+def construct_names(courses):
+    '''
+    A function to construct a list of all the course names
+    '''
+    result = []
+    for course in courses:
+        result.append(course["code"])
+    return result
+
+def in_names(course, names):
+    '''
+    A small function to see if a name appears in the list of names
+    '''
+    for name in names:
+        if name == course["code"]:
+            return True
+    return False
+
+def check_conflict(curr_course, courses):
+    '''
+    A small function that will take a course and
+    return if that generates a conflict with a list provided.
+    Returns true if no conflict was found
+    Returns false if there was some problem
+    '''
+    if courses is None:
+        return False
+
+    for curr_meeting in curr_course["sections"][0]["meetings"]:
+        for course in courses:
+            for meeting in course["sections"][0]["meetings"]:
+                if compare_times(curr_meeting, meeting):
+                    return False
+
+    return True
+
+def compare_times(curr_meeting, meeting):
+    '''
+    A function to compare 2 meetings. If the current meeting has
+    a conflicting time, it will return true.
+    '''
+    if curr_meeting["startTime"] is None or curr_meeting["endTime"] is None:
+        return False
+
+    if meeting["startTime"] is None or meeting["endTime"] is None:
+        return False
+
+    if curr_meeting["type"] == "EXAM" or meeting["type"] == "EXAM":
+        return False
+
+    curr_start = datetime.strptime(curr_meeting["startTime"], "%I:%M%p")
+    curr_end = datetime.strptime(curr_meeting["endTime"], "%I:%M%p")
+    start_time = datetime.strptime(meeting["startTime"], "%I:%M%p")
+    end_time = datetime.strptime(meeting["endTime"], "%I:%M%p")
+
+    for day in curr_meeting["daysOfWeek"]:
+        if day in meeting["daysOfWeek"]:
+            if curr_start <= end_time:
+                if start_time >= curr_start:
+                    return True
+                if end_time >= curr_end:
+                    if start_time <= curr_end:
+                        return True
+
+    return False
 
 def search_with_query(query, term):
     '''
