@@ -4,6 +4,8 @@ import React from 'react';
 
 // Function for testing the basic existence
 test('Helper rendered', () => {
-  render(<ScheduleHelper />);
+  render(<ScheduleHelper
+    term="Winter 2023"
+  />);
   expect(screen.getByRole("heading", {level: 2})).toHaveTextContent("Schedule Helper");
 });

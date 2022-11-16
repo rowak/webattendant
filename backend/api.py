@@ -153,16 +153,30 @@ def random_course():
     '''
     A function that will return a random course.
     '''
-    i = random.randint(0, len(course_list) - 1)
-    course = course_list[i]
-    section = []
-    j = random.randint(0, len(course["sections"]) - 1)
-    section.append(course["sections"][j])
-    resp = {
-        'code': course["code"],
-        'sections': section
-    }
-    return resp
+    found = True
+    course = None
+    section = None
+    term = None
+    count = 0
+
+    if "term" in request.args:
+        term = request.args["term"]
+
+    while found and count < 100:
+        count += 1
+        i = random.randint(0, len(section_list) - 1)
+        course = section_list[i]
+        section = course["sections"][0]
+        if section["status"].lower() == "open":
+            if term is not None:
+                if section["term"].lower() == term.lower():
+                    found = False
+            else:
+                found = False
+        if found is not False:
+            course = {}
+
+    return course
 
 def search_with_query(query, term):
     '''
