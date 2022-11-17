@@ -162,13 +162,16 @@ def random_course():
     courses = None
     names = None
     count = 0
+    algorithm = None
 
     if "term" in request.args:
         term = request.args["term"]
 
+    if "algorithm" in request.args:
+        algorithm = request.args["algorithm"]
+
     courses = reconstruct_courses(request.args.getlist("courses[]"))
     names = construct_names(courses)
-
 
     if term is not None:
         while found and count < 100:
@@ -177,8 +180,9 @@ def random_course():
             course = section_list[i]
             section = course["sections"][0]
             if section["status"].lower() == "open" and section["term"].lower() == term.lower():
-                if check_conflict(course, courses) and in_names(course, names) is False:
-                    found = False
+                if apply_algorithm(course, algorithm):
+                    if check_conflict(course, courses) and in_names(course, names):
+                        found = False
             if found is not False:
                 course = {}
 
@@ -213,8 +217,8 @@ def in_names(course, names):
     '''
     for name in names:
         if name == course["code"]:
-            return True
-    return False
+            return False
+    return True
 
 def check_conflict(curr_course, courses):
     '''
@@ -226,11 +230,15 @@ def check_conflict(curr_course, courses):
     if courses is None:
         return False
 
+    if "meetings" not in curr_course["sections"][0]:
+        return True
+
     for curr_meeting in curr_course["sections"][0]["meetings"]:
         for course in courses:
-            for meeting in course["sections"][0]["meetings"]:
-                if compare_times(curr_meeting, meeting):
-                    return False
+            if "meetings" in course["sections"][0]:
+                for meeting in course["sections"][0]["meetings"]:
+                    if compare_times(curr_meeting, meeting):
+                        return False
 
     return True
 
@@ -261,8 +269,33 @@ def compare_times(curr_meeting, meeting):
                 if end_time >= curr_end:
                     if start_time <= curr_end:
                         return True
-
     return False
+
+def apply_algorithm(course, algorithm):
+    '''
+    A method that will check the algorithm and apply a function
+    based on the algorithm.
+    Returns true if it passed the algorithm
+    Returns false otherwise
+    '''
+    if algorithm == "NoTuesThurs":
+        return no_tues_thurs(course)
+
+    return True
+
+def no_tues_thurs(course):
+    '''
+    Will check if the course does not have a meeting on tuesday or thursday
+    Returns true if no meetings are on tuesday or thursday
+    Returns false otherwise
+    '''
+    if "meetings" in course["sections"][0]:
+        for meeting in course["sections"][0]["meetings"]:
+            if meeting["daysOfWeek"] is not None and meeting["type"].upper() != "EXAM":
+                for day in meeting["daysOfWeek"]:
+                    if day.lower() == "tues" or day.lower() == "thur":
+                        return False
+    return True
 
 def search_with_query(query, term):
     '''
