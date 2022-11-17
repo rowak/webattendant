@@ -61,7 +61,7 @@ class App extends React.Component {
           <div className="app-sidebar">
             <CourseSearch courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} term={this.state.term} />
             <ScheduledCoursesList courses={this.state.courses} buttonCallback={this.removeCourseButtonCallback} term={this.state.term} />
-            <ScheduleHelper term={this.state.term} courses={this.state.courses} />
+            <ScheduleHelper term={this.state.term} courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} />
           </div>
           <div className="error-notifications">
             { this.renderFullAlert() }

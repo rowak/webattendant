@@ -9,7 +9,7 @@ import '../css/CourseSearch.css';
 class CourseSearch extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {query: "", errorText: "", courses: props.courses, term: props.term};
+        this.state = {query: "", errorText: "", courses: [], term: props.term};
         this.queryChanged = this.queryChanged.bind(this);
         this.search = this.search.bind(this);
         this.enterKeyHandler = this.enterKeyHandler.bind(this);

@@ -1,26 +1,27 @@
 import React from 'react';
 import "../css/ScheduleHelper.css";
 import Button from "react-bootstrap/Button";
+import CourseList from './CourseList.js';
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import axios from 'axios';
 
 class ScheduleHelper extends React.Component {
 	constructor(props) {
         super(props);
         this.state = {
-            courses: this.props.courses,
+            courses: props.courses,
             suggest: [],
             courseSelected: null,
-            term: props.term
+            term: props.term,
+            algorithm: null,
+            count: 0
         };
     }
 
     static getDerivedStateFromProps(props, state) {
         if (props.term !== state.term) {
             return {
-                courses: props.courses,
-                courseSelected: null,
                 term: props.term,
-                suggest: []
             };
         }
         if (props.courses !== state.courses) {
@@ -35,11 +36,14 @@ class ScheduleHelper extends React.Component {
         if(this.state.courseSelected !== null) {
             let course = this.state.courseSelected;
             this.setState({ courseSelected: null });
-            if(this.matchesCriteria(course)) {
+            if(this.state.count > 0) {
                 let array = this.state.suggest;
                 array.push(course);
-            } else {
-                this.getCourse();
+                this.setState({
+                    suggest: array,
+                    count: this.state.count - 1
+                });
+                this.getCourse()
             }
         }
     }
@@ -48,65 +52,37 @@ class ScheduleHelper extends React.Component {
     	return(
     		<div className="courseSearch">
                 <h2>Schedule Helper</h2>
-                <Button onClick={() => this.getCourse()}>test</Button>
-                <p>{this.renderCourse()}</p>
+                <div className="algorithms">
+                    <ButtonGroup vertical>
+                        <Button variant="info" onClick={() => this.performNoTuesThurs()}>
+                            No Tuesday or Thursday
+                        </Button>
+                    </ButtonGroup>
+                </div>
+                <CourseList buttonVariant="primary" buttonText="Add" buttonCallback={this.props.buttonCallback} errorText="" courses={this.state.suggest} term={this.state.term}/>
     		</div>
     	);
-    }
-
-    matchesCriteria(course) {
-        if(course === null) {
-            return true;
-        }
-
-        if(this.isNonConflictCourse(course)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    isNonConflictCourse(course) {
-        return true;
-    }
-
-    checkSuggestConflict(event) {
-        for(let i = 0; i < this.state.suggest.length; i++) {
-            let events = this.state.suggest[i].events;
-            for(let j = 0; j < events.length; j++) {
-                if (event.startTime < events[j].startTime) {
-                    if (event.endTime > events[j].startTime) {
-                        return false;
-                    }
-                }
-                else {
-                    if (events[j].endTime > event.startTime) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
     }
 
     getCourse() {
         let basicCourses = [];
         for(let i = 0; i < this.state.courses.length; i++) {
-            let basic = this.state.courses[i].code + ":"
-            + this.state.courses[i].sections[0].code + ":"
-            + this.state.courses[i].sections[0].term;
+            let basic = this.state.courses[i].code.slice() + ":"
+            + this.state.courses[i].sections[0].code.slice() + ":"
+            + this.state.courses[i].sections[0].term.slice();
             basicCourses.push(basic);
         }
         for(let i = 0; i < this.state.suggest.length; i++) {
             let basic = this.state.suggest[i].code.slice() + ":"
             + this.state.suggest[i].sections[0].code.slice() + ":"
-            + this.state.suggest[i].sections[0].term;
+            + this.state.suggest[i].sections[0].term.slice();
             basicCourses.push(basic);
         }
         axios.get("/randomCourse", {
             headers: {},
             params: {
                 term: this.state.term,
+                algorithm: this.state.algorithm,
                 courses: basicCourses
             }
         }).then((resp) => {
@@ -121,14 +97,20 @@ class ScheduleHelper extends React.Component {
         });
     }
 
-    renderCourse() {
-        return (
-            <ol>
-                {this.state.suggest.map((course, i) => {
-                    return(<li>{course["code"]} {course["sections"][0]["code"]}</li>);
-                })}
-            </ol>
-        );
+    performNoTuesThurs() {
+        let len = 5;
+        for(let i = 0; i < this.state.courses.length; i++) {
+            let course = this.state.courses[i];
+            if(course.sections[0].term === this.state.term) {
+                len -= 1;
+            }
+        }
+        this.setState({
+            algorithm: "NoTuesThurs",
+            count: len,
+            suggest: []
+        });
+        this.getCourse();
     }
 }
 
