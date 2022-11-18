@@ -4,6 +4,8 @@ import React from 'react';
 
 // Function for testing the basic existence
 test('Info box rendered', () => {
-  render(<CourseInfo />);
+  let course = []
+
+  render(<CourseInfo courses={course} term={"Fall 2022"}/>);
   expect(screen.getByRole("heading", {level: 2})).toHaveTextContent("Info");
 });
