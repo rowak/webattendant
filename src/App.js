@@ -56,7 +56,7 @@ class App extends React.Component {
         <div className="app-content">
           <div className="calendar-wrap">
             {this.renderCalendar()}
-            <CourseInfo />
+            <CourseInfo courses={this.state.courses} term={this.state.term}/>
           </div>
           <div className="app-sidebar">
             <CourseSearch courses={[]} buttonCallback={this.addCourseButtonCallback} term={this.state.term} />
