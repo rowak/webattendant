@@ -1,0 +1,33 @@
+.listOverflow {
+    overflow: auto;
+    max-height: 500px;
+}
+
+.courseInfoListItem {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-width: 5px;
+    border-color: transparent;
+}
+
+.courseInfoListGroup:not(:first-child) {
+    margin-top: 10px;
+}
+
+.courseInfoListItem > div {
+    display: inline-block;
+    width: 100%;
+}
+
+.courseInfoListItem h5, .courseInfoListItem p {
+    margin: 0;
+}
+
+.errorText {
+    margin: 10px 0 0 0;
+}
+
+.courseInfoListItem:hover {
+    background: lightgray;
+}
