@@ -6,7 +6,7 @@
 .courseInfoListItem {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    /*align-items: center;*/
     border-width: 5px;
     border-color: transparent;
 }
@@ -20,8 +20,12 @@
     width: 100%;
 }
 
-.courseInfoListItem h5, .courseInfoListItem p {
-    margin: 0;
+.courseInfoListItem p {
+    margin:0;
+}
+.courseInfoListItem h6 {
+    margin:0;
+    position: absolute;
 }
 
 .errorText {
@@ -31,3 +35,9 @@
 .courseInfoListItem:hover {
     background: lightgray;
 }
+
+
+
+
+
+

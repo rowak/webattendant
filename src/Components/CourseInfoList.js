@@ -39,19 +39,29 @@ class CourseInfoList extends React.Component {
                         if (this.props.borderColors) {
                             borderColor = course.color;
                         }
-
                         if (this.props.term === course.sections[0].term) {
                             return (
                             <ListGroup key={i} className="courseInfoListGroup">
+                                
                                 <ListGroupItem className="courseInfoListItem ms-0" style={{borderColor: borderColor, background: bgColor}}>
+                                    <h6>CIS*3760 Software Engineering</h6>
                                     <div>
-                                        <h6>Course Code: {course.code} ({course.sections[0].code})</h6>
-                                        <h6>Term: {course.sections[0].term}</h6>
-                                        <h6>Course Name : {course.sections[0].name}</h6>
-                                        <h6>Instructor: {course.sections[0].teachers[0]}</h6>
-                                        <h6>Exam Day: {course.sections[0].meetings[1].daysOfWeek[0]}</h6>
-                                        <h6>Exam Time: {course.sections[0].meetings[1].startTime} - {course.sections[0].meetings[1].endTime}</h6>
-
+                                        <br></br>
+                                        <br></br>
+                                        <p>Credits: 0.50</p>
+                                        <p>Grading: Graded</p>
+                                        <p>Instructor: Greg Klotz</p>
+                                        <p>Term : Fall 2022</p>
+                                    </div>
+                                    <div>
+                                        <br></br>
+                                        <p>Time: 10:00 - 11:00</p>
+                                        <p>Date: 10/11/2000</p>
+                                        <p>Location: MACN 100 EXAM</p>
+                                        <p>Time: 10:00 - 11:00</p>
+                                        <p>Location: MACN 100 LEC</p>
+                                        <p>Time: 10:00 - 11:00</p>
+                                        <p>Location: MACN 100 LAB</p>
                                     </div>
                                 </ListGroupItem>
                             </ListGroup>

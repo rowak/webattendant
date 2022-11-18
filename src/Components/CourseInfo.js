@@ -6,8 +6,6 @@ class CourseInfo extends React.Component {
 	constructor(props) {
         super(props);
         this.state = {courses: props.courses, term: props.term};
-        console.log("Test state: ");
-        console.log(this.state);
     }
     
     static getDerivedStateFromProps(props, state) {
