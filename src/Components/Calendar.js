@@ -11,10 +11,10 @@ Libraries required for calendar to work
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
-import ToggleButton from 'react-bootstrap/ToggleButton'
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import ToggleButton from 'react-bootstrap/ToggleButton';
+import {Tooltip} from 'bootstrap';
 import "../css/Calendar.css";
-
 
 class Calendar extends React.Component {
     constructor(props) {
@@ -25,6 +25,8 @@ class Calendar extends React.Component {
             term: props.term
         };
     }
+
+    tooltip = null;
 
     static getDerivedStateFromProps(props, state) {
         if (props.term !== state.term) {
@@ -120,9 +122,27 @@ class Calendar extends React.Component {
                         events={this.state.events}
                         allDaySlot={false}
                         /* This will log into the Javascript console the date you clicked */
-                        dateClick={(e) => console.log(e.dateStr)}
+                        // dateClick={(e) => console.log(e.dateStr)}
                         /* This will log into the console the ID of the event you clicked */
-                        eventClick={(e) => console.log(e.event.title)}
+                        // eventClick={(e) => /*console.log(e.event.title)*/}
+                        eventMouseEnter={(info) => {
+                            if (info.event.title) {
+                                this.tooltip = new Tooltip(info.el, {
+                                    title: info.event.title,
+                                    html: true,
+                                    placement: "top",
+                                    trigger: "hover",
+                                    container: "body"
+                                });
+                                this.tooltip.show();
+                            }
+                        }}
+                        eventMouseLeave={() => {
+                            if (this.tooltip) {
+                                this.tooltip.dispose();
+                                this.tooltip = null;
+                            }
+                        }}
                     />
                 </div>
             </div>
