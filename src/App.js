@@ -25,7 +25,9 @@ class App extends React.Component {
       fullError: false,
       conflictError: false,
       termSelectors: ["Fall 2022", "Winter 2023"],
-      term: "Fall 2022"
+      term: "Fall 2022",
+      // selectedCourse: null
+      selectedCourse: {"code": "CIS*3760", "sections": [{"code": "0101", "name": "Software Engineering", "term": "Fall 2022", "teachers": ["G. Klotz", "bill"], "status": "Open", "availableCapacity": 45, "capacity": 100, "meetings": [{"type": "LEC", "startTime": "08:30am", "endTime": "09:20am", "daysOfWeek": ["Mon", "Wed", "Fri"], "roomInfo": {"building": "MACN", "roomNumber": "001"}}, {"type": "LEC", "startTime": "08:30am", "endTime": "09:20am", "daysOfWeek": ["Mon", "Wed", "Fri"], "roomInfo": {"building": "MACN", "roomNumber": "001"}}, {"type": "LEC", "startTime": "08:30am", "endTime": "09:20am", "daysOfWeek": ["Mon", "Wed", "Fri"], "roomInfo": {"building": "MACN", "roomNumber": "001"}}, {"type": "LEC", "startTime": "08:30am", "endTime": "09:20am", "daysOfWeek": ["Mon", "Wed", "Fri"], "roomInfo": {"building": "MACN", "roomNumber": "001"}}]}]}
     };
   }
   // variables
@@ -56,7 +58,7 @@ class App extends React.Component {
         <div className="app-content">
           <div className="calendar-wrap">
             {this.renderCalendar()}
-            <CourseInfo courses={this.state.courses} term={this.state.term}/>
+            <CourseInfo course={this.state.selectedCourse}/>
           </div>
           <div className="app-sidebar">
             <CourseSearch courses={[]} buttonCallback={this.addCourseButtonCallback} term={this.state.term} />

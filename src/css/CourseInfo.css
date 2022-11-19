@@ -6,3 +6,16 @@
     max-height: 650px;
     margin-bottom: 20px;
 }
+
+.sectionDetails > table {
+    margin-bottom: 20px;
+}
+
+.sectionDetails table td {
+    font-size: 16px;
+}
+
+.sectionDetails table .fieldLabel {
+    padding-right: 25px;
+    font-weight: bold;
+}

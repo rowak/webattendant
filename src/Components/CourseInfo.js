@@ -1,43 +1,57 @@
 import React from 'react';
-import CourseInfoList from "./CourseInfoList";
+import MeetingInfoList from "./MeetingInfoList";
 import "../css/CourseInfo.css"
 
 class CourseInfo extends React.Component {
 	constructor(props) {
         super(props);
-        this.state = {courses: props.courses, term: props.term};
+        this.state = {
+            course: props.course
+        };
     }
     
     static getDerivedStateFromProps(props, state) {
-        if (props.courses !== state.courses) {
+        if (props.course !== state.course) {
             return {
-                courses: props.courses
+                course: props.course
             };
-        }
-        else if (props.term !== state.term) {
-            return {
-                term: props.term
-            }
         }
         return null;
     }
 
     render() {
-        return (
-            <div className="scheduledCoursesList">
-                <h2>Course Information</h2>
-                <CourseInfoList
-                    buttonCallback={this.props.buttonCallback}
-                    errorText="No courses have been added yet!"
-                    courses={this.state.courses}
-                    borderColors={true}
-                    term={this.state.term}
-                />
-            </div>
-        );
+        let course = this.state.course;
+        if (course !== null) {
+            let section = course.sections[0];
+            return (
+                <div className="courseInfo">
+                    <h2>{`${course.code} (${section.code}) ${section.name}`}</h2>
+                    <div className="sectionDetails">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td className="fieldLabel">Term:</td>
+                                    <td>{section.term}</td>
+                                </tr>
+                                <tr>
+                                    <td className="fieldLabel">Instructors:</td>
+                                    <td>{section.teachers.join(", ")}</td>
+                                </tr>
+                                <tr>
+                                    <td className="fieldLabel">Status:</td>
+                                    <td>{`${section.status} (${section.availableCapacity}/${section.capacity})`}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h3>Meetings</h3>
+                        <MeetingInfoList
+                            meetings={section.meetings}
+                        />
+                    </div>
+                </div>
+            );
+        }
     }
-    
 }
 
 export default CourseInfo;
-

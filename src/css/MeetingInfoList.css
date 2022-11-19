@@ -1,0 +1,15 @@
+.meeting-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.meeting-info {
+    background: #373D47;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.meeting-info > h4 {
+    float: right;
+}
