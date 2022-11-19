@@ -39,4 +39,5 @@
 
 .courseListItem:hover {
     filter: brightness(80%);
+    cursor: pointer;
 }

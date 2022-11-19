@@ -26,8 +26,7 @@ class App extends React.Component {
       conflictError: false,
       termSelectors: ["Fall 2022", "Winter 2023"],
       term: "Fall 2022",
-      // selectedCourse: null
-      selectedCourse: {"code": "CIS*3760", "sections": [{"code": "0101", "name": "Software Engineering", "term": "Fall 2022", "teachers": ["G. Klotz", "bill"], "status": "Open", "availableCapacity": 45, "capacity": 100, "meetings": [{"type": "LEC", "startTime": "08:30am", "endTime": "09:20am", "daysOfWeek": ["Mon", "Wed", "Fri"], "roomInfo": {"building": "MACN", "roomNumber": "001"}}, {"type": "LEC", "startTime": "08:30am", "endTime": "09:20am", "daysOfWeek": ["Mon", "Wed", "Fri"], "roomInfo": {"building": "MACN", "roomNumber": "001"}}, {"type": "LEC", "startTime": "08:30am", "endTime": "09:20am", "daysOfWeek": ["Mon", "Wed", "Fri"], "roomInfo": {"building": "MACN", "roomNumber": "001"}}, {"type": "LEC", "startTime": "08:30am", "endTime": "09:20am", "daysOfWeek": ["Mon", "Wed", "Fri"], "roomInfo": {"building": "MACN", "roomNumber": "001"}}]}]}
+      selectedCourse: null
     };
   }
   // variables
@@ -52,18 +51,18 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
+        <CourseInfo course={this.state.selectedCourse} hideModalCallback={this.hideModalCallback}/>
         <header className="App-header">
           <h1>WebAttendant</h1>
         </header>
         <div className="app-content">
           <div className="calendar-wrap">
             {this.renderCalendar()}
-            <CourseInfo course={this.state.selectedCourse}/>
           </div>
           <div className="app-sidebar">
-            <CourseSearch courses={[]} buttonCallback={this.addCourseButtonCallback} term={this.state.term} />
-            <ScheduledCoursesList courses={this.state.courses} buttonCallback={this.removeCourseButtonCallback} term={this.state.term} />
-            <ScheduleHelper term={this.state.term} courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} />
+            <CourseSearch courses={[]} buttonCallback={this.addCourseButtonCallback} term={this.state.term} courseClickCallback={this.courseClickCallback} />
+            <ScheduledCoursesList courses={this.state.courses} buttonCallback={this.removeCourseButtonCallback} term={this.state.term} courseClickCallback={this.courseClickCallback} />
+            <ScheduleHelper term={this.state.term} courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} courseClickCallback={this.courseClickCallback} />
           </div>
           <div className="error-notifications">
             { this.renderFullAlert() }
@@ -263,12 +262,26 @@ class App extends React.Component {
     });
   }
 
-  // Callback that executes when the one of the term selector buttons
+  // Callback that executes when one of the term selector buttons
   // in the Calendar component is clicked.
   changeTermButtonCallback = (term) => {
     this.setState({
       term: term
     });
+  }
+
+  // Callback that executes when a course in a course list is clicked.
+  courseClickCallback = (course) => {
+    this.setState({
+      selectedCourse: course
+    });
+  }
+
+  hideModalCallback = () => {
+    console.log("test");
+    this.setState({
+      selectedCourse: null
+    })
   }
 
   hasCourse(courses, course) {

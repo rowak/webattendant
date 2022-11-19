@@ -33,14 +33,8 @@ class MeetingInfoList extends React.Component {
                                 <h4>{meeting.type}</h4>
                                 <table>
                                     <tbody>
-                                        <tr>
-                                            <td className="fieldLabel">Days:</td>
-                                            <td>{meeting.daysOfWeek.join(", ")}</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="fieldLabel">Time:</td>
-                                            <td>{`${meeting.startTime} - ${meeting.endTime}`}</td>
-                                        </tr>
+                                        { this.getDaysOfWeekRow(meeting) }
+                                        { this.getTimeRow(meeting) }
                                         <tr>
                                             <td className="fieldLabel">Location:</td>
                                             <td>{location}</td>
@@ -58,6 +52,38 @@ class MeetingInfoList extends React.Component {
                 null
             );
         }
+    }
+
+    getDaysOfWeekRow(meeting) {
+        let daysOfWeek = meeting.daysOfWeek;
+        if (daysOfWeek !== null) {
+            daysOfWeek = daysOfWeek.join(", ");
+        }
+        else {
+            daysOfWeek = "TBA";
+        }
+        return (
+            <tr>
+                <td className="fieldLabel">Days:</td>
+                <td>{daysOfWeek}</td>
+            </tr>
+        );
+    }
+
+    getTimeRow(meeting) {
+        let timeRange = "";
+        if (meeting.startTime !== null && meeting.endTime !== null) {
+            timeRange = `${meeting.startTime} - ${meeting.endTime}`;
+        }
+        else {
+            timeRange = "TBA";
+        }
+        return (
+            <tr>
+                <td className="fieldLabel">Time:</td>
+                <td>{timeRange}</td>
+            </tr>
+        );
     }
 }
 
