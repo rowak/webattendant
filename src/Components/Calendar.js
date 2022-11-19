@@ -127,8 +127,11 @@ class Calendar extends React.Component {
                         // eventClick={(e) => /*console.log(e.event.title)*/}
                         eventMouseEnter={(info) => {
                             if (info.event.title) {
+                                let startTime = this.getFormattedTime(info.event.start);
+                                let endTime = this.getFormattedTime(info.event.end);
+                                let tooltipStr = `${info.event.title}<br>(${startTime} - ${endTime})`
                                 this.tooltip = new Tooltip(info.el, {
-                                    title: info.event.title,
+                                    title: tooltipStr,
                                     html: true,
                                     placement: "top",
                                     trigger: "hover",
@@ -147,6 +150,18 @@ class Calendar extends React.Component {
                 </div>
             </div>
         );
+    }
+
+    getFormattedTime(date) {
+        return date.toLocaleString("en-US", {
+            weekday: undefined,
+            day: undefined,
+            year: undefined,
+            months: undefined,
+            hour: 'numeric',
+            minute: 'numeric',
+            second: undefined
+        });
     }
 }
 
