@@ -5,10 +5,15 @@ Runs on localhost, but hosted through NGINX
 import json
 import random
 import os
+from datetime import datetime
 from flask import Flask, request, Response
 
-with open("courseOutput.json", encoding="utf-8") as file:
+with open("courseOutputF22.json", encoding="utf-8") as file:
     course_list = json.load(file)
+with open("courseOutputW23.json", encoding="utf-8") as file:
+    course_list_temp = json.load(file)
+    for c in course_list_temp:
+        course_list.append(c)
 app = Flask(__name__, static_folder='..', static_url_path='/')
 
 def create_section_list(list_c):
@@ -118,6 +123,7 @@ def get_course():
         section = request.args["sectionCode"]
     else:
         section = None
+
     course = find_course(code, section)
 
     if course is None:
@@ -138,26 +144,160 @@ def search():
         return Response(json.dumps({"error": "No search query specified."}), status=400)
 
     query = request.args["query"]
+    term = None
+    if "term" in request.args:
+        term = request.args["term"].lower()
 
-    return json.dumps(search_with_query(query))
+    return Response(json.dumps(search_with_query(query, term)), mimetype="application/json")
 
 @app.route('/randomCourse', methods=['GET'])
 def random_course():
     '''
     A function that will return a random course.
     '''
-    i = random.randint(0, len(course_list) - 1)
-    course = course_list[i]
-    section = []
-    j = random.randint(0, len(course["sections"]) - 1)
-    section.append(course["sections"][j])
-    resp = {
-        'code': course["code"],
-        'sections': section
-    }
-    return resp
+    found = True
+    course = {}
+    section = None
+    term = None
+    courses = None
+    names = None
+    count = 0
+    algorithm = None
 
-def search_with_query(query):
+    if "term" in request.args:
+        term = request.args["term"]
+
+    if "algorithm" in request.args:
+        algorithm = request.args["algorithm"]
+
+    courses = reconstruct_courses(request.args.getlist("courses[]"))
+    names = construct_names(courses)
+
+    if term is not None:
+        while found and count < 100:
+            count += 1
+            i = random.randint(0, len(section_list) - 1)
+            course = section_list[i]
+            section = course["sections"][0]
+            if section["status"].lower() == "open" and section["term"].lower() == term.lower():
+                if apply_algorithm(course, algorithm):
+                    if check_conflict(course, courses) and in_names(course, names):
+                        found = False
+            if found is not False:
+                course = {}
+
+    return course
+
+def reconstruct_courses(basic_courses):
+    '''
+    A function to reconstruct the course list based on limited data
+    '''
+    courses = []
+    for entry in basic_courses:
+        basic = entry.split(':')
+        for course in section_list:
+            if course["code"] == basic[0]:
+                if course["sections"][0]["code"] == basic[1]:
+                    if course["sections"][0]["term"] == basic[2]:
+                        courses.append(course)
+    return courses
+
+def construct_names(courses):
+    '''
+    A function to construct a list of all the course names
+    '''
+    result = []
+    for course in courses:
+        result.append(course["code"])
+    return result
+
+def in_names(course, names):
+    '''
+    A small function to see if a name appears in the list of names
+    '''
+    for name in names:
+        if name == course["code"]:
+            return False
+    return True
+
+def check_conflict(curr_course, courses):
+    '''
+    A small function that will take a course and
+    return if that generates a conflict with a list provided.
+    Returns true if no conflict was found
+    Returns false if there was some problem
+    '''
+    if courses is None:
+        return False
+
+    if "meetings" not in curr_course["sections"][0]:
+        return True
+
+    for curr_meeting in curr_course["sections"][0]["meetings"]:
+        for course in courses:
+            if "meetings" in course["sections"][0]:
+                for meeting in course["sections"][0]["meetings"]:
+                    if compare_times(curr_meeting, meeting):
+                        return False
+
+    return True
+
+def compare_times(curr_meeting, meeting):
+    '''
+    A function to compare 2 meetings. If the current meeting has
+    a conflicting time, it will return true.
+    '''
+    if curr_meeting["startTime"] is None or curr_meeting["endTime"] is None:
+        return False
+
+    if meeting["startTime"] is None or meeting["endTime"] is None:
+        return False
+
+    if curr_meeting["type"] == "EXAM" or meeting["type"] == "EXAM":
+        return False
+
+    curr_start = datetime.strptime(curr_meeting["startTime"], "%I:%M%p")
+    curr_end = datetime.strptime(curr_meeting["endTime"], "%I:%M%p")
+    start_time = datetime.strptime(meeting["startTime"], "%I:%M%p")
+    end_time = datetime.strptime(meeting["endTime"], "%I:%M%p")
+
+    for day in curr_meeting["daysOfWeek"]:
+        if day in meeting["daysOfWeek"]:
+            if curr_start <= end_time:
+                if start_time >= curr_start:
+                    return True
+                if end_time >= curr_end:
+                    if start_time <= curr_end:
+                        return True
+    return False
+
+def apply_algorithm(course, algorithm):
+    '''
+    A method that will check the algorithm and apply a function
+    based on the algorithm.
+    Returns true if it passed the algorithm
+    Returns false otherwise
+    '''
+    if algorithm == "NoTuesThurs":
+        return no_tues_thurs(course)
+
+    return True
+
+def no_tues_thurs(course):
+    '''
+    Will check if the course does not have a meeting on tuesday or thursday
+    Returns true if no meetings are on tuesday or thursday
+    Returns false otherwise
+    '''
+    if "meetings" in course["sections"][0]:
+        for meeting in course["sections"][0]["meetings"]:
+            if meeting["daysOfWeek"] is not None and meeting["type"].upper() != "EXAM":
+                for day in meeting["daysOfWeek"]:
+                    if day.lower() == "tues" or day.lower() == "thur":
+                        return False
+    return True
+
+def search_with_query(query, term):
     '''
     Performs a search to find the course in the course_list array.
     Will first parse the input to make sure it is in a recognizable format,
@@ -183,7 +323,16 @@ def search_with_query(query):
         course_code = query_parts[0]
         section_code = None
 
-    return search_each_course(query, course_code, section_code)
+    courses = search_each_course(query, course_code, section_code)
+
+    final_courses = []
+    for course in courses:
+        for section in course["sections"]:
+            if term is None or term == section["term"].lower():
+                final_courses.append(course)
+                break
+
+    return final_courses
 
 def search_each_course(query, course_code, section_code):
     '''

@@ -9,10 +9,22 @@ import '../css/CourseSearch.css';
 class CourseSearch extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {query: "", errorText: "", courses: props.courses};
+        this.state = {query: "", errorText: "", courses: props.courses, term: props.term};
         this.queryChanged = this.queryChanged.bind(this);
         this.search = this.search.bind(this);
         this.enterKeyHandler = this.enterKeyHandler.bind(this);
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        if (props.term !== state.term) {
+            return {
+                courses: [],
+                query: "",
+                errorText: "",
+                term: props.term
+            };
+        }
+        return null;
     }
 
     render() {
@@ -24,7 +36,7 @@ class CourseSearch extends React.Component {
                         <Form.Control type="text" placeholder="Enter a course name or code" value={this.state.query} onChange={this.queryChanged} onKeyDown={this.enterKeyHandler}></Form.Control>
                         <Button variant="secondary" onClick={this.search}>Search</Button>
                     </InputGroup>
-                    <CourseList buttonVariant="primary" buttonText="Add" buttonCallback={this.props.buttonCallback} errorText={this.state.errorText} courses={this.state.courses}/>
+                    <CourseList buttonVariant="primary" buttonText="Add" buttonCallback={this.props.buttonCallback} errorText={this.state.errorText} courses={this.state.courses} term={this.state.term} courseClickCallback={this.props.courseClickCallback}/>
                 </div>
             </div>
         );
@@ -40,7 +52,8 @@ class CourseSearch extends React.Component {
         axios.get("/search", {
             headers: {},
             params: {
-                query: this.state.query
+                query: this.state.query,
+                term: this.state.term
             }
         })
         .then((resp) => {

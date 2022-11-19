@@ -12,6 +12,8 @@ import React from 'react';
 import Calendar from "./Components/Calendar.js";
 import ScheduledCoursesList from "./Components/ScheduledCoursesList";
 import CourseSearch from "./Components/CourseSearch";
+import ScheduleHelper from "./Components/ScheduleHelper"
+import CourseInfo from "./Components/CourseInfo"
 import moment from 'moment';
 import Alert from 'react-bootstrap/Alert';
 
@@ -20,23 +22,36 @@ class App extends React.Component {
     super();
     this.state = {
       courses: [],
-      fullError: 0,
-      conflictError: 0
+      fullError: false,
+      conflictError: false,
+      termSelectors: ["Fall 2022", "Winter 2023"],
+      term: "Fall 2022",
+      selectedCourse: null
     };
   }
   // variables
   colors = ['#C09BD8', '#F5B400', '#8AC926', '#1982C4', '#6A4C93'];
-  usedColors = [null, null, null, null, null];
+  // Used colors are stored in an object like {"code": "CIS*3760", "term": "Fall 2022"}.
+  // Each position in the usedColors array represents a color (in order) in the colors array.
+  // Each color can be assigned to only one course at a time, but the same color can be
+  // assigned to courses in other terms.
+  usedColors = [[], [], [], [], []];
 
   renderCalendar() {
     return (
-        <Calendar courses={this.state.courses}/>
+        <Calendar
+          courses={this.state.courses}
+          termSelectors={this.state.termSelectors}
+          termSelectorCallback={this.changeTermButtonCallback}
+          term={this.state.term}
+        />
     )
   }
 
   render() {
     return (
       <div className="App">
+        <CourseInfo course={this.state.selectedCourse} hideModalCallback={this.hideModalCallback}/>
         <header className="App-header">
           <h1>WebAttendant</h1>
         </header>
@@ -45,40 +60,59 @@ class App extends React.Component {
             {this.renderCalendar()}
           </div>
           <div className="app-sidebar">
-            <CourseSearch courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} />
-            <ScheduledCoursesList courses={this.state.courses} buttonCallback={this.removeCourseButtonCallback} />
+            <CourseSearch courses={[]} buttonCallback={this.addCourseButtonCallback} term={this.state.term} courseClickCallback={this.courseClickCallback} />
+            <ScheduledCoursesList courses={this.state.courses} buttonCallback={this.removeCourseButtonCallback} term={this.state.term} courseClickCallback={this.courseClickCallback} />
+            <ScheduleHelper term={this.state.term} courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} courseClickCallback={this.courseClickCallback} />
           </div>
           <div className="error-notifications">
-            { this.showFullAlert() }
-            { this.showConflictAlert() }
+            { this.renderFullAlert() }
+            { this.renderConflictAlert() }
           </div>
         </div>
       </div>
     );
   }
 
+  renderFullAlert = () => {
+    return (
+      <Alert
+          key='warning'
+          variant='warning'
+          show={this.state.fullError}
+          onClose={() => this.setState({fullError: false})} dismissible>
+        <Alert.Heading>Full Schedule</Alert.Heading>
+        <p>You can only have up to 5 courses selected at once.</p>
+      </Alert>
+    );
+  }
+
+  renderConflictAlert = () => {
+    return (
+      <Alert
+          key='danger'
+          variant='danger'
+          show={this.state.conflictError}
+          onClose={() => this.setState({conflictError: false})} dismissible>
+        <Alert.Heading>Conflict</Alert.Heading>
+        <p>You cannot add a course that is already in your schedule.</p>
+      </Alert>
+    );
+  }
+
   showFullAlert = () => {
-    if(this.state.fullError) {
-      return (
-        <Alert key='warning' variant='warning'
-        onClose={() => this.setState({fullError: 0})} dismissible>
-          <Alert.Heading>Full Schedule</Alert.Heading>
-          <p>You can only have up to 5 courses selected at once.</p>
-        </Alert>
-      );
-    }
+    this.setState({fullError: true}, () => {
+      window.setTimeout(() => {
+        this.setState({fullError: false})
+      }, 4000);
+    });
   }
 
   showConflictAlert = () => {
-    if(this.state.conflictError) {
-      return (
-        <Alert key='danger' variant='danger'
-        onClose={() => this.setState({conflictError: 0})} dismissible>
-          <Alert.Heading>Conflict</Alert.Heading>
-          <p>You cannot add a course that is already in your schedule.</p>
-        </Alert>
-      );
-    }
+    this.setState({conflictError: true}, () => {
+      window.setTimeout(() => {
+        this.setState({conflictError: false})
+      }, 4000);
+    })
   }
 
   // Function to translate a list of days into an array of numbers
@@ -108,34 +142,65 @@ class App extends React.Component {
 
   // Reserves a unique color for a course.
   getNextColor = (courseCode) => {
+    let courseObj = {"code": courseCode, "term": this.state.term};
     for (let i = 0; i < this.colors.length; i++) {
-      if (this.usedColors[i] === null) {
-        this.usedColors[i] = courseCode;
+      if (this.colorHasTerm(this.usedColors[i], courseObj.term) === -1) {
+        this.usedColors[i].push(courseObj);
         return this.colors[i]
       }
     }
     return null;
   }
 
+  colorHasTerm = (color, term) => {
+    for (let i = 0; i < color.length; i++) {
+      if (color[i].term === term) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  colorHasCourse = (color, code) => {
+    for (let i = 0; i < color.length; i++) {
+      if (color[i].code === code) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   // Frees the color used by a course so it can be used
   // by other courses.
   freeColor = (courseCode) => {
+    let courseObj = {"code": courseCode, "term": this.state.term};
     for (let i = 0; i < this.colors.length; i++) {
-      if (this.usedColors[i] === courseCode) {
-        this.usedColors[i] = null;
+      let termIndex = this.colorHasTerm(this.usedColors[i], courseObj.term);
+      let courseIndex = this.colorHasCourse(this.usedColors[i], courseObj.code);
+      if (termIndex !== -1 && courseIndex !== -1) {
+        console.log(courseObj.term + " " + i);
+        this.usedColors[i].splice(this.colorHasTerm(this.usedColors[i], courseObj.term), 1);
       }
     }
+  }
+
+  checkMaxCoursesInTerm = () => {
+    let numCourses = 0;
+    for (let i = 0; i < this.state.courses.length; i++) {
+      let course = this.state.courses[i];
+      if (course.sections[0].term === this.state.term) {
+        numCourses++;
+      }
+    }
+    return numCourses < 5;
   }
 
   // Callback that executes when the "Add" button in the
   // CourseSearch component is clicked.
   addCourseButtonCallback = (course) => {
-    // console.log("addCourseButtonCallback called");
     let courses = this.state.courses;
-    if (courses.length === 5) {
-        // console.log("SCHEDULE IS FULL");
-        // TODO: notify user
-        this.setState({fullError: 1});
+    if (!this.checkMaxCoursesInTerm()) {
+        this.showFullAlert();
         return;
     }
     if (!this.hasCourse(courses, course)) {
@@ -176,12 +241,11 @@ class App extends React.Component {
       course.color = color;
       courses.push(course);
     } else {
-      this.setState({conflictError: 1});
+      this.showConflictAlert();
     }
     this.setState({
         courses: courses
     });
-    // console.log(this.state.courses);
   }
 
   // Callback that executes when the "Remove" button in the
@@ -198,9 +262,31 @@ class App extends React.Component {
     });
   }
 
+  // Callback that executes when one of the term selector buttons
+  // in the Calendar component is clicked.
+  changeTermButtonCallback = (term) => {
+    this.setState({
+      term: term
+    });
+  }
+
+  // Callback that executes when a course in a course list is clicked.
+  courseClickCallback = (course) => {
+    this.setState({
+      selectedCourse: course
+    });
+  }
+
+  hideModalCallback = () => {
+    console.log("test");
+    this.setState({
+      selectedCourse: null
+    })
+  }
+
   hasCourse(courses, course) {
     for (let i = 0; i < courses.length; i++) {
-      if (courses[i].code === course.code) {
+      if (courses[i].code === course.code && courses[i].sections[0].term === this.state.term) {
         return true;
       }
     }

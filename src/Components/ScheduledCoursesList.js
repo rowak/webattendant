@@ -6,7 +6,8 @@ class ScheduledCourseList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            courses: props.courses
+            courses: props.courses,
+            term: props.term
         };
     }
 
@@ -15,6 +16,11 @@ class ScheduledCourseList extends React.Component {
             return {
                 courses: props.courses
             };
+        }
+        else if (props.term !== state.term) {
+            return {
+                term: props.term
+            }
         }
         return null;
     }
@@ -30,6 +36,8 @@ class ScheduledCourseList extends React.Component {
                     errorText="No courses have been added yet!"
                     courses={this.state.courses}
                     borderColors={true}
+                    term={this.state.term}
+                    courseClickCallback={this.props.courseClickCallback}
                 />
             </div>
         );

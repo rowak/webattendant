@@ -9,6 +9,7 @@
     align-items: center;
     border-width: 5px;
     border-color: transparent;
+    background: white;
 }
 
 .courseListGroup:not(:first-child) {
@@ -32,6 +33,11 @@
     margin: 10px 0 0 0;
 }
 
+.closedItem {
+    background: #ff8b96;
+}
+
 .courseListItem:hover {
-    background: lightgray;
+    filter: brightness(80%);
+    cursor: pointer;
 }

@@ -61,6 +61,11 @@ body {
     margin: 10px;
 }
 
+.app-helper {
+    width: 65vw;
+    margin: 10px;
+}
+
 .error-notifications {
     position: fixed;
     right: 0px; bottom: 0px;
@@ -73,7 +78,7 @@ body {
         flex-direction: column-reverse;
     }
 
-    .app-sidebar, .calendar-wrap {
+    .app-sidebar, .calendar-wrap, .app-helper {
         width: auto;
     }
 
