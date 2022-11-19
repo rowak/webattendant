@@ -37,6 +37,7 @@ class ScheduledCourseList extends React.Component {
                     courses={this.state.courses}
                     borderColors={true}
                     term={this.state.term}
+                    courseClickCallback={this.props.courseClickCallback}
                 />
             </div>
         );
