@@ -40,6 +40,11 @@ describe('testSearch', () => {
         cy.get('.courseSearchContent >  .courseList > .courseListGroup > .courseListItem > div > p').should('contain', 'Introduction')
     })
 
+    it('Check for no courses found on invalid input', () => {
+        cy.get('.courseInput').type('!!!##$%&@*^#&*^&*!*&*(&*(!@')
+        cy.get('.courseSearchContent > .mb-3 > .btn').click()
+        cy.get('.courseSearchContent >  .courseList > h5 ').should('contain', 'No courses found.')
+    })
 
 })
 
