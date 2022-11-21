@@ -163,6 +163,7 @@ def random_course():
     names = None
     count = 0
     algorithm = None
+    ignore_flag = True
 
     if "term" in request.args:
         term = request.args["term"]
@@ -173,19 +174,21 @@ def random_course():
     courses = reconstruct_courses(request.args.getlist("courses[]"))
     names = construct_names(courses)
 
-    if term is not None:
-        while found and count < 100:
+    if term is not None and algorithm is not None:
+        while found and count < 10000:
             count += 1
             i = random.randint(0, len(section_list) - 1)
             course = section_list[i]
             section = course["sections"][0]
             if section["status"].lower() == "open" and section["term"].lower() == term.lower():
-                if apply_algorithm(course, algorithm):
-                    if check_conflict(course, courses) and in_names(course, names):
+                if ignore_tba(course, ignore_flag) and in_names(course, names):
+                    if check_conflict(course, courses) and apply_algorithm(course, algorithm):
                         found = False
             if found is not False:
                 course = {}
-
+    print(count)
+    if count >= 10000:
+        print("Max error")
     return course
 
 def reconstruct_courses(basic_courses):
@@ -220,6 +223,24 @@ def in_names(course, names):
             return False
     return True
 
+def ignore_tba(course, ignore_flag):
+    '''
+    This will check if a course given has only TBA times
+    If the course has only tba times and the ignore flag is set
+    to true, it will return false.
+    Otherwise it will return true
+    '''
+    if ignore_flag is False:
+        return True
+
+    section = course["sections"][0]
+    if "meetings" in section:
+        for meet in section["meetings"]:
+            if meet["type"].upper() != "EXAM":
+                if meet["startTime"] != None and meet["endTime"] != None:
+                    return True
+    return False
+
 def check_conflict(curr_course, courses):
     '''
     A small function that will take a course and
@@ -239,7 +260,6 @@ def check_conflict(curr_course, courses):
                 for meeting in course["sections"][0]["meetings"]:
                     if compare_times(curr_meeting, meeting):
                         return False
-
     return True
 
 def compare_times(curr_meeting, meeting):

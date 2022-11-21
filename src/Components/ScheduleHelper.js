@@ -14,7 +14,8 @@ class ScheduleHelper extends React.Component {
             courseSelected: null,
             term: props.term,
             algorithm: null,
-            count: 0
+            count: 0,
+            start: false
         };
     }
 
@@ -38,13 +39,20 @@ class ScheduleHelper extends React.Component {
             this.setState({ courseSelected: null });
             if(this.state.count > 0) {
                 let array = this.state.suggest;
-                array.push(course);
+                if(Object.keys(course).length !== 0) {
+                    array.push(course);
+                }
                 this.setState({
                     suggest: array,
-                    count: this.state.count - 1
+                    count: this.state.count - 1,
+                    start: true
                 });
-                this.getCourse()
             }
+        } else if (this.state.start === true && this.state.count > 0) {
+            this.setState({
+                start: false
+            });
+            this.getCourse();
         }
     }
 
@@ -86,9 +94,11 @@ class ScheduleHelper extends React.Component {
                 courses: basicCourses
             }
         }).then((resp) => {
-            this.setState({
-                courseSelected: resp.data,
-            });
+            if (Object.keys(resp.data).length !== 0) {
+                this.setState({
+                    courseSelected: resp.data,
+                });
+            }
         })
         .catch((err) => {
             this.setState({
@@ -108,9 +118,9 @@ class ScheduleHelper extends React.Component {
         this.setState({
             algorithm: "NoTuesThurs",
             count: len,
-            suggest: []
+            suggest: [],
+            start: true
         });
-        this.getCourse();
     }
 }
 
