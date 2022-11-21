@@ -14,7 +14,26 @@ test('MeetingInfoList rendered', () => {
   
 
 
+test('MeetingInfoList displays meeting', () => {
+    let meetings = [{
+        "type": "LEC",
+        "daysOfWeek": [
+           "Fri"
+        ],
+        "startTime": "08:30AM",
+        "endTime": "10:20AM",
+        "date": null,
+        "roomInfo": {
+           "building": "ROZH",
+           "roomNumber": "104"
+        }
+    }];
 
+    render(<MeetingInfoList meetings={meetings} />);
+    
+    expect(screen.getByRole("heading", { level: 4 })).toHaveTextContent("LEC");
+    
+});
 
 
 
