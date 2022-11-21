@@ -237,7 +237,7 @@ def ignore_tba(course, ignore_flag):
     if "meetings" in section:
         for meet in section["meetings"]:
             if meet["type"].upper() != "EXAM":
-                if meet["startTime"] != None and meet["endTime"] != None:
+                if meet["startTime"] is not None and meet["endTime"] is not None:
                     return True
     return False
 
@@ -254,8 +254,10 @@ def check_conflict(curr_course, courses):
     if "meetings" not in curr_course["sections"][0]:
         return True
 
+    print("CURRENT:\t" + curr_course["code"])
     for curr_meeting in curr_course["sections"][0]["meetings"]:
         for course in courses:
+            print("\t" + course["code"])
             if "meetings" in course["sections"][0]:
                 for meeting in course["sections"][0]["meetings"]:
                     if compare_times(curr_meeting, meeting):
@@ -281,14 +283,25 @@ def compare_times(curr_meeting, meeting):
     start_time = datetime.strptime(meeting["startTime"], "%I:%M%p")
     end_time = datetime.strptime(meeting["endTime"], "%I:%M%p")
 
+    print("COMPARE")
+    print(curr_start.strftime("%I:%M%p") + " -- " + curr_end.strftime("%I:%M%p"))
+    print(start_time.strftime("%I:%M%p") + " -- " + end_time.strftime("%I:%M%p"))
+
     for day in curr_meeting["daysOfWeek"]:
         if day in meeting["daysOfWeek"]:
             if curr_start <= end_time:
-                if start_time >= curr_start:
+                print("START IS LESS")
+                if start_time <= curr_start:
+                    print("START IS LARGER, TRUE")
                     return True
-                if end_time >= curr_end:
-                    if start_time <= curr_end:
-                        return True
+            if curr_end >= start_time:
+                print("END IS MORE")
+                if curr_end <= end_time:
+                    print("END IS SMALLER, TRUE")
+                    return True
+            if curr_start <= start_time <= end_time <= curr_end:
+                print("BETWEEN, TRUE")
+                return True
     return False
 
 def apply_algorithm(course, algorithm):
