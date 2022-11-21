@@ -174,7 +174,7 @@ def random_course():
     courses = reconstruct_courses(request.args.getlist("courses[]"))
     names = construct_names(courses)
 
-    if term is not None and algorithm is not None:
+    if term is not None:
         while found and count < 10000:
             count += 1
             i = random.randint(0, len(section_list) - 1)
@@ -186,9 +186,6 @@ def random_course():
                         found = False
             if found is not False:
                 course = {}
-    print(count)
-    if count >= 10000:
-        print("Max error")
     return course
 
 def reconstruct_courses(basic_courses):
@@ -254,10 +251,8 @@ def check_conflict(curr_course, courses):
     if "meetings" not in curr_course["sections"][0]:
         return True
 
-    print("CURRENT:\t" + curr_course["code"])
     for curr_meeting in curr_course["sections"][0]["meetings"]:
         for course in courses:
-            print("\t" + course["code"])
             if "meetings" in course["sections"][0]:
                 for meeting in course["sections"][0]["meetings"]:
                     if compare_times(curr_meeting, meeting):
@@ -283,24 +278,11 @@ def compare_times(curr_meeting, meeting):
     start_time = datetime.strptime(meeting["startTime"], "%I:%M%p")
     end_time = datetime.strptime(meeting["endTime"], "%I:%M%p")
 
-    print("COMPARE")
-    print(curr_start.strftime("%I:%M%p") + " -- " + curr_end.strftime("%I:%M%p"))
-    print(start_time.strftime("%I:%M%p") + " -- " + end_time.strftime("%I:%M%p"))
-
     for day in curr_meeting["daysOfWeek"]:
         if day in meeting["daysOfWeek"]:
-            if curr_start <= end_time:
-                print("START IS LESS")
-                if start_time <= curr_start:
-                    print("START IS LARGER, TRUE")
-                    return True
-            if curr_end >= start_time:
-                print("END IS MORE")
-                if curr_end <= end_time:
-                    print("END IS SMALLER, TRUE")
-                    return True
+            if start_time <= curr_start <= end_time or end_time >= curr_end >= start_time:
+                return True
             if curr_start <= start_time <= end_time <= curr_end:
-                print("BETWEEN, TRUE")
                 return True
     return False
 
