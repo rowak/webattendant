@@ -5,6 +5,7 @@ describe('testSearch', () => {
 
       })
     
+    // Check if states are saved when switching between fall and winter
     it('course info box displays from course list', () => {
         cy.get('.courseInput').type('CIS*3750')
         cy.get('.courseSearchContent > .mb-3 > .btn').click()

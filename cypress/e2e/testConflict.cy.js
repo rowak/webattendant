@@ -4,6 +4,7 @@ describe('testConflict', () => {
         cy.visit('http://localhost:3000/')
       })
     
+    // Check if red frame is displayed for conflicting courses
     it('Add 2 conflicting courses ', () => {
         cy.get('.courseInput').type('CIS*3750')
         cy.get('.courseSearchContent > .mb-3 > .btn').click()

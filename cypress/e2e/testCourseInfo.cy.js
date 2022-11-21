@@ -9,6 +9,7 @@ describe('testSearch', () => {
         cy.get('.courseSearchContent >  .courseList > .courseListGroup > .courseListItem > .btn.btn-primary').first().click()
       })
     
+    // Check if the course info box contains the course information
     it('course info box displays from course list', () => {
 
         
@@ -18,6 +19,7 @@ describe('testSearch', () => {
 
     })
     
+    // Check if the course info box contains the meeting information
     it('course info box displays from search course list', () => {
 
         cy.get('.courseSearchContent >  .courseList > .courseListGroup').first().click()
@@ -26,6 +28,7 @@ describe('testSearch', () => {
 
     })
     
+    // Check if the course closes when you click outside the box
     it('course info box closes', () => {
 
         cy.get('.scheduledCoursesList >  .courseList > .courseListGroup').first().click()
