@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import MeetingInfoList from './MeetingInfoList.js'; // Import the component/file you are testing
 import React from 'react'; // Required to interact with the React DOM
 
-
+// Testing to see if meeting info list is rendered
 test('MeetingInfoList rendered', () => {
     let meetings = [];
 
@@ -13,7 +13,7 @@ test('MeetingInfoList rendered', () => {
 });
   
 
-
+// Test case to see if meeting info list contains the required data
 test('MeetingInfoList displays meeting', () => {
     let meetings = [{
         "type": "LEC",
