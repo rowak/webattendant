@@ -11,10 +11,8 @@ class ScheduleHelper extends React.Component {
         this.state = {
             courses: props.courses,
             suggest: [],
-            courseSelected: null,
             term: props.term,
             algorithm: null,
-            count: 0,
             start: false
         };
     }
@@ -23,6 +21,7 @@ class ScheduleHelper extends React.Component {
         if (props.term !== state.term) {
             return {
                 term: props.term,
+                suggest: []
             };
         }
         if (props.courses !== state.courses) {
@@ -34,21 +33,7 @@ class ScheduleHelper extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if(this.state.courseSelected !== null) {
-            let course = this.state.courseSelected;
-            this.setState({ courseSelected: null });
-            if(this.state.count > 0) {
-                let array = this.state.suggest;
-                if(Object.keys(course).length !== 0) {
-                    array.push(course);
-                }
-                this.setState({
-                    suggest: array,
-                    count: this.state.count - 1,
-                    start: true
-                });
-            }
-        } else if (this.state.start === true && this.state.count > 0) {
+        if (this.state.start === true) {
             this.setState({
                 start: false
             });
@@ -78,13 +63,9 @@ class ScheduleHelper extends React.Component {
             let basic = this.state.courses[i].code.slice() + ":"
             + this.state.courses[i].sections[0].code.slice() + ":"
             + this.state.courses[i].sections[0].term.slice();
-            basicCourses.push(basic);
-        }
-        for(let i = 0; i < this.state.suggest.length; i++) {
-            let basic = this.state.suggest[i].code.slice() + ":"
-            + this.state.suggest[i].sections[0].code.slice() + ":"
-            + this.state.suggest[i].sections[0].term.slice();
-            basicCourses.push(basic);
+            if(this.state.term === this.state.courses[i].sections[0].term) {
+                basicCourses.push(basic);
+            }
         }
         axios.get("/randomCourse", {
             headers: {},
@@ -94,11 +75,9 @@ class ScheduleHelper extends React.Component {
                 courses: basicCourses
             }
         }).then((resp) => {
-            if (Object.keys(resp.data).length !== 0) {
-                this.setState({
-                    courseSelected: resp.data,
-                });
-            }
+            this.setState({
+                suggest: resp.data,
+            });
         })
         .catch((err) => {
             this.setState({
@@ -108,16 +87,8 @@ class ScheduleHelper extends React.Component {
     }
 
     performNoTuesThurs() {
-        let len = 5;
-        for(let i = 0; i < this.state.courses.length; i++) {
-            let course = this.state.courses[i];
-            if(course.sections[0].term === this.state.term) {
-                len -= 1;
-            }
-        }
         this.setState({
             algorithm: "NoTuesThurs",
-            count: len,
             suggest: [],
             start: true
         });

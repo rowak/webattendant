@@ -155,13 +155,14 @@ def random_course():
     '''
     A function that will return a random course.
     '''
-    found = True
     course = {}
+    found_courses = []
     section = None
     term = None
     courses = None
     names = None
     count = 0
+    find = 0
     algorithm = None
     ignore_flag = True
 
@@ -173,20 +174,19 @@ def random_course():
 
     courses = reconstruct_courses(request.args.getlist("courses[]"))
     names = construct_names(courses)
+    find = 5 - len(courses)
 
-    if term is not None:
-        while found and count < 10000:
+    if term is not None and find > 0:
+        while count < 10000 and len(found_courses) < find:
             count += 1
             i = random.randint(0, len(section_list) - 1)
             course = section_list[i]
             section = course["sections"][0]
             if section["status"].lower() == "open" and section["term"].lower() == term.lower():
                 if ignore_tba(course, ignore_flag) and in_names(course, names):
-                    if check_conflict(course, courses) and apply_algorithm(course, algorithm):
-                        found = False
-            if found is not False:
-                course = {}
-    return course
+                    if check_all_conflict(course, courses, found_courses, algorithm):
+                        found_courses.append(course)
+    return found_courses
 
 def reconstruct_courses(basic_courses):
     '''
@@ -237,6 +237,17 @@ def ignore_tba(course, ignore_flag):
                 if meet["startTime"] is not None and meet["endTime"] is not None:
                     return True
     return False
+
+def check_all_conflict(curr_course, courses, found_courses, algorithm):
+    '''
+    A function that will perform the check for all courses, including those found.
+    It will also check if the course matches the algorithm.
+    '''
+    if apply_algorithm(curr_course, algorithm) is False:
+        return False
+    if check_conflict(curr_course, courses) is False:
+        return False
+    return check_conflict(curr_course, found_courses)
 
 def check_conflict(curr_course, courses):
     '''
@@ -432,19 +443,3 @@ def find_course(code, section_code):
             return course_sort[code]
 
     return None
-
-# Old code for getting a section
-#
-# def get_course_with_section(course, section_code):
-#     '''
-#     Returns a copy of a course object with only a specific section
-#     (all others removed).
-#     '''
-#     section_code = section_code.lstrip("0")
-#     course_copy = course.copy()
-#     sections = []
-#     for section in course["sections"]:
-#         if section["code"].lstrip("0") == section_code:
-#             sections.append(section)
-#     course_copy["sections"] = sections
-#     return course_copy
