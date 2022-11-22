@@ -155,14 +155,16 @@ def random_course():
     '''
     A function that will return a random course.
     '''
-    found = True
     course = {}
+    found_courses = []
     section = None
     term = None
     courses = None
     names = None
     count = 0
+    find = 0
     algorithm = None
+    ignore_flag = True
 
     if "term" in request.args:
         term = request.args["term"]
@@ -172,21 +174,19 @@ def random_course():
 
     courses = reconstruct_courses(request.args.getlist("courses[]"))
     names = construct_names(courses)
+    find = 5 - len(courses)
 
-    if term is not None:
-        while found and count < 100:
+    if term is not None and find > 0:
+        while count < 10000 and len(found_courses) < find:
             count += 1
             i = random.randint(0, len(section_list) - 1)
             course = section_list[i]
             section = course["sections"][0]
             if section["status"].lower() == "open" and section["term"].lower() == term.lower():
-                if apply_algorithm(course, algorithm):
-                    if check_conflict(course, courses) and in_names(course, names):
-                        found = False
-            if found is not False:
-                course = {}
-
-    return course
+                if ignore_tba(course, ignore_flag) and in_names(course, names):
+                    if check_all_conflict(course, courses, found_courses, algorithm):
+                        found_courses.append(course)
+    return found_courses
 
 def reconstruct_courses(basic_courses):
     '''
@@ -220,6 +220,35 @@ def in_names(course, names):
             return False
     return True
 
+def ignore_tba(course, ignore_flag):
+    '''
+    This will check if a course given has only TBA times
+    If the course has only tba times and the ignore flag is set
+    to true, it will return false.
+    Otherwise it will return true
+    '''
+    if ignore_flag is False:
+        return True
+
+    section = course["sections"][0]
+    if "meetings" in section:
+        for meet in section["meetings"]:
+            if meet["type"].upper() != "EXAM":
+                if meet["startTime"] is not None and meet["endTime"] is not None:
+                    return True
+    return False
+
+def check_all_conflict(curr_course, courses, found_courses, algorithm):
+    '''
+    A function that will perform the check for all courses, including those found.
+    It will also check if the course matches the algorithm.
+    '''
+    if apply_algorithm(curr_course, algorithm) is False:
+        return False
+    if check_conflict(curr_course, courses) is False:
+        return False
+    return check_conflict(curr_course, found_courses)
+
 def check_conflict(curr_course, courses):
     '''
     A small function that will take a course and
@@ -239,7 +268,6 @@ def check_conflict(curr_course, courses):
                 for meeting in course["sections"][0]["meetings"]:
                     if compare_times(curr_meeting, meeting):
                         return False
-
     return True
 
 def compare_times(curr_meeting, meeting):
@@ -263,12 +291,10 @@ def compare_times(curr_meeting, meeting):
 
     for day in curr_meeting["daysOfWeek"]:
         if day in meeting["daysOfWeek"]:
-            if curr_start <= end_time:
-                if start_time >= curr_start:
-                    return True
-                if end_time >= curr_end:
-                    if start_time <= curr_end:
-                        return True
+            if start_time <= curr_start <= end_time or end_time >= curr_end >= start_time:
+                return True
+            if curr_start <= start_time <= end_time <= curr_end:
+                return True
     return False
 
 def apply_algorithm(course, algorithm):
@@ -278,10 +304,13 @@ def apply_algorithm(course, algorithm):
     Returns true if it passed the algorithm
     Returns false otherwise
     '''
+    result = True
     if algorithm == "NoTuesThurs":
-        return no_tues_thurs(course)
+        result = no_tues_thurs(course)
+    elif algorithm == "NoFriday":
+        result = no_friday(course)
 
-    return True
+    return result
 
 def no_tues_thurs(course):
     '''
@@ -294,6 +323,19 @@ def no_tues_thurs(course):
             if meeting["daysOfWeek"] is not None and meeting["type"].upper() != "EXAM":
                 for day in meeting["daysOfWeek"]:
                     if day.lower() == "tues" or day.lower() == "thur":
+                        return False
+    return True
+
+def no_friday(course):
+    '''
+    Will check if the course has a non-exam meeting on a friday
+    Returns true if no firday meetings
+    '''
+    if "meetings" in course["sections"][0]:
+        for meeting in course["sections"][0]["meetings"]:
+            if meeting["daysOfWeek"] is not None and meeting["type"].upper() != "EXAM":
+                for day in meeting["daysOfWeek"]:
+                    if day.lower() == "fri":
                         return False
     return True
 
@@ -417,19 +459,3 @@ def find_course(code, section_code):
             return course_sort[code]
 
     return None
-
-# Old code for getting a section
-#
-# def get_course_with_section(course, section_code):
-#     '''
-#     Returns a copy of a course object with only a specific section
-#     (all others removed).
-#     '''
-#     section_code = section_code.lstrip("0")
-#     course_copy = course.copy()
-#     sections = []
-#     for section in course["sections"]:
-#         if section["code"].lstrip("0") == section_code:
-#             sections.append(section)
-#     course_copy["sections"] = sections
-#     return course_copy

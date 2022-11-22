@@ -140,7 +140,7 @@ class TestGetRandomCourse(unittest.TestCase):
         result = self.get_query({
             "term": "Fall 2022", "courses": []
         })
-        assert 'code' in result
+        assert len(result) > 0
 
 
 class TestGetAllCourses(unittest.TestCase):
