@@ -304,10 +304,13 @@ def apply_algorithm(course, algorithm):
     Returns true if it passed the algorithm
     Returns false otherwise
     '''
+    result = True
     if algorithm == "NoTuesThurs":
-        return no_tues_thurs(course)
+        result = no_tues_thurs(course)
+    elif algorithm == "NoFriday":
+        result = no_friday(course)
 
-    return True
+    return result
 
 def no_tues_thurs(course):
     '''
@@ -320,6 +323,19 @@ def no_tues_thurs(course):
             if meeting["daysOfWeek"] is not None and meeting["type"].upper() != "EXAM":
                 for day in meeting["daysOfWeek"]:
                     if day.lower() == "tues" or day.lower() == "thur":
+                        return False
+    return True
+
+def no_friday(course):
+    '''
+    Will check if the course has a non-exam meeting on a friday
+    Returns true if no firday meetings
+    '''
+    if "meetings" in course["sections"][0]:
+        for meeting in course["sections"][0]["meetings"]:
+            if meeting["daysOfWeek"] is not None and meeting["type"].upper() != "EXAM":
+                for day in meeting["daysOfWeek"]:
+                    if day.lower() == "fri":
                         return False
     return True
 
