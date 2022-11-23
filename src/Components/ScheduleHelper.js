@@ -13,7 +13,8 @@ class ScheduleHelper extends React.Component {
             suggest: [],
             term: props.term,
             algorithm: null,
-            start: false
+            start: false,
+            ignore: true
         };
     }
 
@@ -53,6 +54,12 @@ class ScheduleHelper extends React.Component {
                         <Button variant="info" onClick={() => this.performNoFriday()}>
                             No Fridays
                         </Button>
+                        <Button variant="info" onClick={() => this.performNoMornings()}>
+                            No Mornings
+                        </Button>
+                        <Button variant="info" onClick={() => this.performNoEvenings()}>
+                            No Evenings
+                        </Button>
                     </ButtonGroup>
                 </div>
                 <CourseList buttonVariant="primary" buttonText="Add" buttonCallback={this.props.buttonCallback} errorText="" courses={this.state.suggest} term={this.state.term} courseClickCallback={this.props.courseClickCallback}/>
@@ -75,7 +82,8 @@ class ScheduleHelper extends React.Component {
             params: {
                 term: this.state.term,
                 algorithm: this.state.algorithm,
-                courses: basicCourses
+                courses: basicCourses,
+                ignoreTBA: this.state.ignore
             }
         }).then((resp) => {
             this.setState({
@@ -100,6 +108,22 @@ class ScheduleHelper extends React.Component {
     performNoFriday() {
         this.setState({
             algorithm: "NoFriday",
+            suggest: [],
+            start: true
+        });
+    }
+
+    performNoMornings() {
+        this.setState({
+            algorithm: "NoMornings",
+            suggest: [],
+            start: true
+        });
+    }
+
+    performNoEvenings() {
+        this.setState({
+            algorithm: "NoEvenings",
             suggest: [],
             start: true
         });

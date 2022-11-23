@@ -164,13 +164,18 @@ def random_course():
     count = 0
     find = 0
     algorithm = None
-    ignore_flag = True
+    ignore_flag = False
 
     if "term" in request.args:
         term = request.args["term"]
 
     if "algorithm" in request.args:
         algorithm = request.args["algorithm"]
+
+    if "ignoreTBA" in request.args:
+        val = request.args["ignoreTBA"]
+        if val.lower() == "true":
+            ignore_flag = True
 
     courses = reconstruct_courses(request.args.getlist("courses[]"))
     names = construct_names(courses)
@@ -309,6 +314,10 @@ def apply_algorithm(course, algorithm):
         result = no_tues_thurs(course)
     elif algorithm == "NoFriday":
         result = no_friday(course)
+    elif algorithm == "NoMornings":
+        result = no_mornings(course)
+    elif algorithm == "NoEvenings":
+        result = no_evenings(course)
 
     return result
 
@@ -337,6 +346,36 @@ def no_friday(course):
                 for day in meeting["daysOfWeek"]:
                     if day.lower() == "fri":
                         return False
+    return True
+
+def no_mornings(course):
+    '''
+    Will check if a course has a starting meeting time before
+    11:00am. If it does not then it will return true,
+    otherwise it will return false
+    '''
+    morn = datetime.strptime("11:00am", "%I:%M%p")
+    if "meetings" in course["sections"][0]:
+        for meeting in course["sections"][0]["meetings"]:
+            if meeting["startTime"] is not None and meeting["type"].upper() != "EXAM":
+                start = datetime.strptime(meeting["startTime"], "%I:%M%p")
+                if start < morn:
+                    return False
+    return True
+
+def no_evenings(course):
+    '''
+    Will check if a course has a ending meeting time after
+    5:00pm. If it does not then it will return true,
+    otherwise it will return false
+    '''
+    morn = datetime.strptime("5:00pm", "%I:%M%p")
+    if "meetings" in course["sections"][0]:
+        for meeting in course["sections"][0]["meetings"]:
+            if meeting["endTime"] is not None and meeting["type"].upper() != "EXAM":
+                end = datetime.strptime(meeting["endTime"], "%I:%M%p")
+                if end > morn:
+                    return False
     return True
 
 def search_with_query(query, term):
