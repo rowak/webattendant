@@ -9,6 +9,7 @@ Potentially useful library. Installed already by install.sh
 import DatalistInput from "react-datalist-input";
 */
 import React from 'react';
+import AppHeader from "./Components/AppHeader"
 import Calendar from "./Components/Calendar.js";
 import ScheduledCoursesList from "./Components/ScheduledCoursesList";
 import CourseSearch from "./Components/CourseSearch";
@@ -52,9 +53,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <CourseInfo course={this.state.selectedCourse} hideModalCallback={this.hideModalCallback}/>
-        <header className="App-header">
-          <h1>WebAttendant</h1>
-        </header>
+        <AppHeader/>
         <div className="app-content">
           <div className="calendar-wrap">
             {this.renderCalendar()}

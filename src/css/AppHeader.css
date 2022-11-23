@@ -1,0 +1,16 @@
+.App-header {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.dummy {
+    visibility: hidden;
+}
+
+.header-menu-button img {
+}
+
+.header-menu-button button {
+    background: none;
+    border: none;
+}
