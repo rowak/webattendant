@@ -2,7 +2,8 @@ import React from 'react';
 import "../css/ScheduleHelper.css";
 import Button from "react-bootstrap/Button";
 import CourseList from './CourseList.js';
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import FormCheck from 'react-bootstrap/FormCheck';
 import axios from 'axios';
 
 class ScheduleHelper extends React.Component {
@@ -14,7 +15,7 @@ class ScheduleHelper extends React.Component {
             term: props.term,
             algorithm: null,
             start: false,
-            ignore: true
+            ignore: false
         };
     }
 
@@ -46,18 +47,22 @@ class ScheduleHelper extends React.Component {
     	return(
     		<div className="courseSearch">
                 <h2>Schedule Helper</h2>
+                <FormCheck
+                    label="Ignore TBA courses"
+                    onClick={() => this.toggleBox()}
+                />
                 <div className="algorithms">
-                    <ButtonGroup vertical>
-                        <Button variant="info" onClick={() => this.performNoTuesThurs()}>
+                    <ButtonGroup>
+                        <Button variant="secondary" onClick={() => this.performNoTuesThurs()}>
                             No Tuesday or Thursday
                         </Button>
-                        <Button variant="info" onClick={() => this.performNoFriday()}>
+                        <Button variant="secondary" onClick={() => this.performNoFriday()}>
                             No Fridays
                         </Button>
-                        <Button variant="info" onClick={() => this.performNoMornings()}>
+                        <Button variant="secondary" onClick={() => this.performNoMornings()}>
                             No Mornings
                         </Button>
-                        <Button variant="info" onClick={() => this.performNoEvenings()}>
+                        <Button variant="secondary" onClick={() => this.performNoEvenings()}>
                             No Evenings
                         </Button>
                     </ButtonGroup>
@@ -65,6 +70,18 @@ class ScheduleHelper extends React.Component {
                 <CourseList buttonVariant="primary" buttonText="Add" buttonCallback={this.props.buttonCallback} errorText="" courses={this.state.suggest} term={this.state.term} courseClickCallback={this.props.courseClickCallback}/>
     		</div>
     	);
+    }
+
+    toggleBox() {
+        if(this.state.ignore) {
+            this.setState({
+                ignore: false
+            });
+        } else {
+            this.setState({
+                ignore: true
+            });
+        }
     }
 
     getCourse() {
