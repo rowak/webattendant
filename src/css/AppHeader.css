@@ -1,6 +1,11 @@
 .App-header {
     flex-direction: row;
     justify-content: space-between;
+    padding: 10px;
+}
+
+.App-header h1 {
+    margin: 0;
 }
 
 .dummy {
@@ -8,6 +13,7 @@
 }
 
 .header-menu-button img {
+    width: 35px;
 }
 
 .header-menu-button button {
