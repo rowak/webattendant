@@ -11,7 +11,7 @@ build:
   before_script:
     - apk update && apk add docker-compose && apk add make
   script:
-    - make build
+    - make docker-build
 
 lint:
   stage: lint
