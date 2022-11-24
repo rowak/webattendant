@@ -37,4 +37,4 @@ clean:
 
 # Removes all docker images, containers, cache, etc
 clean-ci:
-	docker system prune -a
+	docker system prune -a --force
