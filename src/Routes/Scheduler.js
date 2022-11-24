@@ -33,16 +33,33 @@ class Scheduler extends React.Component {
     render() {
         return (
             <div className="Scheduler">
-                <CourseInfo course={this.state.selectedCourse} hideModalCallback={this.hideModalCallback} />
+                <CourseInfo
+                    course={this.state.selectedCourse}
+                    hideModalCallback={this.hideModalCallback} />
                 <AppHeader />
                 <div className="app-content">
                     <div className="calendar-wrap">
                         {this.renderCalendar()}
                     </div>
                     <div className="app-sidebar">
-                        <CourseSearch courses={[]} buttonCallback={this.addCourseButtonCallback} term={this.state.term} courseClickCallback={this.courseClickCallback} />
-                        <ScheduledCoursesList courses={this.state.courses} buttonCallback={this.removeCourseButtonCallback} term={this.state.term} courseClickCallback={this.courseClickCallback} />
-                        <ScheduleHelper term={this.state.term} courses={this.state.courses} buttonCallback={this.addCourseButtonCallback} courseClickCallback={this.courseClickCallback} />
+                        <CourseSearch
+                            courses={[]}
+                            buttonCallback={this.addCourseButtonCallback}
+                            term={this.state.term}
+                            courseClickCallback={this.courseClickCallback}
+                        />
+                        <ScheduledCoursesList
+                            courses={this.state.courses}
+                            buttonCallback={this.removeCourseButtonCallback}
+                            term={this.state.term}
+                            courseClickCallback={this.courseClickCallback}
+                        />
+                        <ScheduleHelper
+                            term={this.state.term}
+                            courses={this.state.courses}
+                            buttonCallback={this.addCourseButtonCallback}
+                            courseClickCallback={this.courseClickCallback}
+                        />
                     </div>
                     <div className="error-notifications">
                         {this.renderFullAlert()}
