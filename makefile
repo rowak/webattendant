@@ -1,6 +1,6 @@
 PYINT = python3
 
-build:
+docker-build:
 	docker-compose build
 
 run-docker:
