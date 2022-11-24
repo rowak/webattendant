@@ -34,3 +34,7 @@ test-ci:
 # Removes all __pycache__ files recursively
 clean:
 	find . -type d -name __pycache__ -prune -exec rm -rf {} \;
+
+# Removes all docker images, containers, cache, etc
+clean-ci:
+	docker system prune -a --force
