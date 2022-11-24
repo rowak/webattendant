@@ -8,7 +8,6 @@ test('CourseSearch rendered', () => {
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Search");
 });
 
-//
 test('CourseSearch displaying courses list', () => {
     //supply course data and check if it appears
     render(<CourseSearch courses={[
@@ -40,7 +39,6 @@ test('CourseSearch displaying Add button', () => {
     ]} />);
     
     const button = screen.getAllByRole("button", { children: "Add"})[1];
-    //console.log(buttons.getAttribute("type"));
     expect(button).toHaveClass("btn btn-primary");
     //find <p> tag with text "testing section"
     expect(screen.getByText("0101")).toBeInTheDocument();
