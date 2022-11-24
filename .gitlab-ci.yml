@@ -1,6 +1,7 @@
 image: docker
 
 stages:
+  - clean
   - build
   - lint
   - test
@@ -40,8 +41,6 @@ clean:
     - apk update && apk add make
   script:
     - make clean-ci
-  dependencies:
-    - build
 
 deploy:
   stage: deploy
