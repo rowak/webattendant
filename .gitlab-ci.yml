@@ -1,7 +1,6 @@
 image: docker
 
 stages:
-  - clean
   - build
   - lint
   - test
