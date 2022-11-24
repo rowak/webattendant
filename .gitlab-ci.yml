@@ -4,6 +4,7 @@ stages:
   - build
   - lint
   - test
+  - clean
   - deploy
 
 build:
@@ -30,6 +31,15 @@ test:
     - make test-ci
   dependencies:
     - build
+
+clean:
+  stage: clean
+  except:
+    - main
+  before_script:
+    - apk update && apk add make
+  script:
+    - make clean-ci
 
 deploy:
   stage: deploy

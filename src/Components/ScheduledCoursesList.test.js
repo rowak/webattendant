@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import ScheduledCourseList from './ScheduledCoursesList.js'; // Import the component/file you are testing
 import React from 'react'; // Required to interact with the React DOM
 
-
 // Basic test case to see if the textbox for selected courses is rendered
 test('ScheduledCourseList rendered', () => {
   let callback = () => {};
@@ -48,5 +47,4 @@ test('Scheduled Course List displaying Remove button', () => {
     const buttons = screen.getAllByRole("button", { children: "Remove"})[0];
 
     expect(buttons).toHaveClass("btn btn-danger");
-    
 });

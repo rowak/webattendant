@@ -9,9 +9,7 @@ test('MeetingInfoList rendered', () => {
     render(<MeetingInfoList meetings={meetings} />);
 
     expect(screen.getByRole("table")).toHaveClass("meeting-grid");
-
 });
-  
 
 // Test case to see if meeting info list contains the required data
 test('MeetingInfoList displays meeting', () => {
@@ -32,9 +30,4 @@ test('MeetingInfoList displays meeting', () => {
     render(<MeetingInfoList meetings={meetings} />);
     
     expect(screen.getByRole("heading", { level: 4 })).toHaveTextContent("LEC");
-    
 });
-
-
-
-

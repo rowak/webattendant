@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import CourseList from './CourseList.js'; // Import the component/file you are testing
 import React from 'react'; // Required to interact with the React DOM
 
-
 // Basic test case to see if the CourseList renders
 test('CourseList rendered', () => {
   let callback = () => {};

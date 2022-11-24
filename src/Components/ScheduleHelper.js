@@ -67,7 +67,15 @@ class ScheduleHelper extends React.Component {
                         </Button>
                     </ButtonGroup>
                 </div>
-                <CourseList buttonVariant="primary" buttonText="Add" buttonCallback={this.props.buttonCallback} errorText="" courses={this.state.suggest} term={this.state.term} courseClickCallback={this.props.courseClickCallback}/>
+                <CourseList
+                    buttonVariant="primary"
+                    buttonText="Add"
+                    buttonCallback={this.props.buttonCallback}
+                    errorText=""
+                    courses={this.state.suggest}
+                    term={this.state.term}
+                    courseClickCallback={this.props.courseClickCallback}
+                />
     		</div>
     	);
     }
