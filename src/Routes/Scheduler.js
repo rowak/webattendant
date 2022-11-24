@@ -8,6 +8,7 @@ import Calendar from "../Components/Calendar.js";
 
 import moment from 'moment';
 import Alert from 'react-bootstrap/Alert';
+
 class Scheduler extends React.Component {
     constructor() {
         super();
@@ -20,6 +21,7 @@ class Scheduler extends React.Component {
             selectedCourse: null
         };
     }
+
     // variables
     colors = ['#C09BD8', '#F5B400', '#8AC926', '#1982C4', '#6A4C93'];
     // Used colors are stored in an object like {"code": "CIS*3760", "term": "Fall 2022"}.
@@ -27,6 +29,7 @@ class Scheduler extends React.Component {
     // Each color can be assigned to only one course at a time, but the same color can be
     // assigned to courses in other terms.
     usedColors = [[], [], [], [], []];
+
     render() {
         return (
             <div className="Scheduler">
@@ -49,6 +52,7 @@ class Scheduler extends React.Component {
             </div>
         );
     }
+
     renderCalendar() {
         return (
             <Calendar
@@ -59,6 +63,7 @@ class Scheduler extends React.Component {
             />
         )
     }
+
     renderFullAlert = () => {
         return (
             <Alert
@@ -164,7 +169,6 @@ class Scheduler extends React.Component {
             let termIndex = this.colorHasTerm(this.usedColors[i], courseObj.term);
             let courseIndex = this.colorHasCourse(this.usedColors[i], courseObj.code);
             if (termIndex !== -1 && courseIndex !== -1) {
-                console.log(courseObj.term + " " + i);
                 this.usedColors[i].splice(this.colorHasTerm(this.usedColors[i], courseObj.term), 1);
             }
         }
@@ -264,7 +268,6 @@ class Scheduler extends React.Component {
     }
 
     hideModalCallback = () => {
-        console.log("test");
         this.setState({
             selectedCourse: null
         })
@@ -279,4 +282,5 @@ class Scheduler extends React.Component {
         return false;
     }
 }
+
 export default Scheduler;

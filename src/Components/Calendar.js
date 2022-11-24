@@ -121,10 +121,6 @@ class Calendar extends React.Component {
                         eventDurationEditable={false}
                         events={this.state.events}
                         allDaySlot={false}
-                        /* This will log into the Javascript console the date you clicked */
-                        // dateClick={(e) => console.log(e.dateStr)}
-                        /* This will log into the console the ID of the event you clicked */
-                        // eventClick={(e) => /*console.log(e.event.title)*/}
                         eventMouseEnter={(info) => {
                             if (info.event.title) {
                                 let startTime = this.getFormattedTime(info.event.start);
