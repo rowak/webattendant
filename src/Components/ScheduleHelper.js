@@ -49,7 +49,7 @@ class ScheduleHelper extends React.Component {
                     <div className="options scheduleAction">
                         <h3>Options</h3>
                         <FormCheck
-                            label="Ignore TBA courses"
+                            label="Hide courses without meetings"
                             onClick={() => this.toggleBox()}
                         />
                     </div>
