@@ -3,11 +3,22 @@
     background: #282c34;
     border: 2px black;
     border-radius: 15px;
-    max-height: 650px;
+    max-height: 850px;
     margin-bottom: 20px;
 }
 
-.algorithms {
-    margin-bottom: 20px;
-    text-align: center;
+.scheduleActions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.scheduleAction {
+    background: #373D47;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.suggestList {
+    margin-top: 18px;
 }

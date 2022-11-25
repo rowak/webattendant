@@ -43,43 +43,56 @@ class ScheduleHelper extends React.Component {
 
     render() {
     	return(
-    		<div className="courseSearch">
+    		<div className="scheduleHelper">
                 <h2>Schedule Helper</h2>
-                <div className="options">
-                    <h3>Options</h3>
-                    <FormCheck
-                        label="Ignore TBA courses"
-                        onClick={() => this.toggleBox()}
-                    />
+                <div className="scheduleActions">
+                    <div className="options scheduleAction">
+                        <h3>Options</h3>
+                        <FormCheck
+                            label="Ignore TBA courses"
+                            onClick={() => this.toggleBox()}
+                        />
+                    </div>
+                    <div className="algorithms scheduleAction">
+                        <h3>Suggestion Type</h3>
+                        <FormCheck
+                            name="algorithm"
+                            type="radio"
+                            label="No Tuesday or Thursday"
+                            onClick={() => this.performNoTuesThurs()}
+                        />
+                        <FormCheck
+                            name="algorithm"
+                            type="radio"
+                            label="No Fridays"
+                            onClick={() => this.performNoFriday()}
+                        />
+                        <FormCheck
+                            name="algorithm"
+                            type="radio"
+                            label="No Mornings"
+                            onClick={() => this.performNoMornings()}
+                        />
+                        <FormCheck
+                            name="algorithm"
+                            type="radio"
+                            label="No Evenings"
+                            onClick={() => this.performNoEvenings()}
+                        />
+                    </div>
                 </div>
-                <div className="algorithms">
-                    <h3>Suggestion Type</h3>
-                    <FormCheck
-                        name="algorithm"
-                        type="radio"
-                        label="No Tuesday or Thursday"
-                        onClick={() => this.performNoTuesThurs()}
-                    />
-                    <FormCheck
-                        name="algorithm"
-                        type="radio"
-                        label="No Fridays"
-                        onClick={() => this.performNoFriday()}
-                    />
-                    <FormCheck
-                        name="algorithm"
-                        type="radio"
-                        label="No Mornings"
-                        onClick={() => this.performNoMornings()}
-                    />
-                    <FormCheck
-                        name="algorithm"
-                        type="radio"
-                        label="No Evenings"
-                        onClick={() => this.performNoEvenings()}
-                    />
-                </div>
-                <div className="courselist">
+                {this.renderCourseList()}
+    		</div>
+    	);
+    }
+
+    renderCourseList() {
+        let suggest = this.state.suggest;
+        let algorithm = this.state.algorithm;
+
+        if (suggest.length > 0) {
+            return (
+                <div className="suggestList">
                     <h3>Recommended Courses</h3>
                     <CourseList
                         buttonVariant="primary"
@@ -91,8 +104,19 @@ class ScheduleHelper extends React.Component {
                         courseClickCallback={this.props.courseClickCallback}
                     />
                 </div>
-    		</div>
-    	);
+            );
+        }
+        else if (suggest.length === 0 && algorithm !== null) {
+            return (
+                <div className="suggestList">
+                    <h3>Recommended Courses</h3>
+                    <h5>Schedule is full.</h5>
+                </div>
+            );
+        }
+        else {
+            return (null);
+        }
     }
 
     toggleBox() {
