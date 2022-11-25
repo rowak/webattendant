@@ -233,21 +233,23 @@ class Scheduler extends React.Component {
                             // Calendar will use this data for the display
                             // Calendar will not have access to course for a specific entry, so
                             // make sure each event has everything it needs
-                            let newEvent = {
-                                title: course.code.concat(" ", sec.code.concat(" ", meet.type)),
-                                code: course.code,
-                                startTime: moment(meet.startTime, ["h:mm A"]).format("HH:mm"),
-                                endTime: moment(meet.endTime, ["h:mm A"]).format("HH:mm"),
-                                daysOfWeek: this.translateDays(meet.daysOfWeek),
-                                sectioncode: sec.code,
-                                //set colour based on how many courses are already in the schedule
-                                backgroundColor: color,
-                                borderColor: color,
-                                originalBorderColor: color
-                            };
-                            // Basic ignore exams functionality
-                            if (meet.type.toLowerCase() !== "exam") {
-                                course.events.push(newEvent);
+                            if(meet.endTime !== null && meet.startTime !== null) {
+                                let newEvent = {
+                                    title: course.code.concat(" ", sec.code.concat(" ", meet.type)),
+                                    code: course.code,
+                                    startTime: moment(meet.startTime, ["h:mm A"]).format("HH:mm"),
+                                    endTime: moment(meet.endTime, ["h:mm A"]).format("HH:mm"),
+                                    daysOfWeek: this.translateDays(meet.daysOfWeek),
+                                    sectioncode: sec.code,
+                                    //set colour based on how many courses are already in the schedule
+                                    backgroundColor: color,
+                                    borderColor: color,
+                                    originalBorderColor: color
+                                };
+                                // Basic ignore exams functionality
+                                if (meet.type.toLowerCase() !== "exam") {
+                                    course.events.push(newEvent);
+                                }
                             }
                         }
                     }
