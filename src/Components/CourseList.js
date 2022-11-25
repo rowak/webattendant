@@ -72,9 +72,11 @@ class CourseList extends React.Component {
 
     hasMeetingsWithTimes(course) {
         let meetings = course.sections[0].meetings;
-        for (let i = 0; i < meetings.length; i++) {
-            if (meetings[i].daysOfWeek !== null && meetings[i].startTime !== null && meetings[i].endTime !== null) {
-                return true;
+        if (meetings !== undefined) {
+            for (let i = 0; i < meetings.length; i++) {
+                if (meetings[i].daysOfWeek !== null && meetings[i].startTime !== null && meetings[i].endTime !== null) {
+                    return true;
+                }
             }
         }
         return false;
@@ -82,9 +84,11 @@ class CourseList extends React.Component {
 
     hasExam(course) {
         let meetings = course.sections[0].meetings;
-        for (let i = 0; i < meetings.length; i++) {
-            if (meetings[i].type.toLowerCase() === "exam") {
-                return true;
+        if (meetings !== undefined) {
+            for (let i = 0; i < meetings.length; i++) {
+                if (meetings[i].type.toLowerCase() === "exam") {
+                    return true;
+                }
             }
         }
         return false;

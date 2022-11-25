@@ -19,10 +19,10 @@ describe('testSearch', () => {
         cy.get('.courseSearchContent >  .courseList > .courseListGroup > .courseListItem > .btn.btn-primary').first().click()
 
         cy.get('.term-selectors > .btn-group > .btn.btn-primary').first().click()
-        cy.get('.scheduledCoursesList >  .courseList > .courseListGroup > .courseListItem > div > h5').should('contain', 'CIS*3750')
+        cy.get('.scheduledCoursesList >  .courseList > .courseListGroup > .courseListItem > div > div > h5').should('contain', 'CIS*3750')
 
         cy.get('.term-selectors > .btn-group > .btn.btn-secondary').first().click()
-        cy.get('.scheduledCoursesList >  .courseList > .courseListGroup > .courseListItem > div > h5').should('contain', 'CIS*3750')
+        cy.get('.scheduledCoursesList >  .courseList > .courseListGroup > .courseListItem > div > div > h5').should('contain', 'CIS*3750')
 
     })
 
