@@ -150,6 +150,7 @@ class Scheduler extends React.Component {
 
     // Reserves a unique color for a course.
     getNextColor = (courseCode) => {
+        console.log(this.usedColors);
         let courseObj = { "code": courseCode, "term": this.state.term };
         for (let i = 0; i < this.colors.length; i++) {
             if (this.colorHasTerm(this.usedColors[i], courseObj.term) === -1) {
@@ -169,9 +170,9 @@ class Scheduler extends React.Component {
         return -1;
     }
 
-    colorHasCourse = (color, code) => {
+    colorHasTermAndCourse = (color, code, term) => {
         for (let i = 0; i < color.length; i++) {
-            if (color[i].code === code) {
+            if (color[i].code === code && color[i].term === term) {
                 return i;
             }
         }
@@ -181,12 +182,13 @@ class Scheduler extends React.Component {
     // Frees the color used by a course so it can be used
     // by other courses.
     freeColor = (courseCode) => {
+        console.log(this.usedColors);
         let courseObj = { "code": courseCode, "term": this.state.term };
         for (let i = 0; i < this.colors.length; i++) {
-            let termIndex = this.colorHasTerm(this.usedColors[i], courseObj.term);
-            let courseIndex = this.colorHasCourse(this.usedColors[i], courseObj.code);
-            if (termIndex !== -1 && courseIndex !== -1) {
+            let has = this.colorHasTermAndCourse(this.usedColors[i], courseObj.code, courseObj.term);
+            if (has !== -1) {
                 this.usedColors[i].splice(this.colorHasTerm(this.usedColors[i], courseObj.term), 1);
+                break;
             }
         }
     }
