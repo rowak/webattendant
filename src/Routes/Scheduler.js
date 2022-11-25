@@ -36,7 +36,6 @@ class Scheduler extends React.Component {
                 <CourseInfo
                     course={this.state.selectedCourse}
                     hideModalCallback={this.hideModalCallback}
-                    allCourses={this.state.courses}
                     addCourseCallBack = {this.addCourseButtonCallback}
                     removeCourseCallBack = {this.removeCourseButtonCallback}
                 />
@@ -213,6 +212,7 @@ class Scheduler extends React.Component {
     // Callback that executes when the "Add" button in the
     // CourseSearch component is clicked.
     addCourseButtonCallback = (course) => {
+        let oldCourse = course;
         let courses = this.state.courses;
         if (!this.checkMaxCoursesInTerm()) {
             this.showFullAlert();
@@ -258,22 +258,32 @@ class Scheduler extends React.Component {
         } else {
             this.showConflictAlert();
         }
+        if (this.state.selectedCourse !== oldCourse) {
+            course = this.state.selectedCourse;
+        }
         this.setState({
-            courses: courses
+            courses: courses,
+            selectedCourse: course
         });
     }
 
     // Callback that executes when the "Remove" button in the
     // ScheduledCoursesList component is clicked.
     removeCourseButtonCallback = (course) => {
+        let oldCourse = course;
         let courses = this.state.courses;
         if (this.hasCourse(courses, course)) {
             let idx = courses.indexOf(course);
             courses.splice(idx, 1);
         }
         this.freeColor(course.code);
+        course.events = undefined;
+        if (this.state.selectedCourse !== oldCourse) {
+            course = this.state.selectedCourse;
+        }
         this.setState({
-            courses: courses
+            courses: courses,
+            selectedCourse: course
         });
     }
 

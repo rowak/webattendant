@@ -7,16 +7,14 @@ class CourseInfo extends React.Component {
 	constructor(props) {
         super(props);
         this.state = {
-            course: props.course,
-            allCourses: props.allCourses
+            course: props.course
         };
     }
     
     static getDerivedStateFromProps(props, state) {
         if (props.course !== state.course) {
             return {
-                course: props.course,
-                allCourses: props.allCourses
+                course: props.course
             };
         }
         return null;
@@ -59,15 +57,25 @@ class CourseInfo extends React.Component {
     }
 
     renderButton(course) {
-        for (let i = 0; i < this.state.allCourses.length; i++) {
-            if (course === this.state.allCourses[i]) {
-                return (
-                    <Button className="infoRemoveButton" variant={this.props.buttonVariant} onClick={(e) => this.handleRemoveButtonCallback(e, course)}>Remove</Button>
-                );
-            }
-        }        
+        if (course.events !== undefined) {
+            return (
+                <Button
+                    className="infoRemoveButton"
+                    variant="danger"
+                    onClick={(e) => this.handleRemoveButtonCallback(e, course)}
+                >
+                Remove
+                </Button>
+            );
+        }     
         return (
-            <Button className="infoAddButton" variant={this.props.buttonVariant} onClick={(e) => this.handleAddButtonCallback(e, course)}>Add</Button>
+            <Button
+                className="infoAddButton"
+                variant="primary"
+                onClick={(e) => this.handleAddButtonCallback(e, course)}
+            >
+            Add
+            </Button>
         );
     }
 
