@@ -188,9 +188,10 @@ def random_course():
             course = section_list[i]
             section = course["sections"][0]
             if section["status"].lower() == "open" and section["term"].lower() == term.lower():
-                if ignore_tba(course, ignore_flag) and in_names(course, names):
+                if ignore_tba(course, ignore_flag) and in_names(course, names) and in_names:
                     if check_all_conflict(course, courses, found_courses, algorithm):
                         found_courses.append(course)
+                        names.append(course["code"])
     return found_courses
 
 def reconstruct_courses(basic_courses):
