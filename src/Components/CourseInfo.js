@@ -1,5 +1,6 @@
 import React from 'react';
 import MeetingInfoList from "./MeetingInfoList";
+import Button from 'react-bootstrap/Button';
 import "../css/CourseInfo.css"
 
 class CourseInfo extends React.Component {
@@ -47,10 +48,45 @@ class CourseInfo extends React.Component {
                                 meetings={section.meetings}
                             />
                         </div>
+                        <br></br>
+                        {this.renderButton(course)}
                     </div>
                 </div>
             );
         }
+    }
+
+    renderButton(course) {
+        if (course.events !== undefined) {
+            return (
+                <Button
+                    className="infoRemoveButton"
+                    variant="danger"
+                    onClick={(e) => this.handleRemoveButtonCallback(e, course)}
+                >
+                Remove
+                </Button>
+            );
+        }     
+        return (
+            <Button
+                className="infoAddButton"
+                variant="primary"
+                onClick={(e) => this.handleAddButtonCallback(e, course)}
+            >
+            Add
+            </Button>
+        );
+    }
+
+    handleAddButtonCallback = (e, course) => {
+        e.stopPropagation();
+        this.props.addCourseCallBack(course);
+    }
+    
+    handleRemoveButtonCallback = (e, course) => {
+        e.stopPropagation();
+        this.props.removeCourseCallBack(course);
     }
 
     getTeachersRow(section) {

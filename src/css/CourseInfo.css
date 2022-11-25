@@ -84,3 +84,26 @@
     height: 100%;
     background: rgba(0,0,0,0.6)
 }
+
+.infoAddButton {
+    background-color: #373D47;
+    border-color: #373D47;
+    display: block;
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+}
+
+.infoRemoveButton {
+    background-color: #373D47;
+    border-color: #373D47;
+    display: block;
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+}
+
+.infoRemoveButton:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
