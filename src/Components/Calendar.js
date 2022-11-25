@@ -100,49 +100,51 @@ class Calendar extends React.Component {
                 </div>
                 <div className="calendar">
                     <h2>Schedule</h2>
-                    <FullCalendar
-                        plugins={[timeGridPlugin, interactionPlugin]}
-                        headerToolbar={false}
-                        initialView="timeGridWeek"
-                        slotMinTime={'07:00:00'}
-                        slotMaxTime={'24:00:00'}
-                        editable={true}
-                        eventTimeFormat={{
-                            hour: 'numeric',
-                            minute: '2-digit',
-                            meridiem: 'short',
-                        }}
-                        dayHeaderFormat={{
-                            weekday: 'short'
-                        }}
-                        contentHeight={'850px'}
-                        expandRows={'true'}
-                        eventStartEditable={false}
-                        eventDurationEditable={false}
-                        events={this.state.events}
-                        allDaySlot={false}
-                        eventMouseEnter={(info) => {
-                            if (info.event.title) {
-                                let startTime = this.getFormattedTime(info.event.start);
-                                let endTime = this.getFormattedTime(info.event.end);
-                                let tooltipStr = `${info.event.title}<br>(${startTime} - ${endTime})`
-                                this.tooltip = new Tooltip(info.el, {
-                                    title: tooltipStr,
-                                    html: true,
-                                    placement: "top",
-                                    trigger: "hover",
-                                    container: "body"
-                                });
-                                this.tooltip.show();
-                            }
-                        }}
-                        eventMouseLeave={() => {
-                            if (this.tooltip) {
-                                this.tooltip.dispose();
-                                this.tooltip = null;
-                            }
-                        }}
-                    />
+                    <div id="schedule">
+                        <FullCalendar
+                            plugins={[timeGridPlugin, interactionPlugin]}
+                            headerToolbar={false}
+                            initialView="timeGridWeek"
+                            slotMinTime={'07:00:00'}
+                            slotMaxTime={'24:00:00'}
+                            editable={true}
+                            eventTimeFormat={{
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                meridiem: 'short',
+                            }}
+                            dayHeaderFormat={{
+                                weekday: 'short'
+                            }}
+                            contentHeight={'850px'}
+                            expandRows={'true'}
+                            eventStartEditable={false}
+                            eventDurationEditable={false}
+                            events={this.state.events}
+                            allDaySlot={false}
+                            eventMouseEnter={(info) => {
+                                if (info.event.title) {
+                                    let startTime = this.getFormattedTime(info.event.start);
+                                    let endTime = this.getFormattedTime(info.event.end);
+                                    let tooltipStr = `${info.event.title}<br>(${startTime} - ${endTime})`
+                                    this.tooltip = new Tooltip(info.el, {
+                                        title: tooltipStr,
+                                        html: true,
+                                        placement: "top",
+                                        trigger: "hover",
+                                        container: "body"
+                                    });
+                                    this.tooltip.show();
+                                }
+                            }}
+                            eventMouseLeave={() => {
+                                if (this.tooltip) {
+                                    this.tooltip.dispose();
+                                    this.tooltip = null;
+                                }
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
         );

@@ -36,7 +36,7 @@ class Scheduler extends React.Component {
                 <CourseInfo
                     course={this.state.selectedCourse}
                     hideModalCallback={this.hideModalCallback} />
-                <AppHeader />
+                <AppHeader term={this.state.term} />
                 <div className="app-content">
                     <div className="calendar-wrap">
                         {this.renderCalendar()}
