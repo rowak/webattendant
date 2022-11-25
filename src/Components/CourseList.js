@@ -51,7 +51,11 @@ class CourseList extends React.Component {
                             <ListGroup key={i} className="courseListGroup">
                                 <ListGroupItem onClick={(e) => this.props.courseClickCallback(course)} className={itemClass} style={{borderColor: borderColor}}>
                                     <div>
-                                        <h5>{course.code} ({course.sections[0].code})</h5>
+                                        <div>
+                                            <h5 className="courseCode">{course.code} ({course.sections[0].code})</h5>
+                                            {this.renderNoMeetingsTag(course)}
+                                            {this.renderNoExamsTag(course)}
+                                        </div>
                                         <p>{course.sections[0].name}</p>
                                     </div>
                                     {this.renderButton(course)}
@@ -64,6 +68,57 @@ class CourseList extends React.Component {
                 </div>
             );
         }
+    }
+
+    hasMeetingsWithTimes(course) {
+        let meetings = course.sections[0].meetings;
+        if (meetings !== undefined) {
+            for (let i = 0; i < meetings.length; i++) {
+                if (meetings[i].daysOfWeek !== null && meetings[i].startTime !== null && meetings[i].endTime !== null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    hasExam(course) {
+        let meetings = course.sections[0].meetings;
+        if (meetings !== undefined) {
+            for (let i = 0; i < meetings.length; i++) {
+                if (meetings[i].type.toLowerCase() === "exam") {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    renderNoMeetingsTag(course) {
+        if (!this.hasMeetingsWithTimes(course)) {
+            return this.renderTag("No Meetings", "noMeetings");
+        }
+        else {
+            return (null);
+        }
+    }
+
+    renderNoExamsTag(course) {
+        if (!this.hasExam(course)) {
+            return this.renderTag("No Exam", "noExam");
+        }
+        else {
+            return (null);
+        }
+    }
+
+    renderTag(text, type) {
+        let className = "tag " + type;
+        return (
+            <div className={className}>
+                {text}
+            </div>
+        );
     }
 
     renderButton(course) {
