@@ -64,14 +64,16 @@ class Calendar extends React.Component {
         for (let j = i + 1; j < events.length; j++) {
             for(let day = 0; day < 7; day++) {
                 if(currEvent.daysOfWeek.includes(day) && events[j].daysOfWeek.includes(day)) {
-                    if (currEvent.startTime < events[j].startTime) {
-                        if (currEvent.endTime > events[j].startTime) {
-                            this.highlightConflict(currEvent, events[j]);
+                    if(currEvent.backgroundColor !== events[j].backgroundColor) {
+                        if (currEvent.startTime < events[j].startTime) {
+                            if (currEvent.endTime > events[j].startTime) {
+                                this.highlightConflict(currEvent, events[j]);
+                            }
                         }
-                    }
-                    else {
-                        if (events[j].endTime > currEvent.startTime) {
-                            this.highlightConflict(currEvent, events[j]);
+                        else {
+                            if (events[j].endTime > currEvent.startTime) {
+                                this.highlightConflict(currEvent, events[j]);
+                            }
                         }
                     }
                 }
