@@ -46,9 +46,3 @@ describe('test error-notification', () => {
 
 
 })
-/* <div role="alert" class="fade alert alert-warning alert-dismissible show" bis_skin_checked="1">
-<button type="button" class="btn-close" aria-label="Close alert"></button>
-<div class="alert-heading h4" bis_skin_checked="1">Full Schedule</div>
-<p>You can only have up to 5 courses selected at once.</p>
-</div>*/
-
