@@ -1,8 +1,6 @@
 import React from 'react';
 import "../css/ScheduleHelper.css";
-import Button from "react-bootstrap/Button";
 import CourseList from './CourseList.js';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import FormCheck from 'react-bootstrap/FormCheck';
 import axios from 'axios';
 
@@ -45,39 +43,80 @@ class ScheduleHelper extends React.Component {
 
     render() {
     	return(
-    		<div className="courseSearch">
+    		<div className="scheduleHelper">
                 <h2>Schedule Helper</h2>
-                <FormCheck
-                    label="Ignore TBA courses"
-                    onClick={() => this.toggleBox()}
-                />
-                <div className="algorithms">
-                    <ButtonGroup>
-                        <Button variant="secondary" onClick={() => this.performNoTuesThurs()}>
-                            No Tuesday or Thursday
-                        </Button>
-                        <Button variant="secondary" onClick={() => this.performNoFriday()}>
-                            No Fridays
-                        </Button>
-                        <Button variant="secondary" onClick={() => this.performNoMornings()}>
-                            No Mornings
-                        </Button>
-                        <Button variant="secondary" onClick={() => this.performNoEvenings()}>
-                            No Evenings
-                        </Button>
-                    </ButtonGroup>
+                <div className="scheduleActions">
+                    <div className="options scheduleAction">
+                        <h3>Options</h3>
+                        <FormCheck
+                            label="Hide courses without meetings"
+                            onClick={() => this.toggleBox()}
+                        />
+                    </div>
+                    <div className="algorithms scheduleAction">
+                        <h3>Suggestion Type</h3>
+                        <FormCheck
+                            name="algorithm"
+                            type="radio"
+                            label="No Tuesday or Thursday"
+                            onClick={() => this.performNoTuesThurs()}
+                        />
+                        <FormCheck
+                            name="algorithm"
+                            type="radio"
+                            label="No Fridays"
+                            onClick={() => this.performNoFriday()}
+                        />
+                        <FormCheck
+                            name="algorithm"
+                            type="radio"
+                            label="No Mornings"
+                            onClick={() => this.performNoMornings()}
+                        />
+                        <FormCheck
+                            name="algorithm"
+                            type="radio"
+                            label="No Evenings"
+                            onClick={() => this.performNoEvenings()}
+                        />
+                    </div>
                 </div>
-                <CourseList
-                    buttonVariant="primary"
-                    buttonText="Add"
-                    buttonCallback={this.props.buttonCallback}
-                    errorText=""
-                    courses={this.state.suggest}
-                    term={this.state.term}
-                    courseClickCallback={this.props.courseClickCallback}
-                />
+                {this.renderCourseList()}
     		</div>
     	);
+    }
+
+    renderCourseList() {
+        let suggest = this.state.suggest;
+        let algorithm = this.state.algorithm;
+
+        if (suggest.length > 0) {
+            return (
+                <div className="suggestList">
+                    <h3>Recommended Courses</h3>
+                    <CourseList
+                        buttonVariant="primary"
+                        buttonText="Add"
+                        buttonCallback={this.props.buttonCallback}
+                        errorText=""
+                        courses={this.state.suggest}
+                        term={this.state.term}
+                        courseClickCallback={this.props.courseClickCallback}
+                    />
+                </div>
+            );
+        }
+        else if (suggest.length === 0 && algorithm !== null) {
+            return (
+                <div className="suggestList">
+                    <h3>Recommended Courses</h3>
+                    <h5>Schedule is full.</h5>
+                </div>
+            );
+        }
+        else {
+            return (null);
+        }
     }
 
     toggleBox() {
