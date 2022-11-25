@@ -35,8 +35,13 @@ class Scheduler extends React.Component {
             <div className="Scheduler">
                 <CourseInfo
                     course={this.state.selectedCourse}
-                    hideModalCallback={this.hideModalCallback} />
-                <AppHeader term={this.state.term} />
+                    hideModalCallback={this.hideModalCallback}
+                />
+                <AppHeader
+                    term={this.state.term}
+                    clearCurrScheduleCallback={this.clearCurrSchedule}
+                    clearAllSchedulesCallback={this.clearAllSchedules}
+                />
                 <div className="app-content">
                     <div className="calendar-wrap">
                         {this.renderCalendar()}
@@ -150,7 +155,6 @@ class Scheduler extends React.Component {
 
     // Reserves a unique color for a course.
     getNextColor = (courseCode) => {
-        console.log(this.usedColors);
         let courseObj = { "code": courseCode, "term": this.state.term };
         for (let i = 0; i < this.colors.length; i++) {
             if (this.colorHasTerm(this.usedColors[i], courseObj.term) === -1) {
@@ -182,7 +186,6 @@ class Scheduler extends React.Component {
     // Frees the color used by a course so it can be used
     // by other courses.
     freeColor = (courseCode) => {
-        console.log(this.usedColors);
         let courseObj = { "code": courseCode, "term": this.state.term };
         for (let i = 0; i < this.colors.length; i++) {
             let has = this.colorHasTermAndCourse(this.usedColors[i], courseObj.code, courseObj.term);
@@ -299,6 +302,41 @@ class Scheduler extends React.Component {
             }
         }
         return false;
+    }
+
+    clearCurrSchedule = () => {
+        let newCourses = [];
+        let newUsedColors = [];
+        let courses = this.state.courses;
+        // Get the courses that aren't for the current term
+        for (let i = 0; i < courses.length; i++) {
+            if (courses[i].sections[0].term !== this.state.term) {
+                newCourses.push(courses[i]);
+            }
+        }
+        // Get the new usedColors that aren't for the current term
+        for (let i = 0; i < this.usedColors.length; i++) {
+            let newColor = [];
+            for (let j = 0; j < this.usedColors[i].length; j++) {
+                if (this.usedColors[i][j].term !== this.state.term) {
+                    newColor.push(this.usedColors[i][j]);
+                }
+            }
+            newUsedColors.push(newColor);
+        }
+        this.setState({
+            courses: newCourses
+        }, function() {
+            this.usedColors = newUsedColors;
+        });
+    }
+
+    clearAllSchedules = () => {
+        this.setState({
+            courses: []
+        }, function() {
+            this.usedColors = [[], [], [], [], []];
+        });
     }
 }
 

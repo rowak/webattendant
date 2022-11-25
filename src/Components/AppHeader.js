@@ -51,7 +51,8 @@ class AppHeader extends React.Component {
                     onClose={() => this.setMenuActive(null, false)}
                 >
                     <MenuItem onClick={() => this.exportToPNG()}>Export to PNG</MenuItem>
-                    <MenuItem onClick={() => console.log("clear")}>Clear Schedule</MenuItem>
+                    <MenuItem onClick={() => this.clearAllSchedules()}>Clear all schedules</MenuItem>
+                    <MenuItem onClick={() => this.clearCurrSchedule()}>Clear current schedule</MenuItem>
                 </Menu>
             </header>
         );
@@ -69,6 +70,21 @@ class AppHeader extends React.Component {
             link.href = dataUrl
             link.click()
         });
+        this.setMenuActive(null, false);
+    }
+
+    clearAllSchedules() {
+        if (this.props.clearAllSchedulesCallback !== undefined) {
+            this.props.clearAllSchedulesCallback();
+        }
+        this.setMenuActive(null, false);
+    }
+
+    clearCurrSchedule() {
+        if (this.props.clearCurrScheduleCallback !== undefined) {
+            this.props.clearCurrScheduleCallback();
+        }
+        this.setMenuActive(null, false);
     }
 }
 
