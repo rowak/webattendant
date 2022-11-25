@@ -1,19 +1,22 @@
 import React from 'react';
 import MeetingInfoList from "./MeetingInfoList";
+import Button from 'react-bootstrap/Button';
 import "../css/CourseInfo.css"
 
 class CourseInfo extends React.Component {
 	constructor(props) {
         super(props);
         this.state = {
-            course: props.course
+            course: props.course,
+            allCourses: props.allCourses
         };
     }
     
     static getDerivedStateFromProps(props, state) {
         if (props.course !== state.course) {
             return {
-                course: props.course
+                course: props.course,
+                allCourses: props.allCourses
             };
         }
         return null;
@@ -47,10 +50,35 @@ class CourseInfo extends React.Component {
                                 meetings={section.meetings}
                             />
                         </div>
+                        <br></br>
+                        {this.renderButton(course)}
                     </div>
                 </div>
             );
         }
+    }
+
+    renderButton(course) {
+        for (let i = 0; i < this.state.allCourses.length; i++) {
+            if (course === this.state.allCourses[i]) {
+                return (
+                    <Button className="infoRemoveButton" variant={this.props.buttonVariant} onClick={(e) => this.handleRemoveButtonCallback(e, course)}>Remove</Button>
+                );
+            }
+        }        
+        return (
+            <Button className="infoAddButton" variant={this.props.buttonVariant} onClick={(e) => this.handleAddButtonCallback(e, course)}>Add</Button>
+        );
+    }
+
+    handleAddButtonCallback = (e, course) => {
+        e.stopPropagation();
+        this.props.addCourseCallBack(course);
+    }
+    
+    handleRemoveButtonCallback = (e, course) => {
+        e.stopPropagation();
+        this.props.removeCourseCallBack(course);
     }
 
     getTeachersRow(section) {

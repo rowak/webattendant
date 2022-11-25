@@ -36,6 +36,9 @@ class Scheduler extends React.Component {
                 <CourseInfo
                     course={this.state.selectedCourse}
                     hideModalCallback={this.hideModalCallback}
+                    allCourses={this.state.courses}
+                    addCourseCallBack = {this.addCourseButtonCallback}
+                    removeCourseCallBack = {this.removeCourseButtonCallback}
                 />
                 <AppHeader
                     term={this.state.term}
