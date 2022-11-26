@@ -50,9 +50,9 @@ class AppHeader extends React.Component {
                     open={this.state.open}
                     onClose={() => this.setMenuActive(null, false)}
                 >
-                    <MenuItem onClick={() => this.exportToPNG()}>Export to PNG</MenuItem>
-                    <MenuItem onClick={() => this.clearAllSchedules()}>Clear all schedules</MenuItem>
-                    <MenuItem onClick={() => this.clearCurrSchedule()}>Clear current schedule</MenuItem>
+                    <MenuItem id="export-menu-item" onClick={() => this.exportToPNG()}>Export to PNG</MenuItem>
+                    <MenuItem id="clearAll-menu-item" onClick={() => this.clearAllSchedules()}>Clear all schedules</MenuItem>
+                    <MenuItem id="clearCurr-menu-item" onClick={() => this.clearCurrSchedule()}>Clear current schedule</MenuItem>
                 </Menu>
             </header>
         );
