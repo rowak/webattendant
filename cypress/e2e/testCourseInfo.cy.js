@@ -12,7 +12,6 @@ describe('testSearch', () => {
     // Check if the course info box contains the course information
     it('course info box displays from course list', () => {
 
-        
         cy.get('.scheduledCoursesList >  .courseList > .courseListGroup').first().click()
         cy.get('.courseInfo >  h2').should('contain', 'CIS*3750')
         cy.get('.courseInfo > .sectionDetails >  h3').should('contain', 'Meetings')
@@ -21,10 +20,19 @@ describe('testSearch', () => {
     
     // Check if the course info box contains the meeting information
     it('course info box displays from search course list', () => {
-
+        
         cy.get('.courseSearchContent >  .courseList > .courseListGroup').first().click()
         cy.get('.courseInfo >  h2').should('contain', 'CIS*3750')
         cy.get('.courseInfo > .sectionDetails >  h3').should('contain', 'Meetings')
+
+    })
+
+    it('test if the course info add/remove button work', () => {
+        
+        cy.get('.courseSearchContent >  .courseList > .courseListGroup').first().click()
+        cy.get('.courseInfo >  .infoRemoveButton').click()
+        cy.get('.info-modal').click(15,15)
+        cy.get('.scheduledCoursesList >  .courseList > h5 ').should('contain', 'No courses have been added yet!')
 
     })
     
