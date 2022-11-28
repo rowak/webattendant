@@ -1,7 +1,7 @@
 describe('testSearch', () => {
     beforeEach(() => {
         cy.visit('http://localhost:3000/')
-        
+        cy.get('.Landing > a > .btn').click()
 
       })
     

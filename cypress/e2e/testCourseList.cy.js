@@ -2,6 +2,7 @@
 describe('testSearch', () => {
     beforeEach(() => {
         cy.visit('http://localhost:3000/')
+        cy.get('.Landing > a > .btn').click()
         cy.get('.courseInput').type('CIS*3750')
         cy.get('.courseSearchContent > .mb-3 > .btn').click()
       })

@@ -2,6 +2,7 @@
 describe('testConflict', () => {
     beforeEach(() => {
         cy.visit('http://localhost:3000/')
+        cy.get('.Landing > a > .btn').click()
       })
     
     // Check if red frame is displayed for conflicting courses
