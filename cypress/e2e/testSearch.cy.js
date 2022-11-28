@@ -2,6 +2,7 @@
 describe('testSearch', () => {
     beforeEach(() => {
         cy.visit('http://localhost:3000/')
+        cy.get('.Landing > a > .btn').click()
       })
     
     // Check if course is found with regular search query

@@ -2,7 +2,7 @@
 describe('test error-notification', () => {
     beforeEach(() => {
         cy.visit('http://localhost:3000/')
-        
+        cy.get('.Landing > a > .btn').click()
         /* Add CIS*3750 to Fall schedule before each test */
         cy.get('.courseInput').type('CIS*3750')
         cy.get('.courseSearchContent > .mb-3 > .btn').click()
