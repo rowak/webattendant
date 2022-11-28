@@ -3,7 +3,7 @@ import TypeWriterEffect from "react-typewriter-effect";
 import { Link } from "react-router-dom";
 import './Landing.css';
 import { Button, Image } from "react-bootstrap";
-import Logo from "../Assets/W_logo_fullsize.png";
+import { Logo } from "../Assets/W_logo_fullsize.png";
 class Landing extends React.Component {
     render() {
         return (
@@ -17,9 +17,6 @@ class Landing extends React.Component {
                 <Link to="/scheduler">
                     <Button variant="primary" size="lg" active>Get Started</Button>
                 </Link>
-                <div className="wave"></div>
-                <div className="wave"></div>
-                <div className="wave"></div>
             </div>
         );
     }

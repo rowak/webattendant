@@ -25,8 +25,8 @@ class App extends React.Component {
       <div className="App">
         <Routes>
             {/* default path is scheduler, can change later*/}
-            <Route path="/" element={<Scheduler />} />
-            <Route path="/landing" element={<Landing />} />
+            <Route path="/" element={<Landing />} />
+            <Route path="/scheduler" element={<Scheduler />} />
         </Routes>
       </div>
     );
