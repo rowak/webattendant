@@ -22,7 +22,7 @@ class MeetingInfoList extends React.Component {
         let meetings = this.state.meetings;
         if (meetings !== null) {
             return (
-                <div className="meeting-grid">
+                <div className="meeting-grid" role="table">
                     {meetings.map((meeting, i) => {
                         let location = "TBA";
                         if (meeting.roomInfo.building !== null && meeting.roomInfo.roomNumber !== null) {

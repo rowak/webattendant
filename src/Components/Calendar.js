@@ -64,14 +64,16 @@ class Calendar extends React.Component {
         for (let j = i + 1; j < events.length; j++) {
             for(let day = 0; day < 7; day++) {
                 if(currEvent.daysOfWeek.includes(day) && events[j].daysOfWeek.includes(day)) {
-                    if (currEvent.startTime < events[j].startTime) {
-                        if (currEvent.endTime > events[j].startTime) {
-                            this.highlightConflict(currEvent, events[j]);
+                    if(currEvent.backgroundColor !== events[j].backgroundColor) {
+                        if (currEvent.startTime < events[j].startTime) {
+                            if (currEvent.endTime > events[j].startTime) {
+                                this.highlightConflict(currEvent, events[j]);
+                            }
                         }
-                    }
-                    else {
-                        if (events[j].endTime > currEvent.startTime) {
-                            this.highlightConflict(currEvent, events[j]);
+                        else {
+                            if (events[j].endTime > currEvent.startTime) {
+                                this.highlightConflict(currEvent, events[j]);
+                            }
                         }
                     }
                 }
@@ -100,53 +102,51 @@ class Calendar extends React.Component {
                 </div>
                 <div className="calendar">
                     <h2>Schedule</h2>
-                    <FullCalendar
-                        plugins={[timeGridPlugin, interactionPlugin]}
-                        headerToolbar={false}
-                        initialView="timeGridWeek"
-                        slotMinTime={'07:00:00'}
-                        slotMaxTime={'24:00:00'}
-                        editable={true}
-                        eventTimeFormat={{
-                            hour: 'numeric',
-                            minute: '2-digit',
-                            meridiem: 'short',
-                        }}
-                        dayHeaderFormat={{
-                            weekday: 'short'
-                        }}
-                        contentHeight={'850px'}
-                        expandRows={'true'}
-                        eventStartEditable={false}
-                        eventDurationEditable={false}
-                        events={this.state.events}
-                        allDaySlot={false}
-                        /* This will log into the Javascript console the date you clicked */
-                        // dateClick={(e) => console.log(e.dateStr)}
-                        /* This will log into the console the ID of the event you clicked */
-                        // eventClick={(e) => /*console.log(e.event.title)*/}
-                        eventMouseEnter={(info) => {
-                            if (info.event.title) {
-                                let startTime = this.getFormattedTime(info.event.start);
-                                let endTime = this.getFormattedTime(info.event.end);
-                                let tooltipStr = `${info.event.title}<br>(${startTime} - ${endTime})`
-                                this.tooltip = new Tooltip(info.el, {
-                                    title: tooltipStr,
-                                    html: true,
-                                    placement: "top",
-                                    trigger: "hover",
-                                    container: "body"
-                                });
-                                this.tooltip.show();
-                            }
-                        }}
-                        eventMouseLeave={() => {
-                            if (this.tooltip) {
-                                this.tooltip.dispose();
-                                this.tooltip = null;
-                            }
-                        }}
-                    />
+                    <div id="schedule">
+                        <FullCalendar
+                            plugins={[timeGridPlugin, interactionPlugin]}
+                            headerToolbar={false}
+                            initialView="timeGridWeek"
+                            slotMinTime={'07:00:00'}
+                            slotMaxTime={'24:00:00'}
+                            editable={true}
+                            eventTimeFormat={{
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                meridiem: 'short',
+                            }}
+                            dayHeaderFormat={{
+                                weekday: 'short'
+                            }}
+                            contentHeight={'850px'}
+                            expandRows={'true'}
+                            eventStartEditable={false}
+                            eventDurationEditable={false}
+                            events={this.state.events}
+                            allDaySlot={false}
+                            eventMouseEnter={(info) => {
+                                if (info.event.title) {
+                                    let startTime = this.getFormattedTime(info.event.start);
+                                    let endTime = this.getFormattedTime(info.event.end);
+                                    let tooltipStr = `${info.event.title}<br>(${startTime} - ${endTime})`
+                                    this.tooltip = new Tooltip(info.el, {
+                                        title: tooltipStr,
+                                        html: true,
+                                        placement: "top",
+                                        trigger: "hover",
+                                        container: "body"
+                                    });
+                                    this.tooltip.show();
+                                }
+                            }}
+                            eventMouseLeave={() => {
+                                if (this.tooltip) {
+                                    this.tooltip.dispose();
+                                    this.tooltip = null;
+                                }
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
         );

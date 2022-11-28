@@ -33,10 +33,25 @@ class CourseSearch extends React.Component {
                 <div className="courseSearchContent">
                     <h2>Search</h2>
                     <InputGroup className="mb-3">
-                        <Form.Control type="text" placeholder="Enter a course name or code" value={this.state.query} onChange={this.queryChanged} onKeyDown={this.enterKeyHandler}></Form.Control>
+                        <Form.Control
+                            type="text"
+                            className="courseInput"
+                            placeholder="Enter a course name or code"
+                            value={this.state.query}
+                            onChange={this.queryChanged}
+                            onKeyDown={this.enterKeyHandler}
+                        />
                         <Button variant="secondary" onClick={this.search}>Search</Button>
                     </InputGroup>
-                    <CourseList buttonVariant="primary" buttonText="Add" buttonCallback={this.props.buttonCallback} errorText={this.state.errorText} courses={this.state.courses} term={this.state.term} courseClickCallback={this.props.courseClickCallback}/>
+                    <CourseList
+                        buttonVariant="primary"
+                        buttonText="Add"
+                        buttonCallback={this.props.buttonCallback}
+                        errorText={this.state.errorText}
+                        courses={this.state.courses}
+                        term={this.state.term}
+                        courseClickCallback={this.props.courseClickCallback}
+                    />
                 </div>
             </div>
         );
