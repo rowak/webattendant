@@ -1,7 +1,8 @@
-# CIS3760
+# WebAttendant
+WebAttendant is a simple web tool for generating a schedule for courses at the University of Guelph. It was created during the Fall 2022 semester of CIS*3760 by a team of seven students.
 
 ## Webserver URL
-https://34.130.208.221
+WebAttendant is temporarily being hosted at https://34.130.208.221
 
 ## Running the app in development mode
 There are two main components to the app: the Flask backend and the React frontend.
@@ -55,6 +56,3 @@ The API can be tested using:
 ```
 make test-api
 ```
-
-## Configuration
-The deploy script creates basic config files for NGINX and Gunicorn that are necessary to run the app. The NGINX config is copied to /etc/nginx/sites-available/react.conf and a symlink is created to the config in /etc/nginx/sites-enabled. The flask service file is copied to /etc/systemd/system/flask.service. No additional changes are necessary.
