@@ -1,0 +1,7 @@
+setup:
+  config:
+    FLASK_ENVIRONMENT: production
+build:
+  docker:
+    web: dockerfile.react
+    worker: dockerfile.flask
